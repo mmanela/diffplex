@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-  <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -11,17 +11,26 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="80" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Style="{StaticResource HeaderText}">DiffPlex Silverlight Viewer</TextBlock>
+
+        <ScrollViewer Name="LeftScroller" Margin="0 0 10 0" Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid Name="LeftDiffGrid" >
+                <TextBox  Background="Transparent" Name="LeftBox" AcceptsReturn="True" TextChanged="TextBox_TextChanged" Style="{StaticResource DiffBox}" />
+            </Grid>
+        </ScrollViewer>
+        <ScrollViewer Name="RightScroller" Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid  Name="RightDiffGrid">
+                <TextBox  Background="Transparent" Name="RightBox" AcceptsReturn="True"  TextChanged="TextBox_TextChanged" Text="This is a test" Style="{StaticResource DiffBox}"  />
+            </Grid>
+        </ScrollViewer>
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2">
+            <Button  Name="GenerateDiff" Click="GenerateDiffButton_Click" Content="Generate Diff" Style="{StaticResource DiffButton}" />
+            <TextBox Name="linePaddingOverride" Width="70"  Margin="0 10 0 0"/>
+            
+        </StackPanel>
         
-      <ScrollViewer Margin="0 0 10 0" Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <TextBox Name="LeftBox" AcceptsReturn="True" />
-        </ScrollViewer>
-        <ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <TextBox Name="RightBox" AcceptsReturn="True" />
-        </ScrollViewer>
-        <Button Grid.Row="2" Grid.ColumnSpan="2" Name="GenerateDiff" Click="GenerateDiffButton_Click" Content="Generate Diff" Style="{StaticResource DiffButton}" />
     </Grid>
 </UserControl>

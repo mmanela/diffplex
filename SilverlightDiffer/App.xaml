@@ -11,5 +11,10 @@
             <Setter Property="Width" Value="100" />
             <Setter Property="Margin" Value="0 10 0 0" />
         </Style>
+        <Style x:Key="DiffBox" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Consolas" />
+        </Style>
+
+        
     </Application.Resources>
 </Application>

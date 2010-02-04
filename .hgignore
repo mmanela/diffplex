@@ -6,3 +6,17 @@ glob:WebDiffer/WebDiffer.csproj.user
 glob:WebDiffer/ClientBin/SilverlightDiffer.xap
 glob:SilverlightDiffer/SilverlightDiffer.csproj.user
 glob:SilverlightDiffer/DiffPlex.Silverlight.csproj.user
+glob:DiffPlex.Console/bin/
+glob:DiffPlex.Silverlight/Bin/
+glob:SilverlightDiffer/obj/
+glob:Facts.DiffPlex/bin/
+glob:WebDiffer/bin/
+glob:Facts.WebDiffer/bin/
+glob:DiffPlex/obj/
+glob:DiffPlex/bin/
+glob:WebDiffer/obj/
+glob:SilverlightDiffer/Bin\
+glob:Facts.WebDiffer/obj/
+glob:DiffPlex.Console/obj/
+glob:Facts.DiffPlex/obj/
+glob:DiffPlex.Silverlight/obj/

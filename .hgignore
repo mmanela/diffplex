@@ -1,0 +1,8 @@
+glob:DiffPlex.4.5.resharper.user
+glob:DiffPlex.Silverlight/DiffPlex.Silverlight.csproj.user
+glob:DiffPlex.suo
+glob:_ReSharper.DiffPlex
+glob:WebDiffer/WebDiffer.csproj.user
+glob:WebDiffer/ClientBin/SilverlightDiffer.xap
+glob:SilverlightDiffer/SilverlightDiffer.csproj.user
+glob:SilverlightDiffer/DiffPlex.Silverlight.csproj.user

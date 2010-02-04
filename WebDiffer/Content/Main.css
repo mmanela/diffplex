@@ -1,0 +1,28 @@
+﻿#mainContent
+{
+	margin-left: auto;
+	margin-right: auto;
+	margin: 20px 0 0 0;
+}
+
+body
+{
+	font-family: "Segoe UI" , "Microsoft Sans Serif" ,Arial,Geneva,Sans-Serif;
+	font-size: 0.8em;
+}
+
+.formField
+{
+	padding: 15px;
+}
+
+
+#oldTextInput, #newTextInput
+{
+	float: left;
+}
+
+.clear
+{
+	clear: both;
+}

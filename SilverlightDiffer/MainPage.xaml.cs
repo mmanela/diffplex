@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -14,14 +15,46 @@ namespace SilverlightDiffer
 {
     public partial class MainPage
     {
+        private const int TimerPollFrequency = 200;
+        private const int IdleTypingDelay = 500;
         private const char ImaginaryLineCharacter = '\u200B';
+        
+        
         private readonly TextDiffBuilder differ = new TextDiffBuilder(new Differ());
         private readonly object mutex = new object();
         private bool inDiff;
+        private Timer diffTimer;
+        private bool timerReady;
+        private readonly List<Key> nonModifyingKeys;
+        private DateTime lastKeyPress;
 
         public MainPage()
         {
             InitializeComponent();
+            diffTimer = new Timer(DiffTimerCallback, null, 0, TimerPollFrequency);
+            nonModifyingKeys = new List<Key>
+                                   {
+                                       Key.Shift,
+                                       Key.Up,
+                                       Key.Left,
+                                       Key.Right,
+                                       Key.Down,
+                                       Key.PageDown,
+                                       Key.PageUp,
+                                       Key.Alt,
+                                       Key.CapsLock,
+                                       Key.Ctrl,
+                                       Key.Escape
+                                   };
+        }
+
+        private void DiffTimerCallback(object state)
+        {
+            if (timerReady && TimeSpan.FromTicks(DateTime.Now.Ticks - lastKeyPress.Ticks).TotalMilliseconds > IdleTypingDelay)
+            {
+                Dispatcher.BeginInvoke(GenerateDiffView);
+                timerReady = false;
+            }
         }
 
         private void GenerateDiffButton_Click(object sender, RoutedEventArgs e)
@@ -32,9 +65,11 @@ namespace SilverlightDiffer
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+            if (nonModifyingKeys.Contains(e.Key))
                 return;
-            GenerateDiffView();
+
+            lastKeyPress = DateTime.Now;
+            timerReady = true;
         }
 
 
@@ -51,8 +86,8 @@ namespace SilverlightDiffer
                 inDiff = true;
             }
 
-            StripImaginaryLines(LeftBox);
-            StripImaginaryLines(RightBox);
+            StripImaginaryLinesAndCharacters(LeftBox);
+            StripImaginaryLinesAndCharacters(RightBox);
             var leftContent = LeftBox.Text;
             var rightContent = RightBox.Text;
 
@@ -143,33 +178,35 @@ namespace SilverlightDiffer
         {
             var selectionStart = textBox.SelectionStart;
             var selectionLength = textBox.SelectionLength;
-            var selectedText = textBox.SelectedText;
+
             var lines = textBox.Text.Split('\r').ToList();
+            var insertPosition = 0;
+            for (var i = 0; i < lineNumber; i++)
+            {
+                insertPosition += lines[i].Length + 1;
+            }
+            if (selectionStart >= insertPosition)
+                selectionStart += 2;
             lines.Insert(lineNumber, ImaginaryLineCharacter.ToString());
             textBox.Text = lines.Aggregate((x, y) => x + '\r' + y);
+            textBox.SelectionStart = selectionStart;
         }
 
-        public void StripImaginaryLines(TextBox textBox)
+        public void StripImaginaryLinesAndCharacters(TextBox textBox)
         {
+            var selectionStart = textBox.SelectionStart;
+            var offset = 0;
+            for (var i = 0; i < textBox.Text.Length && i < selectionStart; i++)
+                if (textBox.Text[i] == '\r' || textBox.Text[i] == ImaginaryLineCharacter)
+                    offset++;
+            selectionStart -= offset;
+
+
             var lines = textBox.Text.Split('\r').Where(x => !x.Equals(ImaginaryLineCharacter.ToString()));
-            textBox.Text = lines.Count() == 0 ? "" : lines.Aggregate((x, y) => x + '\r' + y);
+            var text = lines.Count() == 0 ? "" : lines.Aggregate((x, y) => x + '\r' + y);
+
+            textBox.Text = text.Replace(ImaginaryLineCharacter.ToString(), "");
+            textBox.SelectionStart = selectionStart;
         }
-    }
-
-
-    public class TextSpan
-    {
-        public TextSpan(int lineStart, int charStart, int lineEnd, int charEnd)
-        {
-            LineStart = lineStart;
-            LineEnd = lineEnd;
-            CharacterStart = charStart;
-            CharacterEnd = charEnd;
-        }
-
-        public int LineStart { get; set; }
-        public int LineEnd { get; set; }
-        public int CharacterStart { get; set; }
-        public int CharacterEnd { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DiffPlex;
@@ -14,49 +15,51 @@ namespace SilverlightDiffer
     public partial class MainPage
     {
         private const char ImaginaryLineCharacter = '\u200B';
-        TextDiffBuilder differ = new TextDiffBuilder(new Differ());
-        object mutex = new object();
-        private int inDiff;
+        private readonly TextDiffBuilder differ = new TextDiffBuilder(new Differ());
+        private readonly object mutex = new object();
+        private bool inDiff;
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-
         private void GenerateDiffButton_Click(object sender, RoutedEventArgs e)
         {
             GenerateDiffView();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
-           // GenerateDiffView();
+            if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+                return;
+            GenerateDiffView();
         }
 
-        void GenerateDiffView()
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (inDiff > 0) return;
+        }
+
+        private void GenerateDiffView()
+        {
+            if (inDiff) return;
             lock (mutex)
             {
-                if (inDiff > 0) return;
-                inDiff++;
+                if (inDiff) return;
+                inDiff = true;
             }
 
-            var leftContent = LeftBox.Text.Replace(ImaginaryLineCharacter + "\r","");
-            var rightContent = RightBox.Text.Replace(ImaginaryLineCharacter + "\r", "");
-
-            ThreadPool.QueueUserWorkItem(state =>
-                                             {
-                                                 var diffRes = differ.BuildDiffModel(leftContent, rightContent);
-                                                 Dispatcher.BeginInvoke(() => GenerateDiffLines(diffRes.OldText, diffRes.NewText));
-                                                 inDiff = 0;
-                                             });
+            StripImaginaryLines(LeftBox);
+            StripImaginaryLines(RightBox);
+            var leftContent = LeftBox.Text;
+            var rightContent = RightBox.Text;
 
 
-
-
-
+            var diffRes = differ.BuildDiffModel(leftContent, rightContent);
+            GenerateDiffLines(diffRes.OldText, diffRes.NewText);
+            inDiff = false;
         }
 
         private void GenerateDiffLines(DiffPaneModel leftDiff, DiffPaneModel rightDiff)
@@ -67,7 +70,7 @@ namespace SilverlightDiffer
 
         private void ClearDiffLinesFromGrid(Grid grid)
         {
-            var rectangles = grid.Children.Where(x => x.GetType() == typeof(Rectangle)).ToList();
+            var rectangles = grid.Children.Where(x => x.GetType() == typeof (Rectangle)).ToList();
             foreach (var rect in rectangles)
             {
                 grid.Children.Remove(rect);
@@ -78,8 +81,8 @@ namespace SilverlightDiffer
         {
             ClearDiffLinesFromGrid(grid);
 
-            double? paddingOverride = null; 
-            if(!string.IsNullOrEmpty(linePaddingOverride.Text))
+            double? paddingOverride = null;
+            if (!string.IsNullOrEmpty(linePaddingOverride.Text))
             {
                 try
                 {
@@ -87,7 +90,6 @@ namespace SilverlightDiffer
                 }
                 catch (Exception)
                 {
-                  
                 }
             }
 
@@ -111,7 +113,7 @@ namespace SilverlightDiffer
                 {
                     fillColor = new SolidColorBrush(Colors.LightGray);
 
-                    AddImaginaryLine(textBox,lineNumber);
+                    AddImaginaryLine(textBox, lineNumber);
                 }
 
                 if (paddingOverride != null)
@@ -136,7 +138,7 @@ namespace SilverlightDiffer
                 lineNumber++;
             }
         }
-      
+
         public void AddImaginaryLine(TextBox textBox, int lineNumber)
         {
             var selectionStart = textBox.SelectionStart;
@@ -145,10 +147,14 @@ namespace SilverlightDiffer
             var lines = textBox.Text.Split('\r').ToList();
             lines.Insert(lineNumber, ImaginaryLineCharacter.ToString());
             textBox.Text = lines.Aggregate((x, y) => x + '\r' + y);
+        }
 
+        public void StripImaginaryLines(TextBox textBox)
+        {
+            var lines = textBox.Text.Split('\r').Where(x => !x.Equals(ImaginaryLineCharacter.ToString()));
+            textBox.Text = lines.Count() == 0 ? "" : lines.Aggregate((x, y) => x + '\r' + y);
         }
     }
-
 
 
     public class TextSpan
@@ -160,10 +166,10 @@ namespace SilverlightDiffer
             CharacterStart = charStart;
             CharacterEnd = charEnd;
         }
+
         public int LineStart { get; set; }
         public int LineEnd { get; set; }
         public int CharacterStart { get; set; }
         public int CharacterEnd { get; set; }
     }
-
 }

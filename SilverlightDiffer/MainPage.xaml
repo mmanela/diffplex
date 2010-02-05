@@ -18,12 +18,12 @@
 
         <ScrollViewer Name="LeftScroller" Margin="0 0 10 0" Grid.Column="0" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid Name="LeftDiffGrid" >
-                <TextBox  Background="Transparent" Name="LeftBox" AcceptsReturn="True" TextChanged="TextBox_TextChanged" Style="{StaticResource DiffBox}" />
+                <TextBox  Background="Transparent" Name="LeftBox" AcceptsReturn="True"  KeyUp="TextBox_KeyUp"  TextChanged="TextBox_TextChanged" Style="{StaticResource DiffBox}" />
             </Grid>
         </ScrollViewer>
         <ScrollViewer Name="RightScroller" Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid  Name="RightDiffGrid">
-                <TextBox  Background="Transparent" Name="RightBox" AcceptsReturn="True"  TextChanged="TextBox_TextChanged" Text="This is a test" Style="{StaticResource DiffBox}"  />
+                <TextBox  Background="Transparent" Name="RightBox" AcceptsReturn="True"  KeyUp="TextBox_KeyUp" TextChanged="TextBox_TextChanged" Text="This is a test" Style="{StaticResource DiffBox}"  />
             </Grid>
         </ScrollViewer>
         <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2">

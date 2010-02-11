@@ -17,9 +17,9 @@ namespace SilverlightDiffer
     {
         private const int TimerPollFrequency = 200;
         private const int IdleTypingDelay = 500;
-        private const char ImaginaryLineCharacter = '\u200B';
-        
-        
+        private const char ImaginaryLineCharacter = '\u202B';//'\u200B';
+
+
         private readonly TextDiffBuilder differ = new TextDiffBuilder(new Differ());
         private readonly object mutex = new object();
         private bool inDiff;
@@ -105,7 +105,7 @@ namespace SilverlightDiffer
 
         private void ClearDiffLinesFromGrid(Grid grid)
         {
-            var rectangles = grid.Children.Where(x => x.GetType() == typeof (Rectangle)).ToList();
+            var rectangles = grid.Children.Where(x => x.GetType() == typeof(Rectangle)).ToList();
             foreach (var rect in rectangles)
             {
                 grid.Children.Remove(rect);
@@ -134,7 +134,6 @@ namespace SilverlightDiffer
             var lineNumber = 0;
             foreach (var line in diffModel.Lines)
             {
-                //textBox.FontSize
                 var fillColor = new SolidColorBrush(Colors.Transparent);
                 if (line.Type == ChangeType.Deleted)
                     fillColor = new SolidColorBrush(Colors.Red);
@@ -177,16 +176,18 @@ namespace SilverlightDiffer
         public void AddImaginaryLine(TextBox textBox, int lineNumber)
         {
             var selectionStart = textBox.SelectionStart;
-            var selectionLength = textBox.SelectionLength;
-
-            var lines = textBox.Text.Split('\r').ToList();
-            var insertPosition = 0;
-            for (var i = 0; i < lineNumber; i++)
+            var lines = new List<string>();
+            if (!string.IsNullOrEmpty(textBox.Text))
             {
-                insertPosition += lines[i].Length + 1;
+                lines = textBox.Text.Split('\r').ToList();
+                var insertPosition = 0;
+                for (var i = 0; i < lineNumber; i++)
+                {
+                    insertPosition += lines[i].Length + 1;
+                }
+                if (selectionStart >= insertPosition)
+                    selectionStart += 2;
             }
-            if (selectionStart >= insertPosition)
-                selectionStart += 2;
             lines.Insert(lineNumber, ImaginaryLineCharacter.ToString());
             textBox.Text = lines.Aggregate((x, y) => x + '\r' + y);
             textBox.SelectionStart = selectionStart;
@@ -196,9 +197,16 @@ namespace SilverlightDiffer
         {
             var selectionStart = textBox.SelectionStart;
             var offset = 0;
-            for (var i = 0; i < textBox.Text.Length && i < selectionStart; i++)
-                if (textBox.Text[i] == '\r' || textBox.Text[i] == ImaginaryLineCharacter)
-                    offset++;
+            for (var i = 0; i < textBox.Text.Length - 1 && i < selectionStart; i++)
+            {
+                if (i == 0 || textBox.Text[i] == '\r')
+                {
+                    var nextNewLine = textBox.Text.IndexOf('\r', i + 1);
+                    var nextImaginary = textBox.Text.IndexOf(ImaginaryLineCharacter, i);
+                    if (nextImaginary != -1 && (nextNewLine == -1 || nextNewLine > nextImaginary) && nextImaginary < selectionStart)
+                        offset++;
+                }
+            }
             selectionStart -= offset;
 
 

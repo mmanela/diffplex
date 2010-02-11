@@ -11,7 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
+            <RowDefinition Height="120" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Style="{StaticResource HeaderText}">DiffPlex Silverlight Viewer</TextBlock>
@@ -28,8 +28,17 @@
         </ScrollViewer>
         <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2">
             <Button  Name="GenerateDiff" Click="GenerateDiffButton_Click" Content="Generate Diff" Style="{StaticResource DiffButton}" />
-            <TextBox Name="linePaddingOverride" Width="70"  Margin="0 10 0 0"/>
-
+            <StackPanel Orientation="Horizontal"  Margin="0 10 0 0" HorizontalAlignment="Center">
+                <TextBlock>Line Padding Override:</TextBlock>
+                <TextBox Name="linePaddingOverride" Margin="0 0 10 0" Width="70"  />
+                <TextBlock>Top Offset Override:</TextBlock>
+                <TextBox Name="topOffsetOverride"  Margin="0 0 10 0" Width="70" />
+                <TextBlock>Character Width Override:</TextBlock>
+                <TextBox Name="charWidthOverride"  Margin="0 0 10 0"  Width="70" />
+                <TextBlock>Left Offset Override:</TextBlock>
+                <TextBox Name="leftOffsetOverride"  Margin="0 0 20 0" Width="70" />
+                <CheckBox Name="ShowVisualAids" Content="Show Visual Aids" />
+            </StackPanel>
         </StackPanel>
 
     </Grid>

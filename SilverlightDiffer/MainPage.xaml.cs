@@ -28,6 +28,9 @@ namespace SilverlightDiffer
         private readonly List<Key> nonModifyingKeys;
         private DateTime lastKeyPress;
 
+        private List<FontInfo> fontInfos;
+        private FontInfo currentFont;
+
         public MainPage()
         {
             InitializeComponent();
@@ -46,6 +49,13 @@ namespace SilverlightDiffer
                                        Key.Ctrl,
                                        Key.Escape
                                    };
+
+            fontInfos = new List<FontInfo>
+                              {
+                                  new FontInfo("Courier New",1.466,6.62,3.5),
+                                  new FontInfo("Consolas",1.88 )
+                              };
+            currentFont = fontInfos.Single(x => x.FontFamily.Equals(LeftBox.FontFamily.Source, StringComparison.OrdinalIgnoreCase));
         }
 
         private void DiffTimerCallback(object state)
@@ -112,45 +122,51 @@ namespace SilverlightDiffer
             }
         }
 
-        private void RenderDiffLinesInGrid(Grid grid, TextBox textBox, DiffPaneModel diffModel)
+        private double? GetOverride(TextBox box)
         {
-            ClearDiffLinesFromGrid(grid);
-
-            double? paddingOverride = null;
-            if (!string.IsNullOrEmpty(linePaddingOverride.Text))
+            double? overrideValue = null;
+            if (!string.IsNullOrEmpty(box.Text))
             {
                 try
                 {
-                    paddingOverride = double.Parse(linePaddingOverride.Text);
+                    overrideValue = double.Parse(box.Text);
                 }
                 catch (Exception)
                 {
                 }
             }
+            return overrideValue;
+        }
 
-            var linePadding = 1.88; // this is specific to Consolas
-            var rectLineHeight = textBox.FontSize + (paddingOverride ?? linePadding);
-            const int rectTopOffset = 3;
+        private void RenderDiffLinesInGrid(Grid grid, TextBox textBox, DiffPaneModel diffModel)
+        {
+            ClearDiffLinesFromGrid(grid);
+
+
             var lineNumber = 0;
             foreach (var line in diffModel.Lines)
             {
                 var fillColor = new SolidColorBrush(Colors.Transparent);
                 if (line.Type == ChangeType.Deleted)
-                    fillColor = new SolidColorBrush(Colors.Red);
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 200, 100));
                 else if (line.Type == ChangeType.Inserted)
-                    fillColor = new SolidColorBrush(Colors.Yellow);
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 255, 0));
                 else if (line.Type == ChangeType.Unchanged)
                     fillColor = new SolidColorBrush(Colors.White);
                 else if (line.Type == ChangeType.Modified)
-                    fillColor = new SolidColorBrush(Colors.Cyan);
+                {
+                    if(currentFont.IsMonoSpaced)
+                        RenderDiffWords(grid, textBox, line, lineNumber);
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 220, 220, 255));
+                }
                 else if (line.Type == ChangeType.Imaginary)
                 {
-                    fillColor = new SolidColorBrush(Colors.LightGray);
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
 
                     AddImaginaryLine(textBox, lineNumber);
                 }
 
-                if (paddingOverride != null)
+                if (ShowVisualAids.IsChecked == true)
                 {
                     if (lineNumber % 2 == 0)
                         fillColor = new SolidColorBrush(Colors.Cyan);
@@ -160,17 +176,64 @@ namespace SilverlightDiffer
                     }
                 }
 
-                var rectangle = new Rectangle
-                                    {
-                                        Fill = fillColor,
-                                        Height = rectLineHeight,
-                                        VerticalAlignment = VerticalAlignment.Top,
-                                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                                        Margin = new Thickness(0, rectLineHeight * lineNumber + rectTopOffset, 0, 0)
-                                    };
-                grid.Children.Insert(0, rectangle);
+                PlaceRectangleInGrid(textBox, grid, lineNumber, fillColor, 0, null);
                 lineNumber++;
             }
+        }
+
+        private void RenderDiffWords(Grid grid, TextBox textBox, DiffPiece line, int lineNumber)
+        {
+            var characterWidthOverride = GetOverride(charWidthOverride);
+            var characterLeftOffsetOveride = GetOverride(leftOffsetOverride);
+            var charPos = 0;
+            var characterWidth = characterWidthOverride ?? currentFont.CharacterWidth;
+            var leftOffset = characterLeftOffsetOveride ?? currentFont.LeftOffset;
+            foreach (var word in line.SubPieces)
+            {
+
+                SolidColorBrush fillColor;
+                if (word.Type == ChangeType.Deleted)
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 200, 100, 100));
+                else if (word.Type == ChangeType.Inserted)
+                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 255, 150));
+                else if (word.Type == ChangeType.Imaginary)
+                    continue;
+                else
+                    fillColor = new SolidColorBrush(Colors.Transparent);
+
+                var left = characterWidth * charPos + leftOffset;
+                var wordWidth = characterWidth * word.Text.Length;
+                PlaceRectangleInGrid(textBox, grid, lineNumber, fillColor, left, wordWidth);
+
+                charPos += word.Text.Length;
+            }
+        }
+
+        private void PlaceRectangleInGrid(TextBox textBox, Grid grid, int lineNumber, SolidColorBrush fillColor, double left, double? width)
+        {
+            
+            var paddingOverride = GetOverride(linePaddingOverride);
+            var offsetOverride = GetOverride(topOffsetOverride);
+
+
+            var rectLineHeight = textBox.FontSize + (paddingOverride ?? currentFont.LinePadding);
+            double rectTopOffset = offsetOverride ?? 3;
+
+            var offset = rectLineHeight * lineNumber + rectTopOffset;
+            var floor = Math.Floor(offset);
+            var fraction = offset - floor;
+
+            var rectangle = new Rectangle
+            {
+                Fill = fillColor,
+                Width = width ?? Double.NaN,
+                Height = rectLineHeight + fraction,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = width.HasValue ? HorizontalAlignment.Left : HorizontalAlignment.Stretch,
+                Margin = new Thickness(left, floor, 0, 0)
+            };
+
+            grid.Children.Insert(0, rectangle);
         }
 
         public void AddImaginaryLine(TextBox textBox, int lineNumber)

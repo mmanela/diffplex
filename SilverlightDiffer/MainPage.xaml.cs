@@ -17,7 +17,7 @@ namespace SilverlightDiffer
     {
         private const int TimerPollFrequency = 200;
         private const int IdleTypingDelay = 500;
-        private const char ImaginaryLineCharacter = '\u202B';//'\u200B';
+        private const char ImaginaryLineCharacter = '\u202B';
 
 
         private readonly TextDiffBuilder differ = new TextDiffBuilder(new Differ());
@@ -103,17 +103,17 @@ namespace SilverlightDiffer
 
 
             var diffRes = differ.BuildDiffModel(leftContent, rightContent);
-            GenerateDiffLines(diffRes.OldText, diffRes.NewText);
+            GenerateDiffPanes(diffRes.OldText, diffRes.NewText);
             inDiff = false;
         }
 
-        private void GenerateDiffLines(DiffPaneModel leftDiff, DiffPaneModel rightDiff)
+        private void GenerateDiffPanes(DiffPaneModel leftDiff, DiffPaneModel rightDiff)
         {
-            RenderDiffLinesInGrid(LeftDiffGrid, LeftBox, leftDiff);
-            RenderDiffLinesInGrid(RightDiffGrid, RightBox, rightDiff);
+            RenderDiffLines(LeftDiffGrid, LeftBox, leftDiff);
+            RenderDiffLines(RightDiffGrid, RightBox, rightDiff);
         }
 
-        private void ClearDiffLinesFromGrid(Grid grid)
+        private void ClearDiffLines(Grid grid)
         {
             var rectangles = grid.Children.Where(x => x.GetType() == typeof(Rectangle)).ToList();
             foreach (var rect in rectangles)
@@ -138,9 +138,9 @@ namespace SilverlightDiffer
             return overrideValue;
         }
 
-        private void RenderDiffLinesInGrid(Grid grid, TextBox textBox, DiffPaneModel diffModel)
+        private void RenderDiffLines(Grid grid, TextBox textBox, DiffPaneModel diffModel)
         {
-            ClearDiffLinesFromGrid(grid);
+            ClearDiffLines(grid);
 
 
             var lineNumber = 0;

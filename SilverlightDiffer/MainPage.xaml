@@ -21,14 +21,14 @@
                 <TextBox   TabIndex="0" Background="Transparent" Name="LeftBox" AcceptsReturn="True"  KeyUp="TextBox_KeyUp"  TextChanged="TextBox_TextChanged" Style="{StaticResource DiffBox}" />
             </Grid>
         </ScrollViewer>
-        <ScrollViewer Name="RightScroller"  IsTabStop="False" Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer  Name="RightScroller"  IsTabStop="False" Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid  Name="RightDiffGrid">
                 <TextBox  TabIndex="1" Background="Transparent" Name="RightBox" AcceptsReturn="True"  KeyUp="TextBox_KeyUp" TextChanged="TextBox_TextChanged" Style="{StaticResource DiffBox}"  />
             </Grid>
         </ScrollViewer>
         <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2">
             <Button  Name="GenerateDiff" Click="GenerateDiffButton_Click" Content="Generate Diff" Style="{StaticResource DiffButton}" />
-            <StackPanel Orientation="Horizontal"  Margin="0 10 0 0" HorizontalAlignment="Center">
+            <StackPanel Visibility="Collapsed" Orientation="Horizontal"  Margin="0 10 0 0" HorizontalAlignment="Center">
                 <TextBlock>Line Padding Override:</TextBlock>
                 <TextBox Name="linePaddingOverride" Margin="0 0 10 0" Width="70"  />
                 <TextBlock>Top Offset Override:</TextBlock>

@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using DiffPlex;
-using DiffPlex.TextDiffer;
-using DiffPlex.TextDiffer.Model;
 
 namespace SilverlightDiffer
 {
@@ -18,24 +11,14 @@ namespace SilverlightDiffer
     {
         private const int TimerPollFrequency = 200;
         private const int IdleTypingDelay = 500;
-        private const char ImaginaryLineCharacter = '\u202B';
 
-        private List<ScrollViewer> scrollViewers;
-        private Dictionary<ScrollBar, ScrollViewer> verticalScrollerViewers = new Dictionary<ScrollBar, ScrollViewer>();
-        private Dictionary<ScrollBar, ScrollViewer> horizontalScrollerViewers = new Dictionary<ScrollBar, ScrollViewer>();
-        private double verticalScrollOffset = 0;
-        private double horizontalScrollOffset = 0;
-
-        private readonly TextDiffBuilder differ = new TextDiffBuilder(new Differ());
-        private readonly object mutex = new object();
-        private bool inDiff;
+        private readonly TextBoxDiffRenderer diffRenderer;
+        private readonly ScrollViewerSynchronizer scrollSynchronizer;
         private Timer diffTimer;
         private bool timerReady;
         private readonly List<Key> nonModifyingKeys;
         private DateTime lastKeyPress;
 
-        private List<FontInfo> fontInfos;
-        private FontInfo currentFont;
 
         public MainPage()
         {
@@ -56,115 +39,23 @@ namespace SilverlightDiffer
                                        Key.Escape
                                    };
 
-            fontInfos = new List<FontInfo>
-                              {
-                                  new FontInfo("Courier New",1.466,6.62,3.5),
-                                  new FontInfo("Consolas",1.88 )
-                              };
-            currentFont = fontInfos.Single(x => x.FontFamily.Equals(LeftBox.FontFamily.Source, StringComparison.OrdinalIgnoreCase));
-
-            scrollViewers = new List<ScrollViewer> { LeftScroller, RightScroller };
-            scrollViewers.ForEach(x => x.Loaded += Scroller_Loaded);
-        }
-
-        void Scroller_Loaded(object sender, RoutedEventArgs e)
-        {
-            var scrollViewer = (ScrollViewer)sender;
-            scrollViewer.ScrollToVerticalOffset(verticalScrollOffset);
-            scrollViewer.Opacity = 1;
-            if (verticalScrollerViewers.Count > 0)
-                scrollViewer.ScrollToVerticalOffset(verticalScrollOffset);
-            scrollViewer.ApplyTemplate();
-
-
-            var scrollViewerRoot = (FrameworkElement)VisualTreeHelper.GetChild(scrollViewer, 0);
-            var horizontalScrollBar = (ScrollBar)scrollViewerRoot.FindName("HorizontalScrollBar");
-            var verticalScrollBar = (ScrollBar)scrollViewerRoot.FindName("VerticalScrollBar");
-
-            if (!horizontalScrollerViewers.Keys.Contains(horizontalScrollBar))
-            {
-                horizontalScrollerViewers.Add(horizontalScrollBar, scrollViewer);
-            }
-
-            if (!verticalScrollerViewers.Keys.Contains(verticalScrollBar))
-            {
-                verticalScrollerViewers.Add(verticalScrollBar, scrollViewer);
-            }
-
-            if (horizontalScrollBar != null)
-            {
-                horizontalScrollBar.Scroll += HorizontalScrollBar_Scroll;
-                horizontalScrollBar.ValueChanged += HorizontalScrollBar_ValueChanged;
-            }
-
-            if (verticalScrollBar != null)
-            {
-                verticalScrollBar.Scroll += VerticalScrollBar_Scroll;
-                verticalScrollBar.ValueChanged += VerticalScrollBar_ValueChanged;
-            }
-        }
-
-        private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = verticalScrollerViewers[changedScrollBar];
-            Scroll(changedScrollViewer);
-        }
-
-        private void VerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
-        {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = verticalScrollerViewers[changedScrollBar];
-            Scroll(changedScrollViewer);
-        }
-
-        private void HorizontalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = horizontalScrollerViewers[changedScrollBar];
-            Scroll(changedScrollViewer);
-        }
-
-        private void HorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
-        {
-            var changedScrollBar = sender as ScrollBar;
-            var changedScrollViewer = horizontalScrollerViewers[changedScrollBar];
-            Scroll(changedScrollViewer);
-        }
-
-        private void Scroll(ScrollViewer changedScrollViewer)
-        {
-            verticalScrollOffset = changedScrollViewer.VerticalOffset;
-            horizontalScrollOffset= changedScrollViewer.HorizontalOffset;
-
-            foreach (var scrollViewer in scrollViewers.Where(s => s != changedScrollViewer))
-            {
-                if (scrollViewer.VerticalOffset != changedScrollViewer.VerticalOffset)
-                {
-                    scrollViewer.ScrollToVerticalOffset(changedScrollViewer.VerticalOffset);
-                }
-
-                if (scrollViewer.HorizontalOffset != changedScrollViewer.HorizontalOffset)
-                {
-                    scrollViewer.ScrollToHorizontalOffset(changedScrollViewer.HorizontalOffset);
-                }
-            }
+            scrollSynchronizer = new ScrollViewerSynchronizer(new List<ScrollViewer> {LeftScroller, RightScroller});
+            diffRenderer = new TextBoxDiffRenderer(LeftDiffGrid, LeftBox, RightDiffGrid, RightBox);
         }
 
         private void DiffTimerCallback(object state)
         {
             if (timerReady && TimeSpan.FromTicks(DateTime.Now.Ticks - lastKeyPress.Ticks).TotalMilliseconds > IdleTypingDelay)
             {
-                Dispatcher.BeginInvoke(GenerateDiffView);
+                Dispatcher.BeginInvoke(diffRenderer.GenerateDiffView);
                 timerReady = false;
             }
         }
 
         private void GenerateDiffButton_Click(object sender, RoutedEventArgs e)
         {
-            GenerateDiffView();
+            diffRenderer.GenerateDiffView();
         }
-
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
@@ -175,47 +66,12 @@ namespace SilverlightDiffer
             timerReady = true;
         }
 
-
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
         }
 
-        private void GenerateDiffView()
-        {
-            if (inDiff) return;
-            lock (mutex)
-            {
-                if (inDiff) return;
-                inDiff = true;
-            }
 
-            StripImaginaryLinesAndCharacters(LeftBox);
-            StripImaginaryLinesAndCharacters(RightBox);
-            var leftContent = LeftBox.Text;
-            var rightContent = RightBox.Text;
-
-
-            var diffRes = differ.BuildDiffModel(leftContent, rightContent);
-            GenerateDiffPanes(diffRes.OldText, diffRes.NewText);
-            inDiff = false;
-        }
-
-        private void GenerateDiffPanes(DiffPaneModel leftDiff, DiffPaneModel rightDiff)
-        {
-            RenderDiffLines(LeftDiffGrid, LeftBox, leftDiff);
-            RenderDiffLines(RightDiffGrid, RightBox, rightDiff);
-        }
-
-        private void ClearDiffLines(Grid grid)
-        {
-            var rectangles = grid.Children.Where(x => x.GetType() == typeof(Rectangle)).ToList();
-            foreach (var rect in rectangles)
-            {
-                grid.Children.Remove(rect);
-            }
-        }
-
-        private double? GetOverride(TextBox box)
+        private static double? GetOverride(TextBox box)
         {
             double? overrideValue = null;
             if (!string.IsNullOrEmpty(box.Text))
@@ -231,146 +87,35 @@ namespace SilverlightDiffer
             return overrideValue;
         }
 
-        private void RenderDiffLines(Grid grid, TextBox textBox, DiffPaneModel diffModel)
+        private void Override_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ClearDiffLines(grid);
+            var overrideBox = sender as TextBox;
+            if (overrideBox == null) return;
 
-
-            var lineNumber = 0;
-            foreach (var line in diffModel.Lines)
+            switch (overrideBox.Name)
             {
-                var fillColor = new SolidColorBrush(Colors.Transparent);
-                if (line.Type == ChangeType.Deleted)
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 200, 100));
-                else if (line.Type == ChangeType.Inserted)
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 255, 0));
-                else if (line.Type == ChangeType.Unchanged)
-                    fillColor = new SolidColorBrush(Colors.White);
-                else if (line.Type == ChangeType.Modified)
-                {
-                    if(currentFont.IsMonoSpaced)
-                        RenderDiffWords(grid, textBox, line, lineNumber);
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 220, 220, 255));
-                }
-                else if (line.Type == ChangeType.Imaginary)
-                {
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
-
-                    AddImaginaryLine(textBox, lineNumber);
-                }
-
-                if (ShowVisualAids.IsChecked == true)
-                {
-                    if (lineNumber % 2 == 0)
-                        fillColor = new SolidColorBrush(Colors.Cyan);
-                    else
-                    {
-                        fillColor = new SolidColorBrush(Colors.Gray);
-                    }
-                }
-
-                PlaceRectangleInGrid(textBox, grid, lineNumber, fillColor, 0, null);
-                lineNumber++;
+                case "linePaddingOverride":
+                    diffRenderer.LinePaddingOverride = GetOverride(overrideBox);
+                    break;
+                case "topOffsetOverride":
+                    diffRenderer.TopOffsetOverride = GetOverride(overrideBox);
+                    break;
+                case "charWidthOverride":
+                    diffRenderer.CharacterWidthOverride = GetOverride(overrideBox);
+                    break;
+                case "leftOffsetOverride":
+                    diffRenderer.LeftOffsetOverride = GetOverride(overrideBox);
+                    break;
+                default:
+                    break;
             }
         }
 
-        private void RenderDiffWords(Grid grid, TextBox textBox, DiffPiece line, int lineNumber)
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            var characterWidthOverride = GetOverride(charWidthOverride);
-            var characterLeftOffsetOveride = GetOverride(leftOffsetOverride);
-            var charPos = 0;
-            var characterWidth = characterWidthOverride ?? currentFont.CharacterWidth;
-            var leftOffset = characterLeftOffsetOveride ?? currentFont.LeftOffset;
-            foreach (var word in line.SubPieces)
-            {
-
-                SolidColorBrush fillColor;
-                if (word.Type == ChangeType.Deleted)
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 200, 100, 100));
-                else if (word.Type == ChangeType.Inserted)
-                    fillColor = new SolidColorBrush(Color.FromArgb(255, 255, 255, 150));
-                else if (word.Type == ChangeType.Imaginary)
-                    continue;
-                else
-                    fillColor = new SolidColorBrush(Colors.Transparent);
-
-                var left = characterWidth * charPos + leftOffset;
-                var wordWidth = characterWidth * word.Text.Length;
-                PlaceRectangleInGrid(textBox, grid, lineNumber, fillColor, left, wordWidth);
-
-                charPos += word.Text.Length;
-            }
-        }
-
-        private void PlaceRectangleInGrid(TextBox textBox, Grid grid, int lineNumber, SolidColorBrush fillColor, double left, double? width)
-        {
-            
-            var paddingOverride = GetOverride(linePaddingOverride);
-            var offsetOverride = GetOverride(topOffsetOverride);
-
-
-            var rectLineHeight = textBox.FontSize + (paddingOverride ?? currentFont.LinePadding);
-            double rectTopOffset = offsetOverride ?? 3;
-
-            var offset = rectLineHeight * lineNumber + rectTopOffset;
-            var floor = Math.Floor(offset);
-            var fraction = offset - floor;
-
-            var rectangle = new Rectangle
-            {
-                Fill = fillColor,
-                Width = width ?? Double.NaN,
-                Height = rectLineHeight + fraction,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = width.HasValue ? HorizontalAlignment.Left : HorizontalAlignment.Stretch,
-                Margin = new Thickness(left, floor, 0, 0)
-            };
-
-            grid.Children.Insert(0, rectangle);
-        }
-
-        public void AddImaginaryLine(TextBox textBox, int lineNumber)
-        {
-            var selectionStart = textBox.SelectionStart;
-            var lines = new List<string>();
-            if (!string.IsNullOrEmpty(textBox.Text))
-            {
-                lines = textBox.Text.Split('\r').ToList();
-                var insertPosition = 0;
-                for (var i = 0; i < lineNumber; i++)
-                {
-                    insertPosition += lines[i].Length + 1;
-                }
-                if (selectionStart >= insertPosition)
-                    selectionStart += 2;
-            }
-            lines.Insert(lineNumber, ImaginaryLineCharacter.ToString());
-            textBox.Text = lines.Aggregate((x, y) => x + '\r' + y);
-            textBox.SelectionStart = selectionStart;
-        }
-
-        public void StripImaginaryLinesAndCharacters(TextBox textBox)
-        {
-            var selectionStart = textBox.SelectionStart;
-            var offset = 0;
-            for (var i = 0; i < textBox.Text.Length - 1 && i < selectionStart; i++)
-            {
-                if (i == 0 || textBox.Text[i] == '\r')
-                {
-                    var nextNewLine = textBox.Text.IndexOf('\r', i + 1);
-                    var nextImaginary = textBox.Text.IndexOf(ImaginaryLineCharacter, i);
-                    if (nextImaginary != -1 && (nextNewLine == -1 || nextNewLine > nextImaginary) && nextImaginary < selectionStart)
-                        offset++;
-                }
-            }
-            selectionStart -= offset;
-
-
-            var lines = textBox.Text.Split('\r').Where(x => !x.Equals(ImaginaryLineCharacter.ToString()));
-            var text = lines.Count() == 0 ? "" : lines.Aggregate((x, y) => x + '\r' + y);
-
-            textBox.Text = text.Replace(ImaginaryLineCharacter.ToString(), "");
-            textBox.SelectionStart = selectionStart;
+            var checkBox = sender as CheckBox;
+            if (sender == null) return;
+            diffRenderer.ShowVisualAids = checkBox.IsChecked.HasValue && checkBox.IsChecked.Value;
         }
     }
 }

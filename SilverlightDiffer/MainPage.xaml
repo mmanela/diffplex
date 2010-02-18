@@ -28,16 +28,16 @@
         </ScrollViewer>
         <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2">
             <Button  Name="GenerateDiff" Click="GenerateDiffButton_Click" Content="Generate Diff" Style="{StaticResource DiffButton}" />
-            <StackPanel Visibility="Collapsed" Orientation="Horizontal"  Margin="0 10 0 0" HorizontalAlignment="Center">
+            <StackPanel Visibility="Collapsed"  Orientation="Horizontal"  Margin="0 10 0 0" HorizontalAlignment="Center">
                 <TextBlock>Line Padding Override:</TextBlock>
-                <TextBox Name="linePaddingOverride" Margin="0 0 10 0" Width="70"  />
+                <TextBox Name="linePaddingOverride" Margin="0 0 10 0" Width="70"  TextChanged="Override_TextChanged" />
                 <TextBlock>Top Offset Override:</TextBlock>
-                <TextBox Name="topOffsetOverride"  Margin="0 0 10 0" Width="70" />
+                <TextBox Name="topOffsetOverride"  Margin="0 0 10 0" Width="70"  TextChanged="Override_TextChanged" />
                 <TextBlock>Character Width Override:</TextBlock>
-                <TextBox Name="charWidthOverride"  Margin="0 0 10 0"  Width="70" />
+                <TextBox Name="charWidthOverride"  Margin="0 0 10 0"  Width="70"  TextChanged="Override_TextChanged" />
                 <TextBlock>Left Offset Override:</TextBlock>
-                <TextBox Name="leftOffsetOverride"  Margin="0 0 20 0" Width="70" />
-                <CheckBox Name="ShowVisualAids" Content="Show Visual Aids" />
+                <TextBox Name="leftOffsetOverride"  Margin="0 0 20 0" Width="70"  TextChanged="Override_TextChanged" />
+                <CheckBox Name="ShowVisualAids" Content="Show Visual Aids" Unchecked="CheckBox_Checked" Checked="CheckBox_Checked" />
             </StackPanel>
         </StackPanel>
 

@@ -16,11 +16,6 @@ namespace DiffPlex
             return CreateCustomDiffs(oldText, newText, ignoreWhitespace, str => NormalizeNewlines(str).Split('\n'));
         }
 
-        private static string NormalizeNewlines(string str)
-        {
-            return str.Replace("\r\n", "\n").Replace("\r","\n");
-        }
-
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
             if (oldText == null) throw new ArgumentNullException("oldText");
@@ -37,26 +32,6 @@ namespace DiffPlex
                         for (int i = 0; i < str.Length; i++) s[i] = str[i].ToString();
                         return s;
                     });
-        }
-
-        private static string[] SmartSplit(string str, char[] delims)
-        {
-            var list = new List<string>();
-            int begin = 0;
-            for (int i = 0; i < str.Length; i++)
-            {
-                if (delims.Contains(str[i]))
-                {
-                    list.Add(str.Substring(begin, (i + 1 - begin)));
-                    begin = i + 1;
-                }
-                else if (i >= str.Length - 1)
-                {
-                    list.Add(str.Substring(begin, (i + 1 - begin)));
-                }
-            }
-
-            return list.ToArray();
         }
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)
@@ -122,6 +97,31 @@ namespace DiffPlex
             return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
         }
 
+        private static string NormalizeNewlines(string str)
+        {
+            return str.Replace("\r\n", "\n").Replace("\r", "\n");
+        }
+
+        private static string[] SmartSplit(string str, char[] delims)
+        {
+            var list = new List<string>();
+            int begin = 0;
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (delims.Contains(str[i]))
+                {
+                    list.Add(str.Substring(begin, (i + 1 - begin)));
+                    begin = i + 1;
+                }
+                else if (i >= str.Length - 1)
+                {
+                    list.Add(str.Substring(begin, (i + 1 - begin)));
+                }
+            }
+
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Finds the middle snake and the minimum length of the edit script comparing string A and B
         /// </summary>
@@ -143,7 +143,7 @@ namespace DiffPlex
             return CalculateEditLength(A, startA, endA, B, startB, endB, forwardDiagonal, reverseDiagonal);
         }
 
-        private EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
+        private static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
         {
             if (null == A) throw new ArgumentNullException("A");
             if (null == B) throw new ArgumentNullException("B");
@@ -287,7 +287,7 @@ namespace DiffPlex
             throw new Exception("Should never get here");
         }
 
-        protected virtual void BuildModificationData(ModificationData A, ModificationData B)
+        protected void BuildModificationData(ModificationData A, ModificationData B)
         {
             int N = A.HashedPieces.Length;
             int M = B.HashedPieces.Length;
@@ -339,7 +339,7 @@ namespace DiffPlex
             }
         }
 
-        private static void BuildPieceHashes(Dictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, Func<string, string[]> chunker)
+        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, Func<string, string[]> chunker)
         {
             string[] pieces;
 

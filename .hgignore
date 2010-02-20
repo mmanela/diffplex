@@ -20,3 +20,4 @@ glob:Facts.WebDiffer/obj/
 glob:DiffPlex.Console/obj/
 glob:Facts.DiffPlex/obj/
 glob:DiffPlex.Silverlight/obj/
+glob:3rdParty/*

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<DiffModel>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<SideBySideDiffModel>" %>
 
 <asp:Content ID="indexContent" ContentPlaceHolderID="body" runat="server">
        <div id="diffBox">

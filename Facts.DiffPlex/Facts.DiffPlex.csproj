@@ -57,7 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TextDiffBuilderFacts.cs" />
+    <Compile Include="SideBySideDiffBuilderFacts.cs" />
     <Compile Include="DifferFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

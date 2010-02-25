@@ -60,6 +60,21 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs">
+      <Link>DiffBuilder\ISideBySideDiffBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\DiffPaneModel.cs">
+      <Link>DiffBuilder\Model\DiffPaneModel.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\DiffPiece.cs">
+      <Link>DiffBuilder\Model\DiffPiece.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs">
+      <Link>DiffBuilder\Model\SideBySideDiffModel.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs">
+      <Link>DiffBuilder\SideBySideDiffBuilder.cs</Link>
+    </Compile>
     <Compile Include="..\DiffPlex\Differ.cs">
       <Link>Differ.cs</Link>
     </Compile>
@@ -80,21 +95,6 @@
     </Compile>
     <Compile Include="..\DiffPlex\Model\ModificationData.cs">
       <Link>Model\ModificationData.cs</Link>
-    </Compile>
-    <Compile Include="..\DiffPlex\TextDiffer\ITextDiffBuilder.cs">
-      <Link>TextDiffer\ITextDiffBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\DiffPlex\TextDiffer\Model\DiffModel.cs">
-      <Link>TextDiffer\Model\DiffModel.cs</Link>
-    </Compile>
-    <Compile Include="..\DiffPlex\TextDiffer\Model\DiffPaneModel.cs">
-      <Link>TextDiffer\Model\DiffPaneModel.cs</Link>
-    </Compile>
-    <Compile Include="..\DiffPlex\TextDiffer\Model\DiffPiece.cs">
-      <Link>TextDiffer\Model\DiffPiece.cs</Link>
-    </Compile>
-    <Compile Include="..\DiffPlex\TextDiffer\TextDiffBuilder.cs">
-      <Link>TextDiffer\TextDiffBuilder.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

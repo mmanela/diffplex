@@ -47,14 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TextDiffer\ITextDiffBuilder.cs" />
-    <Compile Include="TextDiffer\TextDiffBuilder.cs" />
+    <Compile Include="DiffBuilder\ISideBySideDiffBuilder.cs" />
+    <Compile Include="DiffBuilder\SideBySideDiffBuilder.cs" />
     <Compile Include="IDiffer.cs" />
     <Compile Include="Model\DiffResult.cs" />
     <Compile Include="Model\DiffBlock.cs" />
-    <Compile Include="TextDiffer\Model\DiffModel.cs" />
-    <Compile Include="TextDiffer\Model\DiffPaneModel.cs" />
-    <Compile Include="TextDiffer\Model\DiffPiece.cs" />
+    <Compile Include="DiffBuilder\Model\SideBySideDiffModel.cs" />
+    <Compile Include="DiffBuilder\Model\DiffPaneModel.cs" />
+    <Compile Include="DiffBuilder\Model\DiffPiece.cs" />
     <Compile Include="Model\ModificationData.cs" />
     <Compile Include="Differ.cs" />
     <Compile Include="Log.cs" />

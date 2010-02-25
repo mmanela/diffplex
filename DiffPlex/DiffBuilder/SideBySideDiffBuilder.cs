@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
-using DiffPlex.TextDiffer.Model;
 
-namespace DiffPlex.TextDiffer
+namespace DiffPlex.DiffBuilder
 {
-    public class TextDiffBuilder : ITextDiffBuilder
+    public class SideBySideDiffBuilder : ISideBySideDiffBuilder
     {
         private readonly IDiffer differ;
 
-        public delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
+        delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
 
         public static readonly char[] WordSeparaters = new[] {' ', '\t', '.', '(', ')', '{', '}', ','};
 
-        public TextDiffBuilder(IDiffer differ)
+        public SideBySideDiffBuilder(IDiffer differ)
         {
             if (differ == null) throw new ArgumentNullException("differ");
 
             this.differ = differ;
         }
 
-        public virtual DiffModel BuildDiffModel(string oldText, string newText)
+        public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
         {
             if (oldText == null) throw new ArgumentNullException("oldText");
             if (newText == null) throw new ArgumentNullException("newText");
@@ -28,9 +28,9 @@ namespace DiffPlex.TextDiffer
             return BuildLineDiff(oldText, newText);
         }
 
-        private DiffModel BuildLineDiff(string oldText, string newText)
+        private SideBySideDiffModel BuildLineDiff(string oldText, string newText)
         {
-            var model = new DiffModel();
+            var model = new SideBySideDiffModel();
             var diffResult = differ.CreateLineDiffs(oldText, newText, true);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
             return model;
@@ -41,7 +41,6 @@ namespace DiffPlex.TextDiffer
             var diffResult = differ.CreateWordDiffs(oldText, newText, false, WordSeparaters);
             BuildDiffPieces(diffResult, oldPieces, newPieces, null);
         }
-
 
         private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder)
         {

@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using DiffPlex;
-using DiffPlex.TextDiffer;
-using DiffPlex.TextDiffer.Model;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using Moq;
 using WebDiffer.Controllers;
 using Xunit;
@@ -18,7 +18,7 @@ namespace Facts.WebDiffer
                 var controller = TestableDiffController.Create();
                 string oldText = "a";
                 string newText = "b";
-                var model = new DiffModel();
+                var model = new SideBySideDiffModel();
                 controller.MockDiffBuilder.Setup(x => x.BuildDiffModel(oldText, newText)).Returns(model);
 
 
@@ -35,7 +35,7 @@ namespace Facts.WebDiffer
                 var controller = TestableDiffController.Create();
                 string oldText = null;
                 string newText = null;
-                var model = new DiffModel();
+                var model = new SideBySideDiffModel();
                 controller.MockDiffBuilder.Setup(x => x.BuildDiffModel(string.Empty, string.Empty)).Returns(model);
 
                 var result = controller.Diff(oldText, newText);
@@ -49,9 +49,9 @@ namespace Facts.WebDiffer
 
         public class TestableDiffController : DiffController
         {
-            public Mock<TextDiffBuilder> MockDiffBuilder;
+            public Mock<SideBySideDiffBuilder> MockDiffBuilder;
 
-            public TestableDiffController(Mock<TextDiffBuilder> diffBuilder)
+            public TestableDiffController(Mock<SideBySideDiffBuilder> diffBuilder)
                 : base(diffBuilder.Object)
             {
                 MockDiffBuilder = diffBuilder;
@@ -60,7 +60,7 @@ namespace Facts.WebDiffer
             public static TestableDiffController Create()
             {
                 var differ = new Mock<IDiffer>();
-                return new TestableDiffController(new Mock<TextDiffBuilder>(differ.Object));
+                return new TestableDiffController(new Mock<SideBySideDiffBuilder>(differ.Object));
             }
         }
     }

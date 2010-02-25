@@ -1,22 +1,22 @@
 ﻿using System.Web.Mvc;
 using DiffPlex;
-using DiffPlex.TextDiffer;
+using DiffPlex.DiffBuilder;
 
 namespace WebDiffer.Controllers
 {
     [HandleError]
     public class DiffController : Controller
     {
-        private TextDiffBuilder diffBuilder;
+        private SideBySideDiffBuilder diffBuilder;
 
-        public DiffController(TextDiffBuilder bidiffBuilder)
+        public DiffController(SideBySideDiffBuilder bidiffBuilder)
         {
             diffBuilder = bidiffBuilder;
         }
 
         public DiffController()
         {
-            diffBuilder = new TextDiffBuilder(new Differ());
+            diffBuilder = new SideBySideDiffBuilder(new Differ());
         }
 
 

@@ -1,4 +1,4 @@
-﻿<%@  Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DiffModel>" %>
+﻿<%@  Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SideBySideDiffModel>" %>
 
 <div id="diffBar">
     <table cellpadding="0" cellspacing="0" class="diffBarTable">

@@ -6,8 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using DiffPlex;
-using DiffPlex.TextDiffer;
-using DiffPlex.TextDiffer.Model;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 
 namespace SilverlightDiffer
 {
@@ -18,7 +18,7 @@ namespace SilverlightDiffer
         private readonly Grid rightGrid;
         private readonly TextBox rightBox;
         private const char ImaginaryLineCharacter = '\u202B';
-        private readonly TextDiffBuilder differ;
+        private readonly SideBySideDiffBuilder differ;
         private readonly object mutex = new object();
         private bool inDiff;
         private readonly List<FontInfo> fontInfos;
@@ -31,7 +31,7 @@ namespace SilverlightDiffer
             this.rightGrid = rightGrid;
             this.rightBox = rightBox;
 
-            differ = new TextDiffBuilder(new Differ());
+            differ = new SideBySideDiffBuilder(new Differ());
             fontInfos = new List<FontInfo>
                             {
                                 new FontInfo("Courier New", 1.466, 6.62, 3.5),

@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using DiffPlex;
 using DiffPlex.Model;
-using DiffPlex.TextDiffer;
-using DiffPlex.TextDiffer.Model;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using Moq;
 using Xunit;
 
 namespace Facts.DiffPlex
 {
-    public class TextDiffBuilderFacts
+    public class SideBySideDiffBuilderFacts
     {
         public class Constructor
         {
             [Fact]
             public void Will_throw_is_IDiffer_is_null()
             {
-                var ex = Record.Exception(() => new TextDiffBuilder(null));
+                var ex = Record.Exception(() => new SideBySideDiffBuilder(null));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException) ex;
@@ -30,7 +30,7 @@ namespace Facts.DiffPlex
             public void Will_throw_is_OldText_is_null()
             {
                 var differ = new Mock<IDiffer>();
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var ex = Record.Exception(() => builder.BuildDiffModel(null, "asd"));
 
@@ -43,7 +43,7 @@ namespace Facts.DiffPlex
             public void Will_throw_is_NewText_is_null()
             {
                 var differ = new Mock<IDiffer>();
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var ex = Record.Exception(() => builder.BuildDiffModel("asa", null));
 
@@ -65,12 +65,12 @@ namespace Facts.DiffPlex
                 differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()))
                     .Callback<string, string, bool, char[]>((a, b, c, d) => chars = d);
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 builder.BuildDiffModel(text, text);
 
-                Assert.Equal(TextDiffBuilder.WordSeparaters.Length, chars.Length);
-                foreach (var c in TextDiffBuilder.WordSeparaters)
+                Assert.Equal(SideBySideDiffBuilder.WordSeparaters.Length, chars.Length);
+                foreach (var c in SideBySideDiffBuilder.WordSeparaters)
                 {
                     Assert.Contains(c, chars);
                 }
@@ -86,7 +86,7 @@ namespace Facts.DiffPlex
                     .Returns(new DiffResult(textLines, textLines, new List<DiffBlock>()));
                 differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(text, text);
 
@@ -116,7 +116,7 @@ namespace Facts.DiffPlex
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 0, 0, 2)}));
                 differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 
@@ -146,7 +146,7 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 2, 0, 0)}));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 
@@ -178,7 +178,7 @@ namespace Facts.DiffPlex
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 5, 0, 4)}));
                 differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 
@@ -237,7 +237,7 @@ namespace Facts.DiffPlex
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(2, 5, 2, 4)}));
                 differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 
@@ -311,7 +311,7 @@ namespace Facts.DiffPlex
                                  new[] {"m ", "is ", "h"},
                                  new[] {"m ", "ai ", "is ", "n ", "h"},
                                  new List<DiffBlock> {new DiffBlock(1, 0, 1, 1), new DiffBlock(3, 0, 3, 1)}));
-                var builder = new TextDiffBuilder(differ.Object);
+                var builder = new SideBySideDiffBuilder(differ.Object);
 
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 

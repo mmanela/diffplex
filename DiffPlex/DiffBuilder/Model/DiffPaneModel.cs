@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DiffPlex.TextDiffer.Model
+namespace DiffPlex.DiffBuilder.Model
 {
     public class DiffPaneModel
     {

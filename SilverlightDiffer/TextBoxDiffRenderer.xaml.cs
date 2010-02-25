@@ -40,11 +40,11 @@ namespace SilverlightDiffer
             currentFont = fontInfos.Single(x => x.FontFamily.Equals(leftBox.FontFamily.Source, StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool ShowVisualAids { get; set; }
-        public double? CharacterWidthOverride { get; set; }
-        public double? LeftOffsetOverride { get; set; }
-        public double? LinePaddingOverride { get; set; }
-        public double? TopOffsetOverride { get; set; }
+        public bool ShowVisualAids { private get; set; }
+        public double? CharacterWidthOverride { private get; set; }
+        public double? LeftOffsetOverride { private get; set; }
+        public double? LinePaddingOverride { private get; set; }
+        public double? TopOffsetOverride { private get; set; }
 
         public void GenerateDiffView()
         {
@@ -109,7 +109,7 @@ namespace SilverlightDiffer
                     AddImaginaryLine(textBox, lineNumber);
                 }
 
-                if (ShowVisualAids == true)
+                if (ShowVisualAids)
                 {
                     if (lineNumber % 2 == 0)
                         fillColor = new SolidColorBrush(Colors.Cyan);

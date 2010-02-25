@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace DiffPlex.CommandLine
+namespace DiffPlex.ConsoleRunner
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Log.Enabled = false;
-            Differ d = new Differ();
-            var diffresult = d.CreateLineDiffs(A, B,false);
-            var formater = new UnidiffFormater();
-            var output = formater.Generate(diffresult);
+            var d = new Differ();
+            var diffresult = d.CreateLineDiffs(OldText, NewText, false);
+            var output = UnidiffFormater.Generate(diffresult);
             foreach (var line in output)
                 Console.WriteLine(line);
-           
         }
 
-        static string A =
-@"We the people
+        private const string OldText =
+            @"We the people
 of the united states of america
 establish justice
 ensure domestic tranquility
@@ -29,8 +24,8 @@ secure the blessing of liberty
 to ourselves and our posterity
 ";
 
-        static string B =
-@"We the people
+        private const string NewText =
+            @"We the people
 in order to form a more perfect union
 establish justice
 ensure domestic tranquility

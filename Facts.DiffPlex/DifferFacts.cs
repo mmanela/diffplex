@@ -815,7 +815,7 @@ namespace Facts.DiffPlex
                 Assert.Equal(a.Length + b.Length, res.EditLength);
             }
 
-            [Theory()]
+            [Theory]
             [ClassData(typeof(TestingEditLengthGenerator))]
             public void Will_return_correct_edit_length_random_strings(int[] a, int[] b, int actualEditLength)
             {
@@ -828,15 +828,15 @@ namespace Facts.DiffPlex
 
         }
 
-        public class TestingEditLengthGenerator : IEnumerable<object[]>
+        private class TestingEditLengthGenerator : IEnumerable<object[]>
         {
-            int count;
-            ArrayGenerator generator = new ArrayGenerator();
+            readonly int count;
+            readonly ArrayGenerator generator = new ArrayGenerator();
             public TestingEditLengthGenerator()
                 : this(50)
             { }
 
-            public TestingEditLengthGenerator(int count)
+            private TestingEditLengthGenerator(int count)
             {
                 if (count < 0) throw new ArgumentNullException("count");
 
@@ -861,16 +861,17 @@ namespace Facts.DiffPlex
             }
         }
 
-        public class ArrayGenerator
+        private class ArrayGenerator
         {
-            int minLength;
-            int maxLength;
-            Random random = new Random();
+            readonly int minLength;
+            readonly int maxLength;
+            readonly Random random = new Random();
 
             public ArrayGenerator()
                 : this(0, 1005)
             { }
-            public ArrayGenerator(int minLength, int maxLength)
+
+            private ArrayGenerator(int minLength, int maxLength)
             {
                 if (minLength < 0) throw new ArgumentNullException("minLength");
                 if (maxLength < 0) throw new ArgumentNullException("maxLength");
@@ -881,8 +882,8 @@ namespace Facts.DiffPlex
 
             public void Generate(out int[] aArr, out int[] bArr, out int editLength)
             {
-                List<int> a = new List<int>();
-                List<int> b = new List<int>();
+                var a = new List<int>();
+                var b = new List<int>();
 
                 int aLength = random.Next(minLength, maxLength);
                 int bLength = random.Next(minLength, maxLength);
@@ -890,7 +891,7 @@ namespace Facts.DiffPlex
                 int commonLength = random.Next(0, Math.Min(aLength, bLength));
                 editLength = (aLength + bLength) - 2 * commonLength;
 
-                var someInt = 1;
+                const int someInt = 1;
                 for (int j = 0; j < commonLength; j++)
                 {
                     a.Add(someInt); b.Add(someInt);
@@ -907,7 +908,7 @@ namespace Facts.DiffPlex
                 bArr = b.ToArray();
             }
 
-            void Shuffle(List<int> arr)
+            void Shuffle(IList<int> arr)
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
@@ -919,10 +920,8 @@ namespace Facts.DiffPlex
             }
         }
 
-        public class TestableDiffer : Differ
+        private class TestableDiffer : Differ
         {
-            public TestableDiffer() { }
-
             public void TestBuildModificationData(ModificationData A, ModificationData B)
             {
                 base.BuildModificationData(A, B);

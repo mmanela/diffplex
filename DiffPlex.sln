@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts.WebDiffer", "Facts.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightDiffer", "SilverlightDiffer\SilverlightDiffer.csproj", "{25474606-3A78-4309-8651-9694FF1C8B68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.CommandLine", "DiffPlex.Console\DiffPlex.CommandLine.csproj", "{9AE2E267-84CE-4999-A63F-25870562DF9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{9AE2E267-84CE-4999-A63F-25870562DF9F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.Silverlight", "DiffPlex.Silverlight\DiffPlex.Silverlight.csproj", "{212D7C23-17A5-4039-9CC9-A277BEB054BF}"
 EndProject

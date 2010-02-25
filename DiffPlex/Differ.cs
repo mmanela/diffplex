@@ -102,7 +102,7 @@ namespace DiffPlex
             return str.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
-        private static string[] SmartSplit(string str, char[] delims)
+        private static string[] SmartSplit(string str, IEnumerable<char> delims)
         {
             var list = new List<string>();
             int begin = 0;
@@ -297,7 +297,7 @@ namespace DiffPlex
             BuildModificationData(A, 0, N, B, 0, M, forwardDiagonal, reverseDiagonal);
         }
 
-        private void BuildModificationData
+        private static void BuildModificationData
             (ModificationData A,
              int startA,
              int endA,

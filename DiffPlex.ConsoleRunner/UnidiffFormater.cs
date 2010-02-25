@@ -2,44 +2,42 @@
 using System.Collections.Generic;
 using DiffPlex.Model;
 
-namespace DiffPlex.CommandLine
+namespace DiffPlex.ConsoleRunner
 {
-    public class UnidiffFormater
+    public static class UnidiffFormater
     {
-        private readonly string NoChangeSymbol = "  ";
-        private readonly string InsertSymbol = "+ ";
-        private readonly string DeleteSymbol = "- ";
+        private const string NoChangeSymbol = "  ";
+        private const string InsertSymbol = "+ ";
+        private const string DeleteSymbol = "- ";
 
-        public List<string> Generate(DiffResult lineDiff)
+        public static List<string> Generate(DiffResult lineDiff)
         {
-            List<string> uniLines = new List<string>();
-
-
+            var uniLines = new List<string>();
             int bPos = 0;
 
             foreach (var diffBlock in lineDiff.DiffBlocks)
             {
                 for (; bPos < diffBlock.InsertStartB; bPos++)
-                    uniLines.Add(NoChangeSymbol + lineDiff.PiecesOld[bPos]);
+                    uniLines.Add(NoChangeSymbol + lineDiff.PiecesNew[bPos]);
 
                 int i = 0;
                 for (; i < Math.Min(diffBlock.DeleteCountA, diffBlock.InsertCountB); i++)
                 {
-                    uniLines.Add(DeleteSymbol + lineDiff.PiecesNew[i + diffBlock.DeleteStartA]);
-                    uniLines.Add(InsertSymbol + lineDiff.PiecesOld[i + diffBlock.InsertStartB]);
+                    uniLines.Add(DeleteSymbol + lineDiff.PiecesOld[i + diffBlock.DeleteStartA]);
+                    uniLines.Add(InsertSymbol + lineDiff.PiecesNew[i + diffBlock.InsertStartB]);
                     bPos++;
                 }
 
                 if (diffBlock.DeleteCountA > diffBlock.InsertCountB)
                 {
                     for (; i < diffBlock.DeleteCountA; i++)
-                        uniLines.Add(DeleteSymbol + lineDiff.PiecesNew[i + diffBlock.DeleteStartA]);
+                        uniLines.Add(DeleteSymbol + lineDiff.PiecesOld[i + diffBlock.DeleteStartA]);
                 }
                 else
                 {
                     for (; i < diffBlock.InsertCountB; i++)
                     {
-                        uniLines.Add(InsertSymbol + lineDiff.PiecesOld[i + diffBlock.InsertStartB]);
+                        uniLines.Add(InsertSymbol + lineDiff.PiecesNew[i + diffBlock.InsertStartB]);
                         bPos++;
                     }
                 }

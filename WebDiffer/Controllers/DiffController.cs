@@ -7,9 +7,9 @@ namespace WebDiffer.Controllers
     [HandleError]
     public class DiffController : Controller
     {
-        private SideBySideDiffBuilder diffBuilder;
+        private readonly ISideBySideDiffBuilder diffBuilder;
 
-        public DiffController(SideBySideDiffBuilder bidiffBuilder)
+        public DiffController(ISideBySideDiffBuilder bidiffBuilder)
         {
             diffBuilder = bidiffBuilder;
         }

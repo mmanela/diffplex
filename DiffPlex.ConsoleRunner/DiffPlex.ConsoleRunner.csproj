@@ -8,8 +8,8 @@
     <ProjectGuid>{9AE2E267-84CE-4999-A63F-25870562DF9F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DiffPlex.Console</RootNamespace>
-    <AssemblyName>DiffPlex.Console</AssemblyName>
+    <RootNamespace>DiffPlex.ConsoleRunner</RootNamespace>
+    <AssemblyName>DiffPlex.ConsoleRunner</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

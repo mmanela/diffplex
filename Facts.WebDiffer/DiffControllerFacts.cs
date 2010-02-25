@@ -49,9 +49,9 @@ namespace Facts.WebDiffer
 
         public class TestableDiffController : DiffController
         {
-            public Mock<SideBySideDiffBuilder> MockDiffBuilder;
+            public Mock<ISideBySideDiffBuilder> MockDiffBuilder;
 
-            public TestableDiffController(Mock<SideBySideDiffBuilder> diffBuilder)
+            private TestableDiffController(Mock<ISideBySideDiffBuilder> diffBuilder)
                 : base(diffBuilder.Object)
             {
                 MockDiffBuilder = diffBuilder;
@@ -60,7 +60,7 @@ namespace Facts.WebDiffer
             public static TestableDiffController Create()
             {
                 var differ = new Mock<IDiffer>();
-                return new TestableDiffController(new Mock<SideBySideDiffBuilder>(differ.Object));
+                return new TestableDiffController(new Mock<ISideBySideDiffBuilder>());
             }
         }
     }

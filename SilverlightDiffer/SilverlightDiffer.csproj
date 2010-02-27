@@ -70,7 +70,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScrollViewerSynchronizer.cs" />
-    <Compile Include="TextBoxDiffRenderer.xaml.cs" />
+    <Compile Include="TextBoxDiffRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />

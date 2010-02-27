@@ -132,7 +132,7 @@ namespace DiffPlex
         /// <param name="startB">lower bound inclusive</param>
         /// <param name="endB">upper bound exclusive</param>
         /// <returns></returns>
-        protected virtual EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB)
+        protected static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB)
         {
             int N = endA - startA;
             int M = endB - startB;
@@ -287,7 +287,7 @@ namespace DiffPlex
             throw new Exception("Should never get here");
         }
 
-        protected void BuildModificationData(ModificationData A, ModificationData B)
+        protected static void BuildModificationData(ModificationData A, ModificationData B)
         {
             int N = A.HashedPieces.Length;
             int M = B.HashedPieces.Length;

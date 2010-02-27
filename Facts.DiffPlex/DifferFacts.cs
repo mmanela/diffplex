@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using DiffPlex;
 using DiffPlex.Model;
 using Xunit;
 using Xunit.Extensions;
-using DiffPlex;
 
 namespace Facts.DiffPlex
 {
@@ -44,7 +44,6 @@ namespace Facts.DiffPlex
 
                 Assert.NotNull(ex);
                 Assert.Equal("chunker", ex.ParamName);
-
             }
         }
 
@@ -367,7 +366,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateWordDiffs(null, "someString", false, new[]{' '})) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateWordDiffs(null, "someString", false, new[] {' '})) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("oldText", ex.ParamName);
@@ -378,7 +377,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateWordDiffs("someString", null, false, new[] { ' ' })) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateWordDiffs("someString", null, false, new[] {' '})) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("newText", ex.ParamName);
@@ -389,7 +388,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("abc defg", "abc defg", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("abc defg", "abc defg", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(0, res.DiffBlocks.Count);
@@ -400,7 +399,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("", "ab c", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("", "ab c", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -415,7 +414,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("xy w", "", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("xy w", "", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -430,7 +429,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("x j zwv", "x y zwv", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("x j zwv", "x y zwv", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -445,7 +444,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("ab ce", "ab d ce", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("ab ce", "ab d ce", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -459,7 +458,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("ab d ce", "ab ce", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("ab d ce", "ab ce", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -473,7 +472,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("a b c d", "a b e f g h", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("a b c d", "a b e f g h", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -488,7 +487,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("z a b c d  ", "x v a b e f g h  ", false, new[] { ' ' });
+                var res = differ.CreateWordDiffs("z a b c d  ", "x v a b e f g h  ", false, new[] {' '});
 
                 Assert.NotNull(res);
                 Assert.Equal(2, res.DiffBlocks.Count);
@@ -515,7 +514,10 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", separator), string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", separator), false, new[] { separator });
+                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", separator),
+                                                 string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", separator),
+                                                 false,
+                                                 new[] {separator});
 
                 Assert.NotNull(res);
                 Assert.Equal(2, res.DiffBlocks.Count);
@@ -536,7 +538,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", ' '), string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", ';'), false, new[] { ' ', ';' });
+                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", ' '), string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", ';'), false, new[] {' ', ';'});
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
@@ -573,8 +575,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("");
                 var b = new ModificationData("cat\nhat\npat\nmatt");
-                a.HashedPieces = new int[] { };
-                b.HashedPieces = new[] { 1, 2, 3, 4 };
+                a.HashedPieces = new int[] {};
+                b.HashedPieces = new[] {1, 2, 3, 4};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -592,8 +594,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");
                 var b = new ModificationData("");
-                a.HashedPieces = new[] { 1, 2, 3, 4 };
-                b.HashedPieces = new int[] { };
+                a.HashedPieces = new[] {1, 2, 3, 4};
+                b.HashedPieces = new int[] {};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -611,8 +613,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");
                 var b = new ModificationData("cat\nhat\npat\nmatt");
-                a.HashedPieces = new[] { 1, 2, 3, 4 };
-                b.HashedPieces = new[] { 1, 2, 3, 4 };
+                a.HashedPieces = new[] {1, 2, 3, 4};
+                b.HashedPieces = new[] {1, 2, 3, 4};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -634,8 +636,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");
                 var b = new ModificationData("door\nfloor\nbore\nmore");
-                a.HashedPieces = new[] { 1, 2, 3, 4 };
-                b.HashedPieces = new[] { 5, 6, 7, 8 };
+                a.HashedPieces = new[] {1, 2, 3, 4};
+                b.HashedPieces = new[] {5, 6, 7, 8};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -657,8 +659,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");
                 var b = new ModificationData("cat\nmatt\ntac");
-                a.HashedPieces = new[] { 1, 2, 3, 4 };
-                b.HashedPieces = new[] { 1, 4, 5 };
+                a.HashedPieces = new[] {1, 2, 3, 4};
+                b.HashedPieces = new[] {1, 4, 5};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -680,8 +682,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nfat\ntac");
                 var b = new ModificationData("cat\nmatt\ntac");
-                a.HashedPieces = new[] { 1, 2, 3 };
-                b.HashedPieces = new[] { 1, 4, 3 };
+                a.HashedPieces = new[] {1, 2, 3};
+                b.HashedPieces = new[] {1, 4, 3};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -702,8 +704,8 @@ namespace Facts.DiffPlex
                 var differ = new TestableDiffer();
                 var a = new ModificationData("matt\ncat\nhat\n");
                 var b = new ModificationData("matt\ncat\ntat\nhat\n");
-                a.HashedPieces = new[] { 1, 2, 3 };
-                b.HashedPieces = new[] { 1, 2, 4, 3 };
+                a.HashedPieces = new[] {1, 2, 3};
+                b.HashedPieces = new[] {1, 2, 4, 3};
                 a.Modifications = new bool[a.HashedPieces.Length];
                 b.Modifications = new bool[b.HashedPieces.Length];
 
@@ -720,7 +722,7 @@ namespace Facts.DiffPlex
             }
 
             [Theory]
-            [ClassData(typeof(TestingEditLengthGenerator))]
+            [ClassData(typeof (TestingEditLengthGenerator))]
             public void Will_return_correct_modifications_count_for_random_data(int[] aLines, int[] bLines, int editLength)
             {
                 var differ = new TestableDiffer();
@@ -736,9 +738,7 @@ namespace Facts.DiffPlex
                 int modCount = a.Modifications.Count(x => x == true) + b.Modifications.Count(x => x == true);
 
                 Assert.Equal(editLength, modCount);
-
             }
-
         }
 
         public class CalculateEditLength
@@ -769,8 +769,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_a_if_b_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { };
+                int[] a = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+                int[] b = new int[] {};
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -781,8 +781,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_b_if_a_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] a = new int[] { };
+                int[] b = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+                int[] a = new int[] {};
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -793,8 +793,8 @@ namespace Facts.DiffPlex
             public void Will_return_correct_length_when_start_and_ends_are_changed()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 0, 5, 6, 7, 8 };
-                int[] a = new int[] { 4, 2, 3, 4, 5, 6, 7, 9 };
+                int[] b = new int[] {1, 2, 3, 0, 5, 6, 7, 8};
+                int[] a = new int[] {4, 2, 3, 4, 5, 6, 7, 9};
 
                 var res = differ.TestCalculateEditLength(a, 1, a.Length - 1, b, 1, b.Length - 1);
 
@@ -805,8 +805,8 @@ namespace Facts.DiffPlex
             public void Will_return_snake_of_zero_length_for_unique_arrays()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { 11, 12, 23, 54, 56 };
+                int[] a = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+                int[] b = new int[] {11, 12, 23, 54, 56};
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -816,7 +816,7 @@ namespace Facts.DiffPlex
             }
 
             [Theory]
-            [ClassData(typeof(TestingEditLengthGenerator))]
+            [ClassData(typeof (TestingEditLengthGenerator))]
             public void Will_return_correct_edit_length_random_strings(int[] a, int[] b, int actualEditLength)
             {
                 var differ = new TestableDiffer();
@@ -825,16 +825,17 @@ namespace Facts.DiffPlex
 
                 Assert.Equal(actualEditLength, res.EditLength);
             }
-
         }
 
         private class TestingEditLengthGenerator : IEnumerable<object[]>
         {
-            readonly int count;
-            readonly ArrayGenerator generator = new ArrayGenerator();
+            private readonly int count;
+            private readonly ArrayGenerator generator = new ArrayGenerator();
+
             public TestingEditLengthGenerator()
                 : this(50)
-            { }
+            {
+            }
 
             private TestingEditLengthGenerator(int count)
             {
@@ -851,11 +852,11 @@ namespace Facts.DiffPlex
                     int editLength;
                     generator.Generate(out a, out b, out editLength);
 
-                    yield return new object[] { a, b, editLength };
+                    yield return new object[] {a, b, editLength};
                 }
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 throw new NotImplementedException();
             }
@@ -863,13 +864,14 @@ namespace Facts.DiffPlex
 
         private class ArrayGenerator
         {
-            readonly int minLength;
-            readonly int maxLength;
-            readonly Random random = new Random();
+            private readonly int minLength;
+            private readonly int maxLength;
+            private readonly Random random = new Random();
 
             public ArrayGenerator()
                 : this(0, 1005)
-            { }
+            {
+            }
 
             private ArrayGenerator(int minLength, int maxLength)
             {
@@ -894,7 +896,8 @@ namespace Facts.DiffPlex
                 const int someInt = 1;
                 for (int j = 0; j < commonLength; j++)
                 {
-                    a.Add(someInt); b.Add(someInt);
+                    a.Add(someInt);
+                    b.Add(someInt);
                 }
 
                 while (a.Count < aLength)
@@ -908,7 +911,7 @@ namespace Facts.DiffPlex
                 bArr = b.ToArray();
             }
 
-            void Shuffle(IList<int> arr)
+            private void Shuffle(IList<int> arr)
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
@@ -924,12 +927,12 @@ namespace Facts.DiffPlex
         {
             public void TestBuildModificationData(ModificationData A, ModificationData B)
             {
-                base.BuildModificationData(A, B);
+                BuildModificationData(A, B);
             }
 
             public EditLengthResult TestCalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB)
             {
-                return base.CalculateEditLength(A, startA, endA, B, startB, endB);
+                return CalculateEditLength(A, startA, endA, B, startB, endB);
             }
         }
     }

@@ -10,7 +10,8 @@ namespace DiffPlex
         [Conditional("DEBUG")]
         public static void WriteLine(string format, params object[] args)
         {
-            Write(format + Environment.NewLine, args);
+            if (Enabled)
+                Write(format + Environment.NewLine, args);
         }
 
         [Conditional("DEBUG")]

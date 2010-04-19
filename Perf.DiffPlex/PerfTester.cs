@@ -15,6 +15,8 @@ namespace Perf.DiffPlex
             var totalTime = new Stopwatch();
             double maxTime = 0;
             double minTime = double.MaxValue;
+            Console.WriteLine("Ensuring code is Jitted");
+            action();
             Console.WriteLine();
             Console.WriteLine("Time before run: {0}", DateTime.Now);
             Console.WriteLine("Running {0} times.", count);

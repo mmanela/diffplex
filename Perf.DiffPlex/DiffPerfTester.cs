@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DiffPlex;
+using DiffPlex.DiffBuilder;
 
 namespace Perf.DiffPlex
 {
     class DiffPerfTester
     {
         private readonly IDiffer differ;
+        private SideBySideDiffBuilder sideBySideDiffer;
         const int MaxLineLength = 150;
         const double DifferenceAmount = 0.2;
         const int MaxLines = 8000;
@@ -16,6 +18,7 @@ namespace Perf.DiffPlex
         public DiffPerfTester()
         {
             differ = new Differ();
+            sideBySideDiffer = new SideBySideDiffBuilder(differ);
         }
 
         public void Run()
@@ -24,7 +27,7 @@ namespace Perf.DiffPlex
             var newLines = MakeDifferent(oldLines, DifferenceAmount);
             var oldText = Implode(oldLines, Environment.NewLine);
             var newText = Implode(newLines, Environment.NewLine);
-            new PerfTester().Run(() => differ.CreateLineDiffs(oldText, newText, false));
+            new PerfTester().Run(() => sideBySideDiffer.BuildDiffModel(oldText, newText));
         }
 
 

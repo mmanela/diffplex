@@ -6,7 +6,6 @@ namespace DiffPlex.ConsoleRunner
     {
         private static void Main(string[] args)
         {
-            Log.Enabled = false;
             var d = new Differ();
             var diffresult = d.CreateLineDiffs(OldText, NewText, false);
             var output = UnidiffFormater.Generate(diffresult);

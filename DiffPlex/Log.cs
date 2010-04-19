@@ -5,20 +5,16 @@ namespace DiffPlex
 {
     public static class Log
     {
-        public static bool Enabled { get; set;}
-
-        [Conditional("DEBUG")]
+        [Conditional("LOG")]
         public static void WriteLine(string format, params object[] args)
         {
-            if (Enabled)
-                Write(format + Environment.NewLine, args);
+             Write(format + Environment.NewLine, args);
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("LOG")]
         public static void Write(string format, params object[] args)
         {
-            if (Enabled)
-                Console.Write(format, args);
+            Console.Write(format, args);
         }
     }
 }

@@ -307,6 +307,18 @@ namespace DiffPlex
              int[] forwardDiagonal,
              int[] reverseDiagonal)
         {
+
+            while (startA < endA && startB < endB && A.HashedPieces[startA].Equals(B.HashedPieces[startB]))
+            {
+                startA++;
+                startB++;
+            }
+            while (startA < endA && startB < endB && A.HashedPieces[endA - 1].Equals(B.HashedPieces[endB - 1]))
+            {
+                endA--;
+                endB--;
+            }
+               
             int aLength = endA - startA;
             int bLength = endB - startB;
             if (aLength > 0 && bLength > 0)

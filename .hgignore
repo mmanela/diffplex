@@ -27,3 +27,7 @@ glob:Perf.DiffPlex/bin/
 glob:Perf.DiffPlex/obj/
 glob:DiffPlex.5.0.ReSharper.user
 glob:Perf.DiffPlex/Perf.DiffPlex.csproj.user
+glob:DiffPlex.ConsoleRunner/DiffPlex.ConsoleRunner.csproj.user
+glob:DiffPlex/DiffPlex.csproj.user
+glob:Facts.DiffPlex/Facts.DiffPlex.csproj.user
+glob:Facts.WebDiffer/Facts.WebDiffer.csproj.user

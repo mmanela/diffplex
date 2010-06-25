@@ -31,3 +31,4 @@ glob:DiffPlex.ConsoleRunner/DiffPlex.ConsoleRunner.csproj.user
 glob:DiffPlex/DiffPlex.csproj.user
 glob:Facts.DiffPlex/Facts.DiffPlex.csproj.user
 glob:Facts.WebDiffer/Facts.WebDiffer.csproj.user
+glob:WebDiffer/ClientBin/DiffPlex.xap

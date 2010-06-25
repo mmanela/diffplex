@@ -1,7 +1,7 @@
-<OutOfBrowserSettings ShortName="SilverlightDiffer Application" EnableGPUAcceleration="True" ShowInstallMenuItem="True">
-  <OutOfBrowserSettings.Blurb>SilverlightDiffer Application on your desktop; at home, at work or on the go.</OutOfBrowserSettings.Blurb>
+<OutOfBrowserSettings ShortName="DiffPlex Client" EnableGPUAcceleration="True" ShowInstallMenuItem="True">
+  <OutOfBrowserSettings.Blurb>DiffPlex Client allows you to diff text files using silverlight on your computer</OutOfBrowserSettings.Blurb>
   <OutOfBrowserSettings.WindowSettings>
-    <WindowSettings Title="SilverlightDiffer Application" />
+    <WindowSettings Title="DiffPlex" />
   </OutOfBrowserSettings.WindowSettings>
   <OutOfBrowserSettings.Icons />
 </OutOfBrowserSettings>

@@ -1,0 +1,77 @@
+--- !ruby/object:Gem::Specification 
+name: diffplex
+version: !ruby/object:Gem::Version 
+  hash: 139
+  prerelease: false
+  segments: 
+  - 1
+  - 1
+  - 0
+  - 0
+  - 2
+  version: 1.1.0.0.2
+platform: ruby
+authors: 
+- Matthew Manela
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2010-09-16 00:00:00 -07:00
+default_executable: 
+dependencies: []
+
+description: "\t\tDiffPlex is a diffing library that allows you to programatically create\n\
+  \t\ttext diffs. DiffPlex is a fast and tested library which is used by CodePlex\n\
+  \t\tto provide its source code diffing functionality.\n"
+email: N/A
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- lib/License.txt
+- lib/NET35/DiffPlex.dll
+- lib/NET35/DiffPlex.pdb
+- lib/NET40/DiffPlex.dll
+- lib/NET40/DiffPlex.pdb
+- lib/Silverlight4/DiffPlex.Silverlight.dll
+- lib/Silverlight4/DiffPlex.Silverlight.pdb
+has_rdoc: true
+homepage: http://diffplex.codeplex.com
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: diffplex
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: DiffPlex is a .NET Diffing Library
+test_files: []
+

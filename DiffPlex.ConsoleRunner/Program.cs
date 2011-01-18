@@ -1,4 +1,6 @@
 ﻿using System;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 
 namespace DiffPlex.ConsoleRunner
 {
@@ -7,10 +9,19 @@ namespace DiffPlex.ConsoleRunner
         private static void Main(string[] args)
         {
             var d = new Differ();
-            var diffresult = d.CreateLineDiffs(OldText, NewText, false);
-            var output = UnidiffFormater.Generate(diffresult);
-            foreach (var line in output)
-                Console.WriteLine(line);
+            var inlineBuilder = new InlineDiffBuilder(d);
+            var result = inlineBuilder.BuildDiffModel(OldText, NewText);
+            foreach (var line in result.Lines)
+            {
+                if(line.Type == ChangeType.Inserted)
+                    Console.Write("+ ");
+                else if(line.Type == ChangeType.Deleted)
+                    Console.Write("- ");
+                else
+                    Console.Write("  ");
+
+                Console.WriteLine(line.Text);
+            }
         }
 
         private const string OldText =

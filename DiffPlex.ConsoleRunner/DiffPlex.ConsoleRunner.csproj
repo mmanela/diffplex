@@ -69,7 +69,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnidiffFormater.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">

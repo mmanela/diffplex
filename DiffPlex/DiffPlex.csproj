@@ -69,6 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiffBuilder\IInlineDiffBuilder.cs" />
+    <Compile Include="DiffBuilder\InlineDiffBuilder.cs" />
     <Compile Include="DiffBuilder\ISideBySideDiffBuilder.cs" />
     <Compile Include="DiffBuilder\SideBySideDiffBuilder.cs" />
     <Compile Include="IDiffer.cs" />

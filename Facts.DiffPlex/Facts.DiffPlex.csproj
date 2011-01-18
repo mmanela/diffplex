@@ -79,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InlineDiffBuilderFacts.cs" />
     <Compile Include="SideBySideDiffBuilderFacts.cs" />
     <Compile Include="DifferFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

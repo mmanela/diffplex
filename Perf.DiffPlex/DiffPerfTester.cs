@@ -18,6 +18,10 @@ namespace Perf.DiffPlex
         public DiffPerfTester()
         {
             differ = new Differ();
+            Console.WriteLine("Max number of lines: {0}", MaxLines);
+            Console.WriteLine("Max length of lines: {0}", MaxLineLength);
+            Console.WriteLine("Max difference amount: {0}", DifferenceAmount);
+            Console.WriteLine();
             sideBySideDiffer = new SideBySideDiffBuilder(differ);
         }
 

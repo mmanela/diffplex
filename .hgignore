@@ -1,11 +1,7 @@
-glob:DiffPlex.4.5.resharper.user
-glob:DiffPlex.Silverlight/DiffPlex.Silverlight.csproj.user
-glob:DiffPlex.suo
-glob:_ReSharper.DiffPlex
-glob:WebDiffer/WebDiffer.csproj.user
+glob:*.user
+glob:*.suo
+glob:_ReSharper*
 glob:WebDiffer/ClientBin/SilverlightDiffer.xap
-glob:SilverlightDiffer/SilverlightDiffer.csproj.user
-glob:SilverlightDiffer/DiffPlex.Silverlight.csproj.user
 glob:DiffPlex.Console/bin/
 glob:DiffPlex.Silverlight/Bin/
 glob:SilverlightDiffer/obj/
@@ -20,16 +16,11 @@ glob:Facts.WebDiffer/obj/
 glob:DiffPlex.Console/obj/
 glob:Facts.DiffPlex/obj/
 glob:DiffPlex.Silverlight/obj/
-glob:3rdParty/*
 glob:DiffPlex.ConsoleRunner/bin/
 glob:DiffPlex.ConsoleRunner/obj/
 glob:Perf.DiffPlex/bin/
 glob:Perf.DiffPlex/obj/
-glob:DiffPlex.5.0.ReSharper.user
-glob:Perf.DiffPlex/Perf.DiffPlex.csproj.user
-glob:DiffPlex.ConsoleRunner/DiffPlex.ConsoleRunner.csproj.user
-glob:DiffPlex/DiffPlex.csproj.user
-glob:Facts.DiffPlex/Facts.DiffPlex.csproj.user
-glob:Facts.WebDiffer/Facts.WebDiffer.csproj.user
 glob:WebDiffer/ClientBin/DiffPlex.xap
-glob:DiffPlex.5.1.ReSharper.user
+syntax: glob
+WebDiffer/ClientBin/DiffPlex.Silverlight.xap
+DiffPlex.sln.cache

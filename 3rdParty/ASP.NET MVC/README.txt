@@ -1,1 +1,0 @@
-Put ASP.NET MVC 1.0 DLL in this folder or in the GAC

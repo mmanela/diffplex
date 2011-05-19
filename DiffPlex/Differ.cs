@@ -9,14 +9,24 @@ namespace DiffPlex
     {
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
+            return CreateLineDiffs(oldText, newText, ignoreWhitespace, false);
+        }
+
+        public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
+        {
             if (oldText == null) throw new ArgumentNullException("oldText");
             if (newText == null) throw new ArgumentNullException("newText");
 
 
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, str => NormalizeNewlines(str).Split('\n'));
+            return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => NormalizeNewlines(str).Split('\n'));
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
+        {
+            return CreateCharacterDiffs(oldText, newText, ignoreWhitespace, false);
+        }
+
+        public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
             if (oldText == null) throw new ArgumentNullException("oldText");
             if (newText == null) throw new ArgumentNullException("newText");
@@ -26,6 +36,7 @@ namespace DiffPlex
                 oldText,
                 newText,
                 ignoreWhitespace,
+                ignoreCase,
                 str =>
                     {
                         var s = new string[str.Length];
@@ -36,6 +47,11 @@ namespace DiffPlex
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)
         {
+            return CreateWordDiffs(oldText, newText, ignoreWhitespace, false, separators);
+        }
+
+        public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
+        {
             if (oldText == null) throw new ArgumentNullException("oldText");
             if (newText == null) throw new ArgumentNullException("newText");
 
@@ -44,10 +60,16 @@ namespace DiffPlex
                 oldText,
                 newText,
                 ignoreWhitespace,
+                ignoreCase,
                 str => SmartSplit(str, separators));
         }
 
         public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker)
+        {
+            return CreateCustomDiffs(oldText, newText, ignoreWhiteSpace, false, chunker);
+        }
+
+        public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
         {
             if (oldText == null) throw new ArgumentNullException("oldText");
             if (newText == null) throw new ArgumentNullException("newText");
@@ -59,8 +81,8 @@ namespace DiffPlex
             var modOld = new ModificationData(oldText);
             var modNew = new ModificationData(newText);
 
-            BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, chunker);
-            BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, chunker);
+            BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, ignoreCase, chunker);
+            BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, ignoreCase, chunker);
 
             BuildModificationData(modOld, modNew);
 
@@ -351,7 +373,7 @@ namespace DiffPlex
             }
         }
 
-        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, Func<string, string[]> chunker)
+        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, bool ignoreCase, Func<string, string[]> chunker)
         {
             string[] pieces;
 
@@ -368,6 +390,7 @@ namespace DiffPlex
             {
                 string piece = pieces[i];
                 if (ignoreWhitespace) piece = piece.Trim();
+                if (ignoreCase) piece = piece.ToUpperInvariant();
 
                 if (pieceHash.ContainsKey(piece))
                 {

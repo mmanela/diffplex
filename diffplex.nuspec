@@ -3,7 +3,7 @@
     <metadata>
         <id>DiffPlex</id>
         <version>@Version@</version>
-        <title>WikiPlex - a Regex Wiki Engine</title>
+        <title>DiffPlex - a .NET Diff Generator</title>
         <authors>Matthew Manela</authors>
         <description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library which is used by CodePlex to provide its source code diffing functionality.</description>
         <language>en-US</language>

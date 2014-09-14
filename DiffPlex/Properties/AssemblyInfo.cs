@@ -14,14 +14,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.*")]
+// Assembly version should consist of just major and minor versions.
+// We omit revision and build numbers so that folks who compile against
+// 1.2.0 can also run against 1.2.1 without a recompile or a binding redirect.
+[assembly: AssemblyVersion("1.2.0.0")]
+
+// File version can include the revision and build numbers so
+// file properties can reveal the true version of this build.
+[assembly: AssemblyFileVersion("1.2.1.0")]

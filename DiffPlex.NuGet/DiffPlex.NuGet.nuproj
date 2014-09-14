@@ -47,6 +47,7 @@
   </PropertyGroup>
   <Target Name="Build" />
   <Import Project="$(NuProjPath)\NuProj.targets" Condition="Exists('$(NuProjPath)\NuProj.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition="!Exists('$(NuProjPath)\NuProj.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="Build">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

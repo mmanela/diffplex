@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiffPlex.Silverlight\DiffPlex.Silverlight.csproj" />
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\License.txt">
+      <Link>License.txt</Link>
+    </None>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>0178cc30-9fa4-4d52-80d6-99b3117bcb7a</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NuProjPath Condition=" '$(NuProjPath)' == '' ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
+  </PropertyGroup>
+  <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
+  <PropertyGroup Label="Configuration">
+    <Id>DiffPlex</Id>
+    <Version>1.2.1</Version>
+    <Title>DiffPlex - a .NET Diff Generator</Title>
+    <Authors>Matthew Manela</Authors>
+    <Owners>Matthew Manela</Owners>
+    <Summary>
+    </Summary>
+    <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library which is used by CodePlex to provide its source code diffing functionality.</Description>
+    <ReleaseNotes>
+    </ReleaseNotes>
+    <ProjectUrl>http://diffplex.codeplex.com/</ProjectUrl>
+    <LicenseUrl>http://diffplex.codeplex.com/license</LicenseUrl>
+    <Copyright>
+    </Copyright>
+    <Tags>diff</Tags>
+  </PropertyGroup>
+  <Import Project="$(NuProjPath)\NuProj.targets" />
+</Project>

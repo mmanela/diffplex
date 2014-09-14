@@ -23,7 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2E1C76A1
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
 		default.ps1 = default.ps1
-		diffplex.nuspec = diffplex.nuspec
 		vsvars2010.ps1 = vsvars2010.ps1
 	EndProjectSection
 EndProject
@@ -31,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{007CFE
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "DiffPlex.NuGet", "DiffPlex.NuGet\DiffPlex.NuGet.nuproj", "{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +71,10 @@ Global
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightDiffer", "Silver
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{9AE2E267-84CE-4999-A63F-25870562DF9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.Silverlight", "DiffPlex.Silverlight\DiffPlex.Silverlight.csproj", "{212D7C23-17A5-4039-9CC9-A277BEB054BF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{3285F2B7-EAA6-45A9-9919-561649FFD006}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2E1C76A1-BB2D-4AFB-96F3-175E4345AF39}"
@@ -63,10 +61,6 @@ Global
 		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{212D7C23-17A5-4039-9CC9-A277BEB054BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{212D7C23-17A5-4039-9CC9-A277BEB054BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{212D7C23-17A5-4039-9CC9-A277BEB054BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{212D7C23-17A5-4039-9CC9-A277BEB054BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Release|Any CPU.ActiveCfg = Release|Any CPU

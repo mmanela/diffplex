@@ -145,9 +145,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiffPlex.Silverlight\DiffPlex.Silverlight.csproj">
-      <Project>{212D7C23-17A5-4039-9CC9-A277BEB054BF}</Project>
-      <Name>DiffPlex.Silverlight</Name>
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
+      <Project>{42ed3f62-53c5-4880-b9b8-f8b78f575353}</Project>
+      <Name>DiffPlex</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />

@@ -17,19 +17,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.ConsoleRunner", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{3285F2B7-EAA6-45A9-9919-561649FFD006}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2E1C76A1-BB2D-4AFB-96F3-175E4345AF39}"
-	ProjectSection(SolutionItems) = preProject
-		build.bat = build.bat
-		default.ps1 = default.ps1
-		vsvars2010.ps1 = vsvars2010.ps1
-	EndProjectSection
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "DiffPlex.NuGet", "DiffPlex.NuGet\DiffPlex.NuGet.nuproj", "{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{007CFE36-40FC-4F14-AA83-692B4788B214}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7E42C9FF-060F-462A-BB33-89E3ED4284B1}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "DiffPlex.NuGet", "DiffPlex.NuGet\DiffPlex.NuGet.nuproj", "{0178CC30-9FA4-4D52-80D6-99B3117BCB7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

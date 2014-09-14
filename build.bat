@@ -14,7 +14,7 @@ goto Build
 
 :Build
 
-packages\psake.4.0.1.0\tools\psake.cmd "default.ps1 %* -properties @{configuration='%Configuration%'} -parameters @{arg0='%1'; arg1='%2'; arg2='%3'} -framework '4.0'"
+packages\psake.4.3.2\tools\psake.cmd "default.ps1 %* -properties @{configuration='%Configuration%'} -parameters @{arg0='%1'; arg1='%2'; arg2='%3'} -framework '4.0'"
 
 
 goto end

@@ -33,7 +33,7 @@
     <Version>1.2.1</Version>
     <Title>DiffPlex - a .NET Diff Generator</Title>
     <Authors>Matthew Manela</Authors>
-    <Owners>Matthew Manela</Owners>
+    <Owners>mmanela,aarnott</Owners>
     <Summary>
     </Summary>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library which is used by CodePlex to provide its source code diffing functionality.</Description>

@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiffPlex.Silverlight\DiffPlex.Silverlight.csproj" />
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
   </ItemGroup>
   <ItemGroup>

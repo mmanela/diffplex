@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2E1C76A1
 		build.bat = build.bat
 		default.ps1 = default.ps1
 		diffplex.nuspec = diffplex.nuspec
+		vsvars2010.ps1 = vsvars2010.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{007CFE36-40FC-4F14-AA83-692B4788B214}"

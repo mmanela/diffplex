@@ -30,14 +30,15 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>DiffPlex</Id>
-    <Version>1.2.1</Version>
+    <Version>1.2.2-beta</Version>
     <Title>DiffPlex - a .NET Diff Generator</Title>
     <Authors>Matthew Manela</Authors>
     <Owners>mmanela,aarnott</Owners>
     <Summary>
     </Summary>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library which is used by CodePlex to provide its source code diffing functionality.</Description>
-    <ReleaseNotes>Now a PCL (portable library) that targets .NET 4.0, Silverlight 5.0, Windows 8.0, Windows Phone 8.0, Windows Phone Appx 8.1.</ReleaseNotes>
+    <ReleaseNotes>
+    </ReleaseNotes>
     <ProjectUrl>http://diffplex.codeplex.com/</ProjectUrl>
     <LicenseUrl>http://diffplex.codeplex.com/license</LicenseUrl>
     <Copyright>

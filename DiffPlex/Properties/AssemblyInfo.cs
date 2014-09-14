@@ -21,4 +21,4 @@ using System.Runtime.InteropServices;
 
 // File version can include the revision and build numbers so
 // file properties can reveal the true version of this build.
-[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.2.0")]

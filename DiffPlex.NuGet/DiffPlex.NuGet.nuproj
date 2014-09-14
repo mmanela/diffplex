@@ -22,7 +22,10 @@
     <ProjectGuid>0178cc30-9fa4-4d52-80d6-99b3117bcb7a</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup>
-    <NuProjPath Condition=" '$(NuProjPath)' == '' ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
+    <!-- We always have the NuGet package path for build... -->
+    <NuProjPath>$(MSBuildProjectPath)..\packages\NuProj.0.9.2-beta\tools</NuProjPath>
+    <!-- ...but prefer the installed version if it's available for enhanced IDE integration. -->
+    <NuProjPath Condition=" Exists('$(MSBuildExtensionsPath)\NuProj') ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">

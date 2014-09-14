@@ -44,6 +44,7 @@
     <Copyright>
     </Copyright>
     <Tags>diff</Tags>
+    <EmbedSourceFiles>true</EmbedSourceFiles>
   </PropertyGroup>
   <Target Name="Build" />
   <Import Project="$(NuProjPath)\NuProj.targets" Condition="Exists('$(NuProjPath)\NuProj.targets')" />

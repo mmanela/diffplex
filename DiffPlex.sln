@@ -19,6 +19,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.Silverlight", "Dif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{3285F2B7-EAA6-45A9-9919-561649FFD006}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2E1C76A1-BB2D-4AFB-96F3-175E4345AF39}"
+	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
+		default.ps1 = default.ps1
+		diffplex.nuspec = diffplex.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

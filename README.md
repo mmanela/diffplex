@@ -88,3 +88,8 @@ For use of the ISidebySideDiffer interface see:
         SideBySideDiffModel BuildDiffModel(string oldText, string newText);
     }
 
+
+
+## Sample Website
+DiffPlex also contains a sample website that shows how to create a basic side by side diff in an ASP MVC website
+![](https://raw.githubusercontent.com/mmanela/diffplex/master/images/website.png)

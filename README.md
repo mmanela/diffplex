@@ -3,7 +3,6 @@ DiffPlex
 
 DiffPlex is C# library to generate textual diffs
 
-In order to use the DiffPlex library you just need to include a reference to DiffPlex.dll in your project.
 
 ## About the API
 The DiffPlex library currently exposes two interfaces for generating diffs:

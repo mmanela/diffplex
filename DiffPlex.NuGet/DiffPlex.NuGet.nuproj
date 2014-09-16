@@ -39,8 +39,8 @@
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library which is used by CodePlex to provide its source code diffing functionality.</Description>
     <ReleaseNotes>
     </ReleaseNotes>
-    <ProjectUrl>http://diffplex.codeplex.com/</ProjectUrl>
-    <LicenseUrl>http://diffplex.codeplex.com/license</LicenseUrl>
+    <ProjectUrl>https://github.com/mmanela/diffplex/</ProjectUrl>
+    <LicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</LicenseUrl>
     <Copyright>
     </Copyright>
     <Tags>diff</Tags>

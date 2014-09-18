@@ -1,9 +1,8 @@
 DiffPlex
 ========
 
-DiffPlex is C# library to generate textual diffs
+DiffPlex is C# library to generate textual diffs. It is a PCL (portable) library that targets .NET 4.0, Silverlight 5.0, Windows 8.0, Windows Phone 8.0, Windows Phone Appx 8.1
 
-In order to use the DiffPlex library you just need to include a reference to DiffPlex.dll in your project.
 
 ## About the API
 The DiffPlex library currently exposes two interfaces for generating diffs:
@@ -89,3 +88,8 @@ For use of the ISidebySideDiffer interface see:
         SideBySideDiffModel BuildDiffModel(string oldText, string newText);
     }
 
+
+
+## Sample Website
+DiffPlex also contains a sample website that shows how to create a basic side by side diff in an ASP MVC website
+![](https://raw.githubusercontent.com/mmanela/diffplex/master/images/website.png)

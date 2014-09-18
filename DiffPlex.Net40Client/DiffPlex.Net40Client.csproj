@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{552D4EFF-48A4-4B45-9F15-167CC0ACC8CF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DiffPlex</RootNamespace>
+    <AssemblyName>DiffPlex</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>opensource.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DiffPlex\DiffBuilder\IInlineDiffBuilder.cs">
+      <Link>DiffBuilder\IInlineDiffBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\InlineDiffBuilder.cs">
+      <Link>DiffBuilder\InlineDiffBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\ISideBySideDiffBuilder.cs">
+      <Link>DiffBuilder\ISideBySideDiffBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\DiffPaneModel.cs">
+      <Link>DiffBuilder\Model\DiffPaneModel.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\DiffPiece.cs">
+      <Link>DiffBuilder\Model\DiffPiece.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\Model\SideBySideDiffModel.cs">
+      <Link>DiffBuilder\Model\SideBySideDiffModel.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\DiffBuilder\SideBySideDiffBuilder.cs">
+      <Link>DiffBuilder\SideBySideDiffBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Differ.cs">
+      <Link>Differ.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\IDiffer.cs">
+      <Link>IDiffer.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Log.cs">
+      <Link>Log.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Model\DiffBlock.cs">
+      <Link>Model\DiffBlock.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Model\DiffResult.cs">
+      <Link>Model\DiffResult.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Model\EditLengthResult.cs">
+      <Link>Model\EditLengthResult.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Model\ModificationData.cs">
+      <Link>Model\ModificationData.cs</Link>
+    </Compile>
+    <Compile Include="..\DiffPlex\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="opensource.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+    <ProjectReference Include="..\DiffPlex.Net40Client\DiffPlex.Net40Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\License.txt">

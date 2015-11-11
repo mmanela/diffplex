@@ -14,7 +14,8 @@
     <AssemblyName>WebDiffer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <SilverlightApplicationList>{25474606-3A78-4309-8651-9694FF1C8B68}|..\DiffPlex.Silverlight\DiffPlex.Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>
+    </SilverlightApplicationList>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
@@ -26,6 +27,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -121,15 +123,12 @@
     <Content Include="Content\Diff.css" />
     <Content Include="Content\InView.png" />
     <Content Include="Default.aspx" />
-    <Content Include="silverlight.aspx" />
-    <Content Include="silverlight.html" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Diff.js" />
     <Content Include="Scripts\jquery-1.3.2-vsdoc.js" />
     <Content Include="Scripts\jquery-1.3.2.js" />
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
-    <Content Include="Silverlight.js" />
     <Content Include="Views\Diff\Diff.aspx" />
     <Content Include="Views\Diff\DiffLine.ascx" />
     <Content Include="Views\Diff\DiffBar.ascx" />

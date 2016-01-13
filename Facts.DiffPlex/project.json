@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "DiffPlex": { "target": "project" },
+    "xunit": "2.1.0-rc1-build3168"
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Runtime": "",
+        "System.Threading.Tasks": ""
+      },
+      "dependencies": {
+        "Moq": "4.2.1510.2205"
+      }
+    }
+  }
+}

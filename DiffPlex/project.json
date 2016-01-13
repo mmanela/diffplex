@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0-alpha1",
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Data": "4.0.0.0"
+      }
+    },
+    "dotnet": {
+      "compilationOptions": { "define": [ "DOTNETCORE" ] },
+      "dependencies": {
+        "System.Runtime": "4.0.21-beta-23225",
+        "System.Collections": "4.0.11-beta-23225",
+        "System.Linq": "4.0.0-beta-23109"
+      }
+    }
+  }
+}

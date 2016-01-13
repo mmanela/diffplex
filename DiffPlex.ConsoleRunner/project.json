@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "DiffPlex": { "target": "project" }
+  },
+  "frameworks": {
+    "dnx451": {
+
+    }
+  }
+}

@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "DiffPlex", "DiffPlex\DiffPlex.xproj", "{DD22BD16-137B-4939-928C-DF7D8FB1935A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.xproj", "{D08583F5-DB48-4DE5-BF32-9EF31C63C658}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Facts.DiffPlex", "Facts.DiffPlex\Facts.DiffPlex.xproj", "{53CC8073-750A-4175-B6C0-21E91C69CB02}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.xproj", "{09ACE529-EAD1-4849-8B90-EAB3BFD221BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C06395F-636A-4F32-9C19-01E75A35AA41}"
+	ProjectSection(SolutionItems) = preProject
+		WebDiffer\project.json = WebDiffer\project.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebDiffer", "WebDiffer\WebDiffer.xproj", "{9B6C083B-B4DA-4808-B84E-455A87B8D672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD22BD16-137B-4939-928C-DF7D8FB1935A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD22BD16-137B-4939-928C-DF7D8FB1935A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD22BD16-137B-4939-928C-DF7D8FB1935A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD22BD16-137B-4939-928C-DF7D8FB1935A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D08583F5-DB48-4DE5-BF32-9EF31C63C658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D08583F5-DB48-4DE5-BF32-9EF31C63C658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D08583F5-DB48-4DE5-BF32-9EF31C63C658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D08583F5-DB48-4DE5-BF32-9EF31C63C658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53CC8073-750A-4175-B6C0-21E91C69CB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53CC8073-750A-4175-B6C0-21E91C69CB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53CC8073-750A-4175-B6C0-21E91C69CB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53CC8073-750A-4175-B6C0-21E91C69CB02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09ACE529-EAD1-4849-8B90-EAB3BFD221BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09ACE529-EAD1-4849-8B90-EAB3BFD221BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09ACE529-EAD1-4849-8B90-EAB3BFD221BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09ACE529-EAD1-4849-8B90-EAB3BFD221BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B6C083B-B4DA-4808-B84E-455A87B8D672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B6C083B-B4DA-4808-B84E-455A87B8D672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B6C083B-B4DA-4808-B84E-455A87B8D672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B6C083B-B4DA-4808-B84E-455A87B8D672}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

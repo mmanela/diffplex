@@ -127,7 +127,7 @@
       <Project>{42ED3F62-53C5-4880-B9B8-F8B78F575353}</Project>
       <Name>DiffPlex</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebDiffer\WebDiffer.csproj">
+    <ProjectReference Include="..\WebDiffer.Old\WebDiffer.csproj">
       <Project>{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}</Project>
       <Name>WebDiffer</Name>
     </ProjectReference>

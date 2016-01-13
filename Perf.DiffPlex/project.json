@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "DiffPlex": { "target": "project" }
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+      },
+      "dependencies": {
+      }
+    }
+  }
+}

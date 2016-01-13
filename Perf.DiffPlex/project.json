@@ -2,11 +2,18 @@
   "dependencies": {
     "DiffPlex": { "target": "project" }
   },
+  "commands": {
+    "Perf.DiffPlex" : "Perf.DiffPlex"
+  },
   "frameworks": {
     "dnx451": {
-      "frameworkAssemblies": {
-      },
+    },
+    "dotnet": {
       "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23225",
+        "System.Console": "4.0.0-beta-23225",
+        "System.Threading": "4.0.11-beta-23409",
+        "System.Threading.Thread": "4.0.0-beta-23409"
       }
     }
   }

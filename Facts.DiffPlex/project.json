@@ -3,6 +3,9 @@
     "DiffPlex": { "target": "project" },
     "xunit": "2.1.0-rc1-build3168"
   },
+  "commands": {
+    "test" : ""
+  },
   "frameworks": {
     "dnx451": {
       "frameworkAssemblies": {

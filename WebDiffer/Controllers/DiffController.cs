@@ -1,6 +1,7 @@
 ﻿using DiffPlex;
 using DiffPlex.DiffBuilder;
 using Microsoft.AspNet.Mvc;
+using WebDiffer.ViewModels;
 
 namespace WebDiffer.Controllers
 {
@@ -13,22 +14,15 @@ namespace WebDiffer.Controllers
 			diffBuilder = bidiffBuilder;
 		}
 
-		//public DiffController()
-		//{
-		//	diffBuilder = new SideBySideDiffBuilder(new Differ());
-		//}
-
 		public ActionResult Index()
 		{
 			return View();
 		}
 
-		//[ValidateInput(false)]
-		public ActionResult Diff(string oldText, string newText)
+		public ActionResult Diff(DiffViewModel model)
 		{
-			var model = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
-
-			return View(model);
+			var diff = diffBuilder.BuildDiffModel(model.OldText ?? string.Empty, model.NewText ?? string.Empty);
+			return View(diff);
 		}
 	}
 }

@@ -7,7 +7,6 @@
       }
     },
     "dotnet": {
-      "compilationOptions": { "define": [ "DOTNETCORE" ] },
       "dependencies": {
         "System.Runtime": "4.0.21-beta-23225",
         "System.Collections": "4.0.11-beta-23225",

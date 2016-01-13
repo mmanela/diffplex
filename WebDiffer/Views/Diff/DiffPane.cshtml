@@ -5,11 +5,19 @@
         {
         <tr>
             <td class="lineNumber">
-                @(diffLine.Position?.ToString() ?? "&nbsp;")
+                @if (diffLine.Position.HasValue)
+                {
+                    @diffLine.Position
+                }
+                else
+                {
+                    <text>&nbsp;</text>
+                }
             </td>
             <td class="line @diffLine.Type.ToString() Line">
                 <span class="lineText">
-                @(await Html.PartialAsync("DiffLine", diffLine))
+                    @await Html.PartialAsync("DiffLine", diffLine)
+                </span>
             </td>
         </tr>
         }

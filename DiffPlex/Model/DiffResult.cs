@@ -23,9 +23,9 @@ namespace DiffPlex.Model
         /// </summary>
         public IList<DiffBlock> DiffBlocks { get; private set; }
 
-        public DiffResult(string[] peicesOld, string[] piecesNew, IList<DiffBlock> blocks)
+        public DiffResult(string[] piecesOld, string[] piecesNew, IList<DiffBlock> blocks)
         {
-            PiecesOld = peicesOld;
+            PiecesOld = piecesOld;
             PiecesNew = piecesNew;
             DiffBlocks = blocks;
         }

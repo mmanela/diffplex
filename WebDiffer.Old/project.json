@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "DiffPlex": { "target": "project" }
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Web": "4.0.0.0"
+      },
+      "dependencies": {
+        "Microsoft.AspNet.Mvc": "6.0.0-rc1-final"
+      }
+    }
+  }
+}

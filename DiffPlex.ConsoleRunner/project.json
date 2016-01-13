@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "DiffPlex": { "target": "project" }
+  },
+  "commands": {
+    "DiffPlex.ConsoleRunner" : "DiffPlex.ConsoleRunner"
+  },
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+  "frameworks": {
+    "net45": {
+    },
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}

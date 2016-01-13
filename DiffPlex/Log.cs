@@ -8,13 +8,13 @@ namespace DiffPlex
         [Conditional("LOG")]
         public static void WriteLine(string format, params object[] args)
         {
-            System.Diagnostics.Debug.WriteLine(format, args);
+            Debug.WriteLine(format, args);
         }
 
         [Conditional("LOG")]
         public static void Write(string format, params object[] args)
         {
-            // not implemented
+            Debug.Write(string.Format(format, args));
         }
     }
 }

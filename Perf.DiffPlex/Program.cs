@@ -9,7 +9,9 @@ namespace Perf.DiffPlex
             Console.WriteLine(@"DiffPlex Perf Tester");
 
             new DiffPerfTester().Run();
-            Console.WriteLine();
+			Console.WriteLine();
+            Console.WriteLine("Press enter to continue...");
+	        Console.Read();
         }
     }
 }

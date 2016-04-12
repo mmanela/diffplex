@@ -5,7 +5,7 @@
     "DNX,Version=v4.5.1": {
       "DiffPlex/2.0.0-alpha1": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5",
         "frameworkAssemblies": [
           "System.Data"
         ]
@@ -4795,7 +4795,7 @@
     "DNX,Version=v4.5.1/win7-x86": {
       "DiffPlex/2.0.0-alpha1": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5",
         "frameworkAssemblies": [
           "System.Data"
         ]
@@ -6861,7 +6861,7 @@
     "DNX,Version=v4.5.1/win7-x64": {
       "DiffPlex/2.0.0-alpha1": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5",
         "frameworkAssemblies": [
           "System.Data"
         ]

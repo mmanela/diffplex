@@ -1,0 +1,29 @@
+﻿@model WebDiffer.ViewModels.DiffViewModel
+<div id="header">
+    <h1>DiffPlex Web</h1>
+</div>
+<h2>Create a diff</h2>
+@using (Html.BeginForm("Diff", "Diff", new { }, FormMethod.Post))
+{
+    <div id="oldTextInput" class="formField">
+        <div>
+            <label asp-for="OldText">Old Text</label>
+        </div>
+        <div>
+            <textarea asp-for="OldText" rows="20" cols="70"></textarea>
+        </div>
+    </div>
+    <div id="newTextInput" class="formField">
+        <div>
+            <label asp-for="NewText">New Text</label>
+        </div>
+        <div>
+            <textarea asp-for="NewText" rows="20" cols="70"></textarea>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div class="formField">
+        <input type="submit" name="diff" value="Create Diff" />
+    </div>
+}
+

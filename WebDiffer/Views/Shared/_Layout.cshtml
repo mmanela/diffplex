@@ -1,0 +1,67 @@
+﻿@using Microsoft.Extensions.Primitives
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>DiffPlex Web</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/Main.css" />
+        <link rel="stylesheet" href="~/css/Diff.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/Main.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/Diff.css" asp-append-version="true" />
+    </environment>
+</head>
+<body class="@GetBrowserCssClass()">
+    <div id="mainContent">
+        @RenderBody()
+    </div>
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+    </environment>
+    <script type="text/javascript" src="~/js/Diff.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+@functions{
+    string GetBrowserCssClass()
+    {
+        StringValues userAgent;
+        if (this.ViewContext.HttpContext.Request.Headers.TryGetValue("UserAgent", out userAgent))
+        {
+            if (userAgent.Contains("MSIE 8"))
+                return "IE IE8";
+
+            if (userAgent.Contains("MSIE 7"))
+                return "IE IE7";
+
+            if (userAgent.Contains("Chrome"))
+                return "Chrome";
+
+            if (userAgent.Contains("Firefox/3"))
+                return "FF FF3";
+
+            if (userAgent.Contains("Firefox"))
+                return "FF";
+
+            if (userAgent.Contains("MSIE 6"))
+                return "IE IE6";
+
+            if (userAgent.Contains("Safari"))
+                return "Safari";
+
+            if (userAgent.Contains("Opera"))
+                return "Opera";
+        }
+
+        return "";
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "projects": [ "DiffPlex", "DiffPlex.ConsoleRunner", "Facts.DiffPlex", "Perf.DiffPlex", "WebDiffer" ],
+    "sdk": {
+        "version": "1.0.0-preview2-003121"
+    }
+}

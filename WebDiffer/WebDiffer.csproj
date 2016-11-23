@@ -118,8 +118,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ClientBin\DiffPlex.xap" />
-    <Content Include="ClientBin\SilverlightDiffer.xap" />
     <Content Include="Content\Diff.css" />
     <Content Include="Content\InView.png" />
     <Content Include="Default.aspx" />

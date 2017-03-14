@@ -13,9 +13,9 @@ namespace DiffPlex.ConsoleRunner
             var result = inlineBuilder.BuildDiffModel(OldText, NewText);
             foreach (var line in result.Lines)
             {
-                if(line.Type == ChangeType.Inserted)
+                if (line.Type == ChangeType.Inserted)
                     Console.Write("+ ");
-                else if(line.Type == ChangeType.Deleted)
+                else if (line.Type == ChangeType.Deleted)
                     Console.Write("- ");
                 else
                     Console.Write("  ");

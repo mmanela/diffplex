@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{265B25AF-D95C-44B3-8FB4-49228806E2AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{265B25AF-D95C-44B3-8FB4-49228806E2AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex", "DiffPlex\DiffPlex.csproj", "{54247212-BA10-4593-8E4D-D3B5AC06D2F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex", "DiffPlex\DiffPlex.csproj", "{54247212-BA10-4593-8E4D-D3B5AC06D2F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts.DiffPlex", "Facts.DiffPlex\Facts.DiffPlex.csproj", "{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Facts.DiffPlex", "Facts.DiffPlex\Facts.DiffPlex.csproj", "{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDiffer", "WebDiffer\WebDiffer.csproj", "{E8BDBF13-2A11-438B-9135-5F566F811208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDiffer", "WebDiffer\WebDiffer.csproj", "{E8BDBF13-2A11-438B-9135-5F566F811208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

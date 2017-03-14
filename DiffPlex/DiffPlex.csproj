@@ -1,7 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.3</Version>
+    <Authors>Matthew Manela</Authors>
+    <Company />
+    <RepositoryUrl>https://github.com/mmanela/diffplex/</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
+    <PackageTags>diff</PackageTags>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>opensource.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 </Project>

@@ -12,6 +12,8 @@
     <PackageTags>diff</PackageTags>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>opensource.snk</AssemblyOriginatorKeyFile>
+    <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library.</Description>
+    <PackageReleaseNotes>* Now targets netstandard 1.4</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

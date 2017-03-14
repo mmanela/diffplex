@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Perf.DiffPlex
 {
-    public class    LoadTester
+    public class LoadTester
     {
         private readonly Action action;
         static bool everyoneDie;

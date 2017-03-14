@@ -1,10 +1,13 @@
-﻿using System.Web.Mvc;
-using DiffPlex;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using DiffPlex.DiffBuilder;
+using DiffPlex;
 
 namespace WebDiffer.Controllers
 {
-    [HandleError]
     public class DiffController : Controller
     {
         private readonly ISideBySideDiffBuilder diffBuilder;
@@ -14,19 +17,14 @@ namespace WebDiffer.Controllers
             diffBuilder = bidiffBuilder;
         }
 
-        public DiffController()
-        {
-            diffBuilder = new SideBySideDiffBuilder(new Differ());
-        }
 
-
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
+        
 
-        [ValidateInput(false)]
-        public ActionResult Diff(string oldText, string newText)
+        public IActionResult Diff(string oldText, string newText)
         {
             var model = diffBuilder.BuildDiffModel(oldText ?? string.Empty, newText ?? string.Empty);
 

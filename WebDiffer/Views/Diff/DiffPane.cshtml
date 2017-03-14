@@ -1,0 +1,21 @@
+﻿@model DiffPlex.DiffBuilder.Model.DiffPaneModel
+
+
+    <div class="diffPane">
+        <table cellpadding="0" cellspacing="0" class="diffTable">
+            @foreach (var diffLine in Model.Lines)
+            {
+
+            <tr>
+                <td class="lineNumber">
+                    @Html.Raw(diffLine.Position.HasValue? diffLine.Position.ToString() : "&nbsp;")
+                </td>
+                <td class="line @diffLine.Type.ToString()Line">
+                    <span class="lineText">
+                        @Html.Partial("DiffLine", diffLine)
+                     </span>
+                </td>
+            </tr>
+            }
+        </table>
+    </div>

@@ -1,24 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex", "DiffPlex\DiffPlex.csproj", "{42ED3F62-53C5-4880-B9B8-F8B78F575353}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{265B25AF-D95C-44B3-8FB4-49228806E2AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts.DiffPlex", "Facts.DiffPlex\Facts.DiffPlex.csproj", "{09794955-B3FC-4E61-A184-D74029C48B3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex", "DiffPlex\DiffPlex.csproj", "{54247212-BA10-4593-8E4D-D3B5AC06D2F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDiffer", "WebDiffer\WebDiffer.csproj", "{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Facts.DiffPlex", "Facts.DiffPlex\Facts.DiffPlex.csproj", "{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts.WebDiffer", "Facts.WebDiffer\Facts.WebDiffer.csproj", "{0A9EE3B4-4C3D-4C5D-AAED-0B7633A5AFE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{9AE2E267-84CE-4999-A63F-25870562DF9F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{3285F2B7-EAA6-45A9-9919-561649FFD006}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7E42C9FF-060F-462A-BB33-89E3ED4284B1}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDiffer", "WebDiffer\WebDiffer.csproj", "{E8BDBF13-2A11-438B-9135-5F566F811208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,30 +19,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42ED3F62-53C5-4880-B9B8-F8B78F575353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42ED3F62-53C5-4880-B9B8-F8B78F575353}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42ED3F62-53C5-4880-B9B8-F8B78F575353}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42ED3F62-53C5-4880-B9B8-F8B78F575353}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09794955-B3FC-4E61-A184-D74029C48B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09794955-B3FC-4E61-A184-D74029C48B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09794955-B3FC-4E61-A184-D74029C48B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09794955-B3FC-4E61-A184-D74029C48B3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7700A0A2-B149-42C0-91D4-AD19CD9CC81B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A9EE3B4-4C3D-4C5D-AAED-0B7633A5AFE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A9EE3B4-4C3D-4C5D-AAED-0B7633A5AFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A9EE3B4-4C3D-4C5D-AAED-0B7633A5AFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A9EE3B4-4C3D-4C5D-AAED-0B7633A5AFE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9AE2E267-84CE-4999-A63F-25870562DF9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3285F2B7-EAA6-45A9-9919-561649FFD006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{265B25AF-D95C-44B3-8FB4-49228806E2AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{265B25AF-D95C-44B3-8FB4-49228806E2AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{265B25AF-D95C-44B3-8FB4-49228806E2AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{265B25AF-D95C-44B3-8FB4-49228806E2AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54247212-BA10-4593-8E4D-D3B5AC06D2F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54247212-BA10-4593-8E4D-D3B5AC06D2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54247212-BA10-4593-8E4D-D3B5AC06D2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54247212-BA10-4593-8E4D-D3B5AC06D2F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1C3A293-EF92-4F4D-930C-597FE8E1CDDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8BDBF13-2A11-438B-9135-5F566F811208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8BDBF13-2A11-438B-9135-5F566F811208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8BDBF13-2A11-438B-9135-5F566F811208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8BDBF13-2A11-438B-9135-5F566F811208}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

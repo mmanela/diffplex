@@ -132,7 +132,8 @@ namespace DiffPlex
             {
                 if (delims.Contains(str[i]))
                 {
-                    list.Add(str.Substring(begin, (i + 1 - begin)));
+                    list.Add(str.Substring(begin, (i - begin)));
+                    list.Add(str.Substring(i, 1));
                     begin = i + 1;
                 }
                 else if (i >= str.Length - 1)

@@ -448,7 +448,7 @@ namespace Facts.DiffPlex
                 Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
                 Assert.Equal(0, res.DiffBlocks[0].DeleteCountA);
                 Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(2, res.DiffBlocks[0].InsertCountB);
+                Assert.Equal(3, res.DiffBlocks[0].InsertCountB);
             }
 
             [Fact]
@@ -461,7 +461,7 @@ namespace Facts.DiffPlex
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
                 Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(2, res.DiffBlocks[0].DeleteCountA);
+                Assert.Equal(3, res.DiffBlocks[0].DeleteCountA);
                 Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
                 Assert.Equal(0, res.DiffBlocks[0].InsertCountB);
             }
@@ -475,53 +475,10 @@ namespace Facts.DiffPlex
 
                 Assert.NotNull(res);
                 Assert.Equal(1, res.DiffBlocks.Count);
-                Assert.Equal(1, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(1, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
-            }
-
-            [Fact]
-            public void Will_return_correct_one_item_list_when_no_deletions()
-            {
-                var differ = new TestableDiffer();
-
-                var res = differ.CreateWordDiffs("ab ce", "ab d ce", false, new[] { ' ' });
-
-                Assert.NotNull(res);
-                Assert.Equal(1, res.DiffBlocks.Count);
-                Assert.Equal(0, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(1, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
-            }
-
-            [Fact]
-            public void Will_return_correct_one_item_list_when_no_insertions()
-            {
-                var differ = new TestableDiffer();
-
-                var res = differ.CreateWordDiffs("ab d ce", "ab ce", false, new[] { ' ' });
-
-                Assert.NotNull(res);
-                Assert.Equal(1, res.DiffBlocks.Count);
-                Assert.Equal(1, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(0, res.DiffBlocks[0].InsertCountB);
-            }
-
-            [Fact]
-            public void Will_return_correct_one_item_list_for_strings_with_multiple_difference()
-            {
-                var differ = new TestableDiffer();
-
-                var res = differ.CreateWordDiffs("a b c d", "a b e f g h", false, new[] { ' ' });
-
-                Assert.NotNull(res);
-                Assert.Equal(1, res.DiffBlocks.Count);
                 Assert.Equal(2, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(2, res.DiffBlocks[0].DeleteCountA);
+                Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
                 Assert.Equal(2, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(4, res.DiffBlocks[0].InsertCountB);
+                Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
             }
 
             [Fact]
@@ -532,17 +489,27 @@ namespace Facts.DiffPlex
                 var res = differ.CreateWordDiffs("z a b c d  ", "x v a b e f g h  ", false, new[] { ' ' });
 
                 Assert.NotNull(res);
-                Assert.Equal(2, res.DiffBlocks.Count);
+                Assert.Equal(4, res.DiffBlocks.Count);
 
                 Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
                 Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
                 Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(2, res.DiffBlocks[0].InsertCountB);
+                Assert.Equal(3, res.DiffBlocks[0].InsertCountB);
 
-                Assert.Equal(3, res.DiffBlocks[1].DeleteStartA);
-                Assert.Equal(2, res.DiffBlocks[1].DeleteCountA);
-                Assert.Equal(4, res.DiffBlocks[1].InsertStartB);
+                Assert.Equal(5, res.DiffBlocks[1].DeleteStartA);
+                Assert.Equal(0, res.DiffBlocks[1].DeleteCountA);
+                Assert.Equal(7, res.DiffBlocks[1].InsertStartB);
                 Assert.Equal(4, res.DiffBlocks[1].InsertCountB);
+
+                Assert.Equal(6, res.DiffBlocks[2].DeleteStartA);
+                Assert.Equal(1, res.DiffBlocks[2].DeleteCountA);
+                Assert.Equal(12, res.DiffBlocks[2].InsertStartB);
+                Assert.Equal(1, res.DiffBlocks[2].InsertCountB);
+
+                Assert.Equal(8, res.DiffBlocks[3].DeleteStartA);
+                Assert.Equal(1, res.DiffBlocks[3].DeleteCountA);
+                Assert.Equal(14, res.DiffBlocks[3].InsertStartB);
+                Assert.Equal(1, res.DiffBlocks[3].InsertCountB);
             }
 
 
@@ -551,20 +518,10 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs("z a b c d  ", "X V A B E F G H  ", false, true, new[] { ' ' });
+                var res = differ.CreateWordDiffs("z a", "Z A", false, true, new[] { ' ' });
 
                 Assert.NotNull(res);
-                Assert.Equal(2, res.DiffBlocks.Count);
-
-                Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(2, res.DiffBlocks[0].InsertCountB);
-
-                Assert.Equal(3, res.DiffBlocks[1].DeleteStartA);
-                Assert.Equal(2, res.DiffBlocks[1].DeleteCountA);
-                Assert.Equal(4, res.DiffBlocks[1].InsertStartB);
-                Assert.Equal(4, res.DiffBlocks[1].InsertCountB);
+                Assert.Equal(0, res.DiffBlocks.Count);
             }
 
 
@@ -578,23 +535,18 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", separator),
-                                                 string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", separator),
+                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}{0}", separator),
+                                                 string.Format("z{0}v{0}{0}", separator),
                                                  false,
                                                  new[] { separator });
 
                 Assert.NotNull(res);
-                Assert.Equal(2, res.DiffBlocks.Count);
+                Assert.Equal(1, res.DiffBlocks.Count);
 
-                Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
+                Assert.Equal(2, res.DiffBlocks[0].DeleteStartA);
                 Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(2, res.DiffBlocks[0].InsertCountB);
-
-                Assert.Equal(3, res.DiffBlocks[1].DeleteStartA);
-                Assert.Equal(2, res.DiffBlocks[1].DeleteCountA);
-                Assert.Equal(4, res.DiffBlocks[1].InsertStartB);
-                Assert.Equal(4, res.DiffBlocks[1].InsertCountB);
+                Assert.Equal(2, res.DiffBlocks[0].InsertStartB);
+                Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
             }
 
             [Fact]
@@ -602,15 +554,21 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}b{0}c{0}d{0}{0}", ' '), string.Format("x{0}v{0}a{0}b{0}e{0}f{0}g{0}h{0}{0}", ';'), false, new[] { ' ', ';' });
+                var res = differ.CreateWordDiffs(string.Format("z{0}a{0}{0}", ' '), string.Format("z{0}v{0}{0}", ';'), false, new[] { ' ', ';' });
 
                 Assert.NotNull(res);
-                Assert.Equal(1, res.DiffBlocks.Count);
+                Assert.Equal(2, res.DiffBlocks.Count);
 
-                Assert.Equal(0, res.DiffBlocks[0].DeleteStartA);
-                Assert.Equal(6, res.DiffBlocks[0].DeleteCountA);
-                Assert.Equal(0, res.DiffBlocks[0].InsertStartB);
-                Assert.Equal(9, res.DiffBlocks[0].InsertCountB);
+                Assert.Equal(1, res.DiffBlocks[0].DeleteStartA);
+                Assert.Equal(3, res.DiffBlocks[0].DeleteCountA);
+                Assert.Equal(1, res.DiffBlocks[0].InsertStartB);
+                Assert.Equal(3, res.DiffBlocks[0].InsertCountB);
+
+
+                Assert.Equal(5, res.DiffBlocks[1].DeleteStartA);
+                Assert.Equal(1, res.DiffBlocks[1].DeleteCountA);
+                Assert.Equal(5, res.DiffBlocks[1].InsertStartB);
+                Assert.Equal(1, res.DiffBlocks[1].InsertCountB);
             }
         }
 

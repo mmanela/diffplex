@@ -1,7 +1,7 @@
 DiffPlex
 ========
 
-DiffPlex is C# library to generate textual diffs. It targets netstandard 1.4.
+DiffPlex is C# library to generate textual diffs. It is a PCL (portable) library that targets .NET 4.0, Silverlight 5.0, Windows 8.0, Windows Phone 8.0, Windows Phone Appx 8.1
 
 
 ## About the API

@@ -63,6 +63,11 @@
     padding-left: .2em;
     white-space: nowrap;
     width: 100%;
+    font-size: 0;
+}
+
+.piece {
+    font-size: 12px;
 }
 
 .lineNumber {

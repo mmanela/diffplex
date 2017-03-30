@@ -11,7 +11,7 @@ namespace DiffPlex.DiffBuilder
 
         delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
 
-        public static readonly char[] WordSeparaters = new[] {' ', '\t', '.', '(', ')', '{', '}', ',', '!'};
+        public static readonly char[] WordSeparaters = {' ', '\t', '.', '(', ')', '{', '}', ',', '!'};
 
         public SideBySideDiffBuilder(IDiffer differ)
         {

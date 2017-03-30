@@ -790,8 +790,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_a_if_b_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { };
+                int[] a = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] b = { };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -802,8 +802,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_b_if_a_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] a = new int[] { };
+                int[] b = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] a = { };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -814,8 +814,8 @@ namespace Facts.DiffPlex
             public void Will_return_correct_length_when_start_and_ends_are_changed()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 0, 5, 6, 7, 8 };
-                int[] a = new int[] { 4, 2, 3, 4, 5, 6, 7, 9 };
+                int[] b = { 1, 2, 3, 0, 5, 6, 7, 8 };
+                int[] a = { 4, 2, 3, 4, 5, 6, 7, 9 };
 
                 var res = differ.TestCalculateEditLength(a, 1, a.Length - 1, b, 1, b.Length - 1);
 
@@ -826,8 +826,8 @@ namespace Facts.DiffPlex
             public void Will_return_snake_of_zero_length_for_unique_arrays()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { 11, 12, 23, 54, 56 };
+                int[] a = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] b = { 11, 12, 23, 54, 56 };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 

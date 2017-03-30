@@ -19,7 +19,7 @@ namespace DiffPlex
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None));
+            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, ignoreCase, str => str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None));
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
@@ -230,14 +230,15 @@ namespace DiffPlex
                             int revY = revX - k;
                             if (revX <= x && revY <= y)
                             {
-                                var res = new EditLengthResult();
-                                res.EditLength = 2 * D - 1;
-                                res.StartX = startX + startA;
-                                res.StartY = startY + startB;
-                                res.EndX = x + startA;
-                                res.EndY = y + startB;
-                                res.LastEdit = lastEdit;
-                                return res;
+                                return new EditLengthResult
+                                {
+                                    EditLength = 2*D - 1,
+                                    StartX = startX + startA,
+                                    StartY = startY + startB,
+                                    EndX = x + startA,
+                                    EndY = y + startB,
+                                    LastEdit = lastEdit
+                                };
                             }
                         }
                     }
@@ -286,20 +287,20 @@ namespace DiffPlex
                             int forY = forX - (k + delta);
                             if (forX >= x && forY >= y)
                             {
-                                var res = new EditLengthResult();
-                                res.EditLength = 2 * D;
-                                res.StartX = x + startA;
-                                res.StartY = y + startB;
-                                res.EndX = endX + startA;
-                                res.EndY = endY + startB;
-                                res.LastEdit = lastEdit;
-                                return res;
+                                return new EditLengthResult
+                                {
+                                    EditLength = 2*D,
+                                    StartX = x + startA,
+                                    StartY = y + startB,
+                                    EndX = endX + startA,
+                                    EndY = endY + startB,
+                                    LastEdit = lastEdit
+                                };
                             }
                         }
                     }
                 }
             }
-
 
             throw new Exception("Should never get here");
         }
@@ -324,7 +325,6 @@ namespace DiffPlex
              int[] forwardDiagonal,
              int[] reverseDiagonal)
         {
-
             while (startA < endA && startB < endB && A.HashedPieces[startA].Equals(B.HashedPieces[startB]))
             {
                 startA++;

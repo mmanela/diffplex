@@ -15,17 +15,14 @@ namespace DiffPlex.DiffBuilder
 
         public SideBySideDiffBuilder(IDiffer differ)
         {
-            if (differ == null) throw new ArgumentNullException(nameof(differ));
-
-            this.differ = differ;
+            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
         }
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
         {
-            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
-            if (newText == null) throw new ArgumentNullException(nameof(newText));
-
-            return BuildLineDiff(oldText, newText);
+            return BuildLineDiff(
+                oldText ?? throw new ArgumentNullException(nameof(oldText)),
+                newText ?? throw new ArgumentNullException(nameof(newText)));
         }
 
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText)

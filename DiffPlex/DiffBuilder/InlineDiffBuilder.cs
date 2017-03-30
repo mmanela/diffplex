@@ -11,10 +11,7 @@ namespace DiffPlex.DiffBuilder
 
         public InlineDiffBuilder(IDiffer differ)
         {
-            if (differ == null)
-                throw new ArgumentNullException(nameof(differ));
-
-            this.differ = differ;
+            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
         }
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText)

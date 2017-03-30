@@ -9,6 +9,7 @@ namespace Perf.DiffPlex
 {
     internal class DiffPerfTester
     {
+        private static readonly Random random = new Random();
         private readonly SideBySideDiffBuilder sideBySideDiffer;
         private const int MaxLineLength = 150;
         private const double DifferenceAmount = 0.2;
@@ -54,7 +55,6 @@ namespace Perf.DiffPlex
 
         private static IList<string> MakeDifferent(IList<string> lines, double differenceAmount)
         {
-            var random = new Random();
             var newLines = new List<string>();
             foreach (var i in Enumerable.Range(0, lines.Count))
             {
@@ -84,7 +84,6 @@ namespace Perf.DiffPlex
         private static string RandomString(int maxLength)
         {
             var builder = new StringBuilder();
-            var random = new Random();
             foreach (var i in Enumerable.Range(0, random.Next(0, maxLength)))
             {
                 var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));

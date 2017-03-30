@@ -861,7 +861,7 @@ namespace Facts.DiffPlex
 
             private TestingEditLengthGenerator(int count)
             {
-                if (count < 0) throw new ArgumentNullException("count");
+                if (count < 0) throw new ArgumentNullException(nameof(count));
 
                 this.count = count;
             }
@@ -897,8 +897,8 @@ namespace Facts.DiffPlex
 
             private ArrayGenerator(int minLength, int maxLength)
             {
-                if (minLength < 0) throw new ArgumentNullException("minLength");
-                if (maxLength < 0) throw new ArgumentNullException("maxLength");
+                if (minLength < 0) throw new ArgumentNullException(nameof(minLength));
+                if (maxLength < 0) throw new ArgumentNullException(nameof(maxLength));
 
                 this.maxLength = maxLength;
                 this.minLength = minLength;

@@ -37,8 +37,8 @@ namespace Perf.DiffPlex
 
         private string Implode<T>(IEnumerable<T> enumerable, string delim)
         {
-            if (enumerable == null) throw new ArgumentNullException("enumerable");
-            if (delim == null) throw new ArgumentNullException("delim");
+            if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
+            if (delim == null) throw new ArgumentNullException(nameof(delim));
 
             bool loopedAtLeaseOnce = false;
             StringBuilder result = new StringBuilder();

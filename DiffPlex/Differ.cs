@@ -14,8 +14,8 @@ namespace DiffPlex
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
             return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => NormalizeNewlines(str).Split('\n'));
@@ -28,8 +28,8 @@ namespace DiffPlex
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
             return CreateCustomDiffs(
@@ -52,8 +52,8 @@ namespace DiffPlex
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
             return CreateCustomDiffs(
@@ -71,9 +71,9 @@ namespace DiffPlex
 
         public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
-            if (chunker == null) throw new ArgumentNullException("chunker");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+            if (chunker == null) throw new ArgumentNullException(nameof(chunker));
 
             var pieceHash = new Dictionary<string, int>();
             var lineDiffs = new List<DiffBlock>();
@@ -168,8 +168,8 @@ namespace DiffPlex
 
         private static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
         {
-            if (null == A) throw new ArgumentNullException("A");
-            if (null == B) throw new ArgumentNullException("B");
+            if (null == A) throw new ArgumentNullException(nameof(A));
+            if (null == B) throw new ArgumentNullException(nameof(B));
 
             if (A.Length == 0 && B.Length == 0)
             {
@@ -341,7 +341,7 @@ namespace DiffPlex
                 endA--;
                 endB--;
             }
-               
+
             int aLength = endA - startA;
             int bLength = endB - startB;
             if (aLength > 0 && bLength > 0)

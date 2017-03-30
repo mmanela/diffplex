@@ -6,7 +6,7 @@ namespace DiffPlex.ConsoleRunner
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var d = new Differ();
             var inlineBuilder = new InlineDiffBuilder(d);

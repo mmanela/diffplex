@@ -4,7 +4,7 @@ namespace Perf.DiffPlex
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             Console.WriteLine(@"DiffPlex Perf Tester");
 

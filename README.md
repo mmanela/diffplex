@@ -1,7 +1,7 @@
 DiffPlex
 ========
 
-DiffPlex is C# library to generate textual diffs. It targets netstandard 1.4.
+DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0`.
 
 
 ## About the API

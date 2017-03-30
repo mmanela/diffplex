@@ -9,7 +9,6 @@ namespace Perf.DiffPlex
 {
     internal class DiffPerfTester
     {
-        private readonly IDiffer differ;
         private SideBySideDiffBuilder sideBySideDiffer;
         private const int MaxLineLength = 150;
         private const double DifferenceAmount = 0.2;
@@ -17,12 +16,11 @@ namespace Perf.DiffPlex
 
         public DiffPerfTester()
         {
-            differ = new Differ();
             Console.WriteLine("Max number of lines: {0}", MaxLines);
             Console.WriteLine("Max length of lines: {0}", MaxLineLength);
             Console.WriteLine("Max difference amount: {0}", DifferenceAmount);
             Console.WriteLine();
-            sideBySideDiffer = new SideBySideDiffBuilder(differ);
+            sideBySideDiffer = new SideBySideDiffBuilder(new Differ());
         }
 
         public void Run()

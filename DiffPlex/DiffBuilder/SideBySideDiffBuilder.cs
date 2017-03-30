@@ -28,7 +28,7 @@ namespace DiffPlex.DiffBuilder
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText)
         {
             var model = new SideBySideDiffModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
             return model;
         }

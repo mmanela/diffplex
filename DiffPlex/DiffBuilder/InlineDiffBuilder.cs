@@ -20,7 +20,7 @@ namespace DiffPlex.DiffBuilder
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
             BuildDiffPieces(diffResult, model.Lines);
             return model;
         }

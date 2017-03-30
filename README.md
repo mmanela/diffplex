@@ -25,6 +25,34 @@ For use of the `ISidebySideDiffer` interface see:
 * `DiffController.cs` and associated MVC views in the `WebDiffer` project
 * `TextBoxDiffRenderer.cs` in the `SilverlightDiffer` project
 
+## Sample code
+
+```csharp
+var diffBuilder = new InlineDiffBuilder(new Differ());
+var diff = diffBuilder.BuildDiffModel(before, after);
+
+foreach (var line in diff.Lines)
+{
+    switch (line.Type)
+    {
+        case ChangeType.Inserted:
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("+ ");
+            break;
+        case ChangeType.Deleted:
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("- ");
+            break;
+        default:
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("  ");
+            break;
+    }
+
+    Console.WriteLine(line.Text);
+}
+```
+
 ## IDiffer Interface 
 
 ```csharp 

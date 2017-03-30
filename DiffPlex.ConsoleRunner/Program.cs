@@ -8,17 +8,26 @@ namespace DiffPlex.ConsoleRunner
     {
         private static void Main()
         {
-            var d = new Differ();
-            var inlineBuilder = new InlineDiffBuilder(d);
-            var result = inlineBuilder.BuildDiffModel(OldText, NewText);
-            foreach (var line in result.Lines)
+            var diffBuilder = new InlineDiffBuilder(new Differ());
+            var diff = diffBuilder.BuildDiffModel(OldText, NewText);
+
+            foreach (var line in diff.Lines)
             {
-                if (line.Type == ChangeType.Inserted)
-                    Console.Write("+ ");
-                else if (line.Type == ChangeType.Deleted)
-                    Console.Write("- ");
-                else
-                    Console.Write("  ");
+                switch (line.Type)
+                {
+                    case ChangeType.Inserted:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("+ ");
+                        break;
+                    case ChangeType.Deleted:
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("- ");
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("  ");
+                        break;
+                }
 
                 Console.WriteLine(line.Text);
             }

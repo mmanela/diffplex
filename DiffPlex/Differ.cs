@@ -369,12 +369,9 @@ namespace DiffPlex
 
         private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, bool ignoreCase, Func<string, string[]> chunker)
         {
-            string[] pieces;
-
-            if (string.IsNullOrEmpty(data.RawData))
-                pieces = new string[0];
-            else
-                pieces = chunker(data.RawData);
+            var pieces = string.IsNullOrEmpty(data.RawData)
+                ? new string[0]
+                : chunker(data.RawData);
 
             data.Pieces = pieces;
             data.HashedPieces = new int[pieces.Length];

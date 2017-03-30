@@ -4,7 +4,7 @@
     {
         public int[] HashedPieces { get; set; }
 
-        public string RawData { get; private set; }
+        public string RawData { get; }
 
         public bool[] Modifications { get; set; }
 

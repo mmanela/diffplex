@@ -171,7 +171,6 @@ namespace DiffPlex
                 return new EditLengthResult();
             }
 
-            Edit lastEdit;
             int N = endA - startA;
             int M = endB - startB;
             int MAX = M + N + 1;
@@ -190,6 +189,7 @@ namespace DiffPlex
                 Log.WriteLine("\nSearching for a {0}-Path", D);
                 // forward D-path
                 Log.WriteLine("\tSearching for forward path");
+                Edit lastEdit;
                 for (int k = -D; k <= D; k += 2)
                 {
                     Log.WriteLine("\n\t\tSearching diagonal {0}", k);
@@ -222,12 +222,11 @@ namespace DiffPlex
 
                     if (!deltaEven)
                     {
-                        int revX, revY;
                         if (k - delta >= (-D + 1) && k - delta <= (D - 1))
                         {
                             int revKIndex = (k - delta) + HALF;
-                            revX = reverseDiagonal[revKIndex];
-                            revY = revX - k;
+                            int revX = reverseDiagonal[revKIndex];
+                            int revY = revX - k;
                             if (revX <= x && revY <= y)
                             {
                                 var res = new EditLengthResult();
@@ -279,12 +278,11 @@ namespace DiffPlex
 
                     if (deltaEven)
                     {
-                        int forX, forY;
                         if (k + delta >= -D && k + delta <= D)
                         {
                             int forKIndex = (k + delta) + HALF;
-                            forX = forwardDiagonal[forKIndex];
-                            forY = forX - (k + delta);
+                            int forX = forwardDiagonal[forKIndex];
+                            int forY = forX - (k + delta);
                             if (forX >= x && forY >= y)
                             {
                                 var res = new EditLengthResult();

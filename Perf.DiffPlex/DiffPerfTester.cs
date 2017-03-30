@@ -85,10 +85,9 @@ namespace Perf.DiffPlex
         {
             var builder = new StringBuilder();
             var random = new Random();
-            char ch;
             foreach (var i in Enumerable.Range(0, random.Next(0, maxLength)))
             {
-                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
                 builder.Append(ch);
             }
 

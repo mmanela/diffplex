@@ -33,7 +33,7 @@ namespace Perf.DiffPlex
         }
 
 
-        private string Implode<T>(IEnumerable<T> enumerable, string delim)
+        private static string Implode<T>(IEnumerable<T> enumerable, string delim)
         {
             if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
             if (delim == null) throw new ArgumentNullException(nameof(delim));
@@ -52,7 +52,7 @@ namespace Perf.DiffPlex
                 return String.Empty;
         }
 
-        private IList<string> MakeDifferent(IList<string> lines, double differenceAmount)
+        private static IList<string> MakeDifferent(IList<string> lines, double differenceAmount)
         {
             var random = new Random();
             var newLines = new List<string>();
@@ -65,7 +65,6 @@ namespace Perf.DiffPlex
                     {
                         newLines.Add(RandomString(MaxLineLength));
                     }
-
                 }
                 else
                 {
@@ -77,12 +76,12 @@ namespace Perf.DiffPlex
 
         }
 
-        private IList<string> GenerateLines(int lines)
+        private static IList<string> GenerateLines(int lines)
         {
             return Enumerable.Range(0, lines).Select(i => RandomString(MaxLineLength)).ToList();
         }
 
-        private string RandomString(int maxLength)
+        private static string RandomString(int maxLength)
         {
             var builder = new StringBuilder();
             var random = new Random();

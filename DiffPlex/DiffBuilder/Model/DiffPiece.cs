@@ -18,17 +18,12 @@ namespace DiffPlex.DiffBuilder.Model
         public string Text { get; set; }
         public List<DiffPiece> SubPieces { get; set; }
 
-        public DiffPiece(string text, ChangeType type, int? position)
+        public DiffPiece(string text, ChangeType type, int? position = null)
         {
             Text = text;
             Position = position;
             Type = type;
             SubPieces = new List<DiffPiece>();
-        }
-
-        public DiffPiece(string text, ChangeType type)
-            : this(text, type, null)
-        {
         }
 
         public DiffPiece()

@@ -7,7 +7,7 @@ namespace DiffPlex
         [Conditional("LOG")]
         public static void WriteLine(string format, params object[] args)
         {
-            System.Diagnostics.Debug.WriteLine(format, args);
+            Debug.WriteLine(format, args);
         }
 
         [Conditional("LOG")]

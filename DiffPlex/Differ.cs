@@ -6,6 +6,8 @@ namespace DiffPlex
 {
     public class Differ : IDiffer
     {
+        private static readonly string[] emptyStringArray = new string[0];
+
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
             return CreateLineDiffs(oldText, newText, ignoreWhitespace, false);
@@ -369,7 +371,7 @@ namespace DiffPlex
         private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, bool ignoreCase, Func<string, string[]> chunker)
         {
             var pieces = string.IsNullOrEmpty(data.RawData)
-                ? new string[0]
+                ? emptyStringArray
                 : chunker(data.RawData);
 
             data.Pieces = pieces;

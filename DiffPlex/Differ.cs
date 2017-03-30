@@ -119,13 +119,13 @@ namespace DiffPlex
             return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
         }
 
-        private static string[] SmartSplit(string str, IEnumerable<char> delims)
+        private static string[] SmartSplit(string str, char[] delims)
         {
             var list = new List<string>();
             int begin = 0;
             for (int i = 0; i < str.Length; i++)
             {
-                if (delims.Contains(str[i]))
+                if (Array.IndexOf(delims, str[i]) != -1)
                 {
                     list.Add(str.Substring(begin, (i - begin)));
                     list.Add(str.Substring(i, 1));

@@ -18,7 +18,7 @@ namespace DiffPlex
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => NormalizeNewlines(str).Split('\n'));
+            return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None));
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
@@ -117,11 +117,6 @@ namespace DiffPlex
             } while (posA < piecesALength && posB < piecesBLength);
 
             return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
-        }
-
-        private static string NormalizeNewlines(string str)
-        {
-            return str.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
         private static string[] SmartSplit(string str, IEnumerable<char> delims)

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DiffPlex.Model;
 
 namespace DiffPlex
 {
     public class Differ : IDiffer
     {
+        private static readonly string[] emptyStringArray = new string[0];
+
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
             return CreateLineDiffs(oldText, newText, ignoreWhitespace, false);
@@ -14,11 +15,11 @@ namespace DiffPlex
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace,ignoreCase, str => NormalizeNewlines(str).Split('\n'));
+            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, ignoreCase, str => str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None));
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
@@ -28,8 +29,8 @@ namespace DiffPlex
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
             return CreateCustomDiffs(
@@ -52,8 +53,8 @@ namespace DiffPlex
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
 
             return CreateCustomDiffs(
@@ -71,9 +72,9 @@ namespace DiffPlex
 
         public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
-            if (chunker == null) throw new ArgumentNullException("chunker");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+            if (chunker == null) throw new ArgumentNullException(nameof(chunker));
 
             var pieceHash = new Dictionary<string, int>();
             var lineDiffs = new List<DiffBlock>();
@@ -119,18 +120,13 @@ namespace DiffPlex
             return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
         }
 
-        private static string NormalizeNewlines(string str)
-        {
-            return str.Replace("\r\n", "\n").Replace("\r", "\n");
-        }
-
-        private static string[] SmartSplit(string str, IEnumerable<char> delims)
+        private static string[] SmartSplit(string str, char[] delims)
         {
             var list = new List<string>();
             int begin = 0;
             for (int i = 0; i < str.Length; i++)
             {
-                if (delims.Contains(str[i]))
+                if (Array.IndexOf(delims, str[i]) != -1)
                 {
                     list.Add(str.Substring(begin, (i - begin)));
                     list.Add(str.Substring(i, 1));
@@ -168,15 +164,14 @@ namespace DiffPlex
 
         private static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
         {
-            if (null == A) throw new ArgumentNullException("A");
-            if (null == B) throw new ArgumentNullException("B");
+            if (null == A) throw new ArgumentNullException(nameof(A));
+            if (null == B) throw new ArgumentNullException(nameof(B));
 
             if (A.Length == 0 && B.Length == 0)
             {
                 return new EditLengthResult();
             }
 
-            Edit lastEdit;
             int N = endA - startA;
             int M = endB - startB;
             int MAX = M + N + 1;
@@ -194,7 +189,8 @@ namespace DiffPlex
             {
                 Log.WriteLine("\nSearching for a {0}-Path", D);
                 // forward D-path
-                Log.WriteLine("\tSearching for foward path");
+                Log.WriteLine("\tSearching for forward path");
+                Edit lastEdit;
                 for (int k = -D; k <= D; k += 2)
                 {
                     Log.WriteLine("\n\t\tSearching diagonal {0}", k);
@@ -225,25 +221,22 @@ namespace DiffPlex
 
                     forwardDiagonal[kIndex] = x;
 
-                    if (!deltaEven)
+                    if (!deltaEven && k - delta >= -D + 1 && k - delta <= D - 1)
                     {
-                        int revX, revY;
-                        if (k - delta >= (-D + 1) && k - delta <= (D - 1))
+                        int revKIndex = (k - delta) + HALF;
+                        int revX = reverseDiagonal[revKIndex];
+                        int revY = revX - k;
+                        if (revX <= x && revY <= y)
                         {
-                            int revKIndex = (k - delta) + HALF;
-                            revX = reverseDiagonal[revKIndex];
-                            revY = revX - k;
-                            if (revX <= x && revY <= y)
+                            return new EditLengthResult
                             {
-                                var res = new EditLengthResult();
-                                res.EditLength = 2 * D - 1;
-                                res.StartX = startX + startA;
-                                res.StartY = startY + startB;
-                                res.EndX = x + startA;
-                                res.EndY = y + startB;
-                                res.LastEdit = lastEdit;
-                                return res;
-                            }
+                                EditLength = 2*D - 1,
+                                StartX = startX + startA,
+                                StartY = startY + startB,
+                                EndX = x + startA,
+                                EndY = y + startB,
+                                LastEdit = lastEdit
+                            };
                         }
                     }
                 }
@@ -282,30 +275,26 @@ namespace DiffPlex
                     Log.WriteLine("\t\tFollowed snake to ({0},{1})", x, y);
                     reverseDiagonal[kIndex] = x;
 
-                    if (deltaEven)
+                    if (deltaEven && k + delta >= -D && k + delta <= D)
                     {
-                        int forX, forY;
-                        if (k + delta >= -D && k + delta <= D)
+                        int forKIndex = (k + delta) + HALF;
+                        int forX = forwardDiagonal[forKIndex];
+                        int forY = forX - (k + delta);
+                        if (forX >= x && forY >= y)
                         {
-                            int forKIndex = (k + delta) + HALF;
-                            forX = forwardDiagonal[forKIndex];
-                            forY = forX - (k + delta);
-                            if (forX >= x && forY >= y)
+                            return new EditLengthResult
                             {
-                                var res = new EditLengthResult();
-                                res.EditLength = 2 * D;
-                                res.StartX = x + startA;
-                                res.StartY = y + startB;
-                                res.EndX = endX + startA;
-                                res.EndY = endY + startB;
-                                res.LastEdit = lastEdit;
-                                return res;
-                            }
+                                EditLength = 2*D,
+                                StartX = x + startA,
+                                StartY = y + startB,
+                                EndX = endX + startA,
+                                EndY = endY + startB,
+                                LastEdit = lastEdit
+                            };
                         }
                     }
                 }
             }
-
 
             throw new Exception("Should never get here");
         }
@@ -330,7 +319,6 @@ namespace DiffPlex
              int[] forwardDiagonal,
              int[] reverseDiagonal)
         {
-
             while (startA < endA && startB < endB && A.HashedPieces[startA].Equals(B.HashedPieces[startB]))
             {
                 startA++;
@@ -341,7 +329,7 @@ namespace DiffPlex
                 endA--;
                 endB--;
             }
-               
+
             int aLength = endA - startA;
             int bLength = endB - startB;
             if (aLength > 0 && bLength > 0)
@@ -376,12 +364,9 @@ namespace DiffPlex
 
         private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, bool ignoreCase, Func<string, string[]> chunker)
         {
-            string[] pieces;
-
-            if (string.IsNullOrEmpty(data.RawData))
-                pieces = new string[0];
-            else
-                pieces = chunker(data.RawData);
+            var pieces = string.IsNullOrEmpty(data.RawData)
+                ? emptyStringArray
+                : chunker(data.RawData);
 
             data.Pieces = pieces;
             data.HashedPieces = new int[pieces.Length];

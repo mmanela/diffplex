@@ -57,7 +57,7 @@ namespace Facts.DiffPlex
             public void Will_pass_correct_word_separators_to_create_word_diff()
             {
                 string text = "a\nb\nc\nd\n\n";
-                string[] textLines = new[] {"a", "b", "c", "d", ""};
+                string[] textLines = {"a", "b", "c", "d", ""};
                 char[] chars = null;
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(text, text, true))
@@ -80,7 +80,7 @@ namespace Facts.DiffPlex
             public void Will_build_diffModel_for_duplicate_strings()
             {
                 string text = "a\nb\nc\nd\n\n";
-                string[] textLines = new[] {"a", "b", "c", "d", ""};
+                string[] textLines = {"a", "b", "c", "d", ""};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(text, text, true))
                     .Returns(new DiffResult(textLines, textLines, new List<DiffBlock>()));
@@ -109,8 +109,8 @@ namespace Facts.DiffPlex
             {
                 string textOld = "";
                 string textNew = "z\ny\nx\nw\n";
-                string[] textLinesOld = new string[] {};
-                string[] textLinesNew = new[] {"z", "y"};
+                string[] textLinesOld = {};
+                string[] textLinesNew = {"z", "y"};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 0, 0, 2)}));
@@ -141,8 +141,8 @@ namespace Facts.DiffPlex
             {
                 string textNew = "";
                 string textOld = "z\ny\nx\nw\n";
-                string[] textLinesNew = new string[] {};
-                string[] textLinesOld = new[] {"z", "y"};
+                string[] textLinesNew = {};
+                string[] textLinesOld = {"z", "y"};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 2, 0, 0)}));
@@ -171,8 +171,8 @@ namespace Facts.DiffPlex
             {
                 string textOld = "a\nb\nc\nd\n\n";
                 string textNew = "z\ny\nx\nw\n";
-                string[] textLinesOld = new[] {"a", "b", "c", "d", ""};
-                string[] textLinesNew = new[] {"z", "y", "x", "w"};
+                string[] textLinesOld = {"a", "b", "c", "d", ""};
+                string[] textLinesNew = {"z", "y", "x", "w"};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 5, 0, 4)}));
@@ -230,8 +230,8 @@ namespace Facts.DiffPlex
             {
                 string textOld = "1\n2\na\nb\nc\nd\n\n";
                 string textNew = "1\n2\nz\ny\nx\nw\n";
-                string[] textLinesOld = new[] {"1", "2", "a", "b", "c", "d", ""};
-                string[] textLinesNew = new[] {"1", "2", "z", "y", "x", "w"};
+                string[] textLinesOld = {"1", "2", "a", "b", "c", "d", ""};
+                string[] textLinesNew = {"1", "2", "z", "y", "x", "w"};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(2, 5, 2, 4)}));
@@ -301,8 +301,8 @@ namespace Facts.DiffPlex
             {
                 string textOld = "m is h";
                 string textNew = "m ai is n h";
-                string[] textLinesOld = new[] {"m is h"};
-                string[] textLinesNew = new[] {"m ai is n h"};
+                string[] textLinesOld = {"m is h"};
+                string[] textLinesNew = {"m ai is n h"};
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 1, 0, 1)}));

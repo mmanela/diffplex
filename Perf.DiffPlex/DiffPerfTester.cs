@@ -7,22 +7,21 @@ using DiffPlex.DiffBuilder;
 
 namespace Perf.DiffPlex
 {
-    class DiffPerfTester
+    internal class DiffPerfTester
     {
-        private readonly IDiffer differ;
-        private SideBySideDiffBuilder sideBySideDiffer;
-        const int MaxLineLength = 150;
-        const double DifferenceAmount = 0.2;
-        const int MaxLines = 8000;
+        private static readonly Random random = new Random();
+        private readonly SideBySideDiffBuilder sideBySideDiffer;
+        private const int MaxLineLength = 150;
+        private const double DifferenceAmount = 0.2;
+        private const int MaxLines = 8000;
 
         public DiffPerfTester()
         {
-            differ = new Differ();
             Console.WriteLine("Max number of lines: {0}", MaxLines);
             Console.WriteLine("Max length of lines: {0}", MaxLineLength);
             Console.WriteLine("Max difference amount: {0}", DifferenceAmount);
             Console.WriteLine();
-            sideBySideDiffer = new SideBySideDiffBuilder(differ);
+            sideBySideDiffer = new SideBySideDiffBuilder(new Differ());
         }
 
         public void Run()
@@ -35,10 +34,10 @@ namespace Perf.DiffPlex
         }
 
 
-        private string Implode<T>(IEnumerable<T> enumerable, string delim)
+        private static string Implode<T>(IEnumerable<T> enumerable, string delim)
         {
-            if (enumerable == null) throw new ArgumentNullException("enumerable");
-            if (delim == null) throw new ArgumentNullException("delim");
+            if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
+            if (delim == null) throw new ArgumentNullException(nameof(delim));
 
             bool loopedAtLeaseOnce = false;
             StringBuilder result = new StringBuilder();
@@ -54,9 +53,8 @@ namespace Perf.DiffPlex
                 return String.Empty;
         }
 
-        private IList<string> MakeDifferent(IList<string> lines, double differenceAmount)
+        private static IList<string> MakeDifferent(IList<string> lines, double differenceAmount)
         {
-            var random = new Random();
             var newLines = new List<string>();
             foreach (var i in Enumerable.Range(0, lines.Count))
             {
@@ -67,7 +65,6 @@ namespace Perf.DiffPlex
                     {
                         newLines.Add(RandomString(MaxLineLength));
                     }
-
                 }
                 else
                 {
@@ -79,19 +76,17 @@ namespace Perf.DiffPlex
 
         }
 
-        private IList<string> GenerateLines(int lines)
+        private static IList<string> GenerateLines(int lines)
         {
             return Enumerable.Range(0, lines).Select(i => RandomString(MaxLineLength)).ToList();
         }
 
-        private string RandomString(int maxLength)
+        private static string RandomString(int maxLength)
         {
             var builder = new StringBuilder();
-            var random = new Random();
-            char ch;
             foreach (var i in Enumerable.Range(0, random.Next(0, maxLength)))
             {
-                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
                 builder.Append(ch);
             }
 

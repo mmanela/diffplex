@@ -10,18 +10,18 @@ namespace DiffPlex.Model
         /// <summary>
         /// The chunked peices of the old text
         /// </summary>
-        public string[] PiecesOld { get; private set; }
+        public string[] PiecesOld { get; }
 
         /// <summary>
         /// The chunked peices of the new text
         /// </summary>
-        public string[] PiecesNew { get; private set; }
+        public string[] PiecesNew { get; }
 
 
         /// <summary>
         /// A collection of DiffBlocks which details deletions and insertions
         /// </summary>
-        public IList<DiffBlock> DiffBlocks { get; private set; }
+        public IList<DiffBlock> DiffBlocks { get; }
 
         public DiffResult(string[] peicesOld, string[] piecesNew, IList<DiffBlock> blocks)
         {

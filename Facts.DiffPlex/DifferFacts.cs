@@ -5,7 +5,6 @@ using System.Linq;
 using DiffPlex;
 using DiffPlex.Model;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Facts.DiffPlex
 {
@@ -171,7 +170,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -192,7 +191,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly_and_ignoring_whitespace()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively_and_ignoring_whitespace()
             {
                 var differ = new TestableDiffer();
 
@@ -359,7 +358,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -482,7 +481,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -531,7 +530,7 @@ namespace Facts.DiffPlex
             [InlineData(',')]
             [InlineData('-')]
             [InlineData('(')]
-            public void Will_return_correct_diff_for_arbitratry_separators(char separator)
+            public void Will_return_correct_diff_for_arbitrary_separators(char separator)
             {
                 var differ = new TestableDiffer();
 
@@ -676,7 +675,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_modifications_two_partially_similiar_strings()
+            public void Will_return_correct_modifications_two_partially_similar_strings()
             {
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");
@@ -791,8 +790,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_a_if_b_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { };
+                int[] a = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] b = { };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -803,8 +802,8 @@ namespace Facts.DiffPlex
             public void Will_return_length_of_b_if_a_is_empty()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] a = new int[] { };
+                int[] b = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] a = { };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -815,8 +814,8 @@ namespace Facts.DiffPlex
             public void Will_return_correct_length_when_start_and_ends_are_changed()
             {
                 var differ = new TestableDiffer();
-                int[] b = new int[] { 1, 2, 3, 0, 5, 6, 7, 8 };
-                int[] a = new int[] { 4, 2, 3, 4, 5, 6, 7, 9 };
+                int[] b = { 1, 2, 3, 0, 5, 6, 7, 8 };
+                int[] a = { 4, 2, 3, 4, 5, 6, 7, 9 };
 
                 var res = differ.TestCalculateEditLength(a, 1, a.Length - 1, b, 1, b.Length - 1);
 
@@ -827,8 +826,8 @@ namespace Facts.DiffPlex
             public void Will_return_snake_of_zero_length_for_unique_arrays()
             {
                 var differ = new TestableDiffer();
-                int[] a = new int[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                int[] b = new int[] { 11, 12, 23, 54, 56 };
+                int[] a = { 1, 2, 3, 4, 5, 6, 7, 8 };
+                int[] b = { 11, 12, 23, 54, 56 };
 
                 var res = differ.TestCalculateEditLength(a, 0, a.Length, b, 0, b.Length);
 
@@ -861,7 +860,7 @@ namespace Facts.DiffPlex
 
             private TestingEditLengthGenerator(int count)
             {
-                if (count < 0) throw new ArgumentNullException("count");
+                if (count < 0) throw new ArgumentNullException(nameof(count));
 
                 this.count = count;
             }
@@ -897,8 +896,8 @@ namespace Facts.DiffPlex
 
             private ArrayGenerator(int minLength, int maxLength)
             {
-                if (minLength < 0) throw new ArgumentNullException("minLength");
-                if (maxLength < 0) throw new ArgumentNullException("maxLength");
+                if (minLength < 0) throw new ArgumentNullException(nameof(minLength));
+                if (maxLength < 0) throw new ArgumentNullException(nameof(maxLength));
 
                 this.maxLength = maxLength;
                 this.minLength = minLength;

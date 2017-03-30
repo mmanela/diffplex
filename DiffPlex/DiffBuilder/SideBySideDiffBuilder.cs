@@ -9,29 +9,26 @@ namespace DiffPlex.DiffBuilder
     {
         private readonly IDiffer differ;
 
-        delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
+        private delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
 
-        public static readonly char[] WordSeparaters = new[] {' ', '\t', '.', '(', ')', '{', '}', ',', '!'};
+        public static readonly char[] WordSeparaters = {' ', '\t', '.', '(', ')', '{', '}', ',', '!'};
 
         public SideBySideDiffBuilder(IDiffer differ)
         {
-            if (differ == null) throw new ArgumentNullException("differ");
-
-            this.differ = differ;
+            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
         }
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
-
-            return BuildLineDiff(oldText, newText);
+            return BuildLineDiff(
+                oldText ?? throw new ArgumentNullException(nameof(oldText)),
+                newText ?? throw new ArgumentNullException(nameof(newText)));
         }
 
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText)
         {
             var model = new SideBySideDiffModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
             return model;
         }

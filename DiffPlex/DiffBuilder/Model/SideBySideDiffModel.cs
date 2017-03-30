@@ -5,8 +5,8 @@
     /// </summary>
     public class SideBySideDiffModel
     {
-        public DiffPaneModel OldText { get; private set; }
-        public DiffPaneModel NewText { get; private set; }
+        public DiffPaneModel OldText { get; }
+        public DiffPaneModel NewText { get; }
 
         public SideBySideDiffModel()
         {

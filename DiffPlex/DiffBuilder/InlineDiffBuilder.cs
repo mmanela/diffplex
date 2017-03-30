@@ -11,19 +11,16 @@ namespace DiffPlex.DiffBuilder
 
         public InlineDiffBuilder(IDiffer differ)
         {
-            if (differ == null)
-                throw new ArgumentNullException("differ");
-
-            this.differ = differ;
+            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
         }
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText)
         {
-            if (oldText == null) throw new ArgumentNullException("oldText");
-            if (newText == null) throw new ArgumentNullException("newText");
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
             BuildDiffPieces(diffResult, model.Lines);
             return model;
         }

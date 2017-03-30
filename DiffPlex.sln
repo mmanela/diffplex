@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj", "{265B25AF-D95C-44B3-8FB4-49228806E2AA}"
 EndProject
@@ -12,6 +12,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Perf.DiffPlex", "Perf.DiffPlex\Perf.DiffPlex.csproj", "{6D22FAAC-BC3C-4011-B4C3-EFD63EE88545}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDiffer", "WebDiffer\WebDiffer.csproj", "{E8BDBF13-2A11-438B-9135-5F566F811208}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{911759D1-96FB-4525-B8EE-CD5B59C42EB3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		License.txt = License.txt
+		README.md = README.md
+		images\website.png = images\website.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

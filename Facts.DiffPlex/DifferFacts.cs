@@ -5,7 +5,6 @@ using System.Linq;
 using DiffPlex;
 using DiffPlex.Model;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Facts.DiffPlex
 {

@@ -194,7 +194,7 @@ namespace DiffPlex
             {
                 Log.WriteLine("\nSearching for a {0}-Path", D);
                 // forward D-path
-                Log.WriteLine("\tSearching for foward path");
+                Log.WriteLine("\tSearching for forward path");
                 for (int k = -D; k <= D; k += 2)
                 {
                     Log.WriteLine("\n\t\tSearching diagonal {0}", k);

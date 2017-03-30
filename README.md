@@ -9,11 +9,11 @@ DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0`.
 The DiffPlex library currently exposes two interfaces for generating diffs:
 
 * `IDiffer` (implemented by the `Differ` class) - This is the core diffing class.  It exposes the low level functions to generate differences between texts.
-* `ISidebySideDiffer` (implemented by the `SideBySideDiffer` class) - This is a higher level interface.  It consumes the `IDiffer` interface and generates a `SideBySideDiffModel`.  This is a model which is suited for displaying the differences of two peices of text in a side by side view.
+* `ISidebySideDiffer` (implemented by the `SideBySideDiffer` class) - This is a higher level interface.  It consumes the `IDiffer` interface and generates a `SideBySideDiffModel`.  This is a model which is suited for displaying the differences of two pieces of text in a side by side view.
 
 ## Examples
 
-For examples of how to use the API please see the the following projets contained in the DiffPlex solution.
+For examples of how to use the API please see the the following projects contained in the DiffPlex solution.
 
 For use of the `IDiffer` interface see:
 

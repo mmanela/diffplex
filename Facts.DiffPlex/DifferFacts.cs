@@ -171,7 +171,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -192,7 +192,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly_and_ignoring_whitespace()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively_and_ignoring_whitespace()
             {
                 var differ = new TestableDiffer();
 
@@ -359,7 +359,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -482,7 +482,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_conesecutivly()
+            public void Will_return_correct_two_item_list_for_strings_with_multiple_difference_non_consecutively()
             {
                 var differ = new TestableDiffer();
 
@@ -531,7 +531,7 @@ namespace Facts.DiffPlex
             [InlineData(',')]
             [InlineData('-')]
             [InlineData('(')]
-            public void Will_return_correct_diff_for_arbitratry_separators(char separator)
+            public void Will_return_correct_diff_for_arbitrary_separators(char separator)
             {
                 var differ = new TestableDiffer();
 
@@ -676,7 +676,7 @@ namespace Facts.DiffPlex
             }
 
             [Fact]
-            public void Will_return_correct_modifications_two_partially_similiar_strings()
+            public void Will_return_correct_modifications_two_partially_similar_strings()
             {
                 var differ = new TestableDiffer();
                 var a = new ModificationData("cat\nhat\npat\nmatt");

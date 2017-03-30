@@ -9,7 +9,7 @@ namespace Perf.DiffPlex
 {
     internal class DiffPerfTester
     {
-        private SideBySideDiffBuilder sideBySideDiffer;
+        private readonly SideBySideDiffBuilder sideBySideDiffer;
         private const int MaxLineLength = 150;
         private const double DifferenceAmount = 0.2;
         private const int MaxLines = 8000;

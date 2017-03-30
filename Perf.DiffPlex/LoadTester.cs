@@ -14,7 +14,7 @@ namespace Perf.DiffPlex
         private int errorCount;
         private readonly Stopwatch overallTimer = new Stopwatch();
         private readonly List<long> times = new List<long>();
-        private ReaderWriterLockSlim signal = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim signal = new ReaderWriterLockSlim();
 
         public LoadTester(Action action)
         {

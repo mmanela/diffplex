@@ -221,25 +221,22 @@ namespace DiffPlex
 
                     forwardDiagonal[kIndex] = x;
 
-                    if (!deltaEven)
+                    if (!deltaEven && k - delta >= -D + 1 && k - delta <= D - 1)
                     {
-                        if (k - delta >= (-D + 1) && k - delta <= (D - 1))
+                        int revKIndex = (k - delta) + HALF;
+                        int revX = reverseDiagonal[revKIndex];
+                        int revY = revX - k;
+                        if (revX <= x && revY <= y)
                         {
-                            int revKIndex = (k - delta) + HALF;
-                            int revX = reverseDiagonal[revKIndex];
-                            int revY = revX - k;
-                            if (revX <= x && revY <= y)
+                            return new EditLengthResult
                             {
-                                return new EditLengthResult
-                                {
-                                    EditLength = 2*D - 1,
-                                    StartX = startX + startA,
-                                    StartY = startY + startB,
-                                    EndX = x + startA,
-                                    EndY = y + startB,
-                                    LastEdit = lastEdit
-                                };
-                            }
+                                EditLength = 2*D - 1,
+                                StartX = startX + startA,
+                                StartY = startY + startB,
+                                EndX = x + startA,
+                                EndY = y + startB,
+                                LastEdit = lastEdit
+                            };
                         }
                     }
                 }
@@ -278,25 +275,22 @@ namespace DiffPlex
                     Log.WriteLine("\t\tFollowed snake to ({0},{1})", x, y);
                     reverseDiagonal[kIndex] = x;
 
-                    if (deltaEven)
+                    if (deltaEven && k + delta >= -D && k + delta <= D)
                     {
-                        if (k + delta >= -D && k + delta <= D)
+                        int forKIndex = (k + delta) + HALF;
+                        int forX = forwardDiagonal[forKIndex];
+                        int forY = forX - (k + delta);
+                        if (forX >= x && forY >= y)
                         {
-                            int forKIndex = (k + delta) + HALF;
-                            int forX = forwardDiagonal[forKIndex];
-                            int forY = forX - (k + delta);
-                            if (forX >= x && forY >= y)
+                            return new EditLengthResult
                             {
-                                return new EditLengthResult
-                                {
-                                    EditLength = 2*D,
-                                    StartX = x + startA,
-                                    StartY = y + startB,
-                                    EndX = endX + startA,
-                                    EndY = endY + startB,
-                                    LastEdit = lastEdit
-                                };
-                            }
+                                EditLength = 2*D,
+                                StartX = x + startA,
+                                StartY = y + startB,
+                                EndX = endX + startA,
+                                EndY = endY + startB,
+                                LastEdit = lastEdit
+                            };
                         }
                     }
                 }

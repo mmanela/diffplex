@@ -7,13 +7,13 @@ using DiffPlex.DiffBuilder;
 
 namespace Perf.DiffPlex
 {
-    class DiffPerfTester
+    internal class DiffPerfTester
     {
         private readonly IDiffer differ;
         private SideBySideDiffBuilder sideBySideDiffer;
-        const int MaxLineLength = 150;
-        const double DifferenceAmount = 0.2;
-        const int MaxLines = 8000;
+        private const int MaxLineLength = 150;
+        private const double DifferenceAmount = 0.2;
+        private const int MaxLines = 8000;
 
         public DiffPerfTester()
         {

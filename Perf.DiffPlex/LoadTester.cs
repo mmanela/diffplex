@@ -9,7 +9,7 @@ namespace Perf.DiffPlex
     public class LoadTester
     {
         private readonly Action action;
-        static bool everyoneDie;
+        private static bool everyoneDie;
         private int threadCount;
         private int errorCount;
         private readonly Stopwatch overallTimer = new Stopwatch();

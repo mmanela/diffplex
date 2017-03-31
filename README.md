@@ -1,4 +1,4 @@
-DiffPlex
+DiffPlex [![Build status](https://ci.appveyor.com/api/projects/status/kixqv7xppdtatey7/branch/master?svg=true)](https://ci.appveyor.com/project/mmanela/diffplex/branch/master)
 ========
 
 DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0`.

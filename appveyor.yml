@@ -1,0 +1,16 @@
+version: 1.4.{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2017
+configuration: Release
+before_build:
+  appveyor-retry nuget restore
+build:
+  parallel: true
+  verbosity: minimal
+test:
+  assemblies:
+    - Facts.DiffPlex.dll
+test_script:
+  - dotnet test .\Facts.DiffPlex\Facts.DiffPlex.csproj --configuration Release --no-build

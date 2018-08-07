@@ -14,3 +14,6 @@ test:
     - Facts.DiffPlex.dll
 test_script:
   - dotnet test .\Facts.DiffPlex\Facts.DiffPlex.csproj --configuration Release --no-build
+artifacts:
+  - path: DiffPlex/bin/%CONFIGURATION%/*/DiffPlex.dll
+  - path: DiffPlex/bin/%CONFIGURATION%/*.nupkg

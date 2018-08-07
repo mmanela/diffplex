@@ -316,19 +316,19 @@ namespace Facts.DiffPlex
                 var bidiff = builder.BuildDiffModel(textOld, textNew);
 
                 Assert.NotNull(bidiff);
-                Assert.Equal(1, bidiff.OldText.Lines.Count);
-                Assert.Equal(1, bidiff.NewText.Lines.Count);
-                Assert.Equal(bidiff.NewText.Lines[0].SubPieces[0].Type, ChangeType.Unchanged);
-                Assert.Equal(bidiff.NewText.Lines[0].SubPieces[1].Type, ChangeType.Inserted);
-                Assert.Equal(bidiff.NewText.Lines[0].SubPieces[2].Type, ChangeType.Unchanged);
-                Assert.Equal(bidiff.NewText.Lines[0].SubPieces[3].Type, ChangeType.Inserted);
-                Assert.Equal(bidiff.NewText.Lines[0].SubPieces[4].Type, ChangeType.Unchanged);
+                Assert.Single(bidiff.OldText.Lines);
+                Assert.Single(bidiff.NewText.Lines);
+                Assert.Equal(ChangeType.Unchanged, bidiff.NewText.Lines[0].SubPieces[0].Type);
+                Assert.Equal(ChangeType.Inserted, bidiff.NewText.Lines[0].SubPieces[1].Type);
+                Assert.Equal(ChangeType.Unchanged, bidiff.NewText.Lines[0].SubPieces[2].Type);
+                Assert.Equal(ChangeType.Inserted, bidiff.NewText.Lines[0].SubPieces[3].Type);
+                Assert.Equal(ChangeType.Unchanged, bidiff.NewText.Lines[0].SubPieces[4].Type);
 
-                Assert.Equal(bidiff.OldText.Lines[0].SubPieces[0].Type, ChangeType.Unchanged);
-                Assert.Equal(bidiff.OldText.Lines[0].SubPieces[1].Type, ChangeType.Imaginary);
-                Assert.Equal(bidiff.OldText.Lines[0].SubPieces[2].Type, ChangeType.Unchanged);
-                Assert.Equal(bidiff.OldText.Lines[0].SubPieces[3].Type, ChangeType.Imaginary);
-                Assert.Equal(bidiff.OldText.Lines[0].SubPieces[4].Type, ChangeType.Unchanged);
+                Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[0].Type);
+                Assert.Equal(ChangeType.Imaginary, bidiff.OldText.Lines[0].SubPieces[1].Type);
+                Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[2].Type);
+                Assert.Equal(ChangeType.Imaginary, bidiff.OldText.Lines[0].SubPieces[3].Type);
+                Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[4].Type);
             }
         }
     }

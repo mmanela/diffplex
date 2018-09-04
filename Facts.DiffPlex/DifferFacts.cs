@@ -586,8 +586,8 @@ namespace Facts.DiffPlex
 
                 differ.TestBuildModificationData(a, b);
 
-                Assert.Equal(0, a.Modifications.Length);
-                Assert.Equal(0, b.Modifications.Length);
+                Assert.Empty(a.Modifications);
+                Assert.Empty(b.Modifications);
             }
 
             [Fact]

@@ -20,9 +20,9 @@ namespace DiffPlex.DiffBuilder
 
         public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators) : this(differ)
         {
-            if (wordSeparators is null)
+            if (wordSeparators is null || wordSeparators.Length == 0)
             {
-                throw new ArgumentNullException(nameof(wordSeparators));
+                throw new ArgumentException("wordSeparators cannot be null or empty.", nameof(wordSeparators));
             }
             WordSeparaters = wordSeparators;
         }

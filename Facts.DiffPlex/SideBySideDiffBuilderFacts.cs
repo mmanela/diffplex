@@ -22,6 +22,26 @@ namespace Facts.DiffPlex
                 var an = (ArgumentNullException) ex;
                 Assert.Equal("differ", an.ParamName);
             }
+
+            [Fact]
+            public void Will_throw_is_Separators_is_null()
+            {
+                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), null));
+
+                Assert.IsType<ArgumentException>(ex);
+                var an = (ArgumentException)ex;
+                Assert.Equal("wordSeparators", an.ParamName);
+            }
+
+            [Fact]
+            public void Will_throw_is_Separators_is_empty()
+            {
+                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), new char[] { }));
+
+                Assert.IsType<ArgumentException>(ex);
+                var an = (ArgumentException)ex;
+                Assert.Equal("wordSeparators", an.ParamName);
+            }
         }
 
         public class BuildDiffModel
@@ -66,6 +86,23 @@ namespace Facts.DiffPlex
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()))
                     .Callback<string, string, bool, char[]>((a, b, c, d) => chars = d);
                 var builder = new SideBySideDiffBuilder(differ.Object);
+
+                builder.BuildDiffModel(text, text);
+
+                Assert.Equal(builder.WordSeparaters.Length, chars.Length);
+                foreach (var c in builder.WordSeparaters)
+                {
+                    Assert.Contains(c, chars);
+                }
+            }
+
+            [Fact]
+            public void Will_pass_correct_word_separators_to_constructor_to_create_word_diff()
+            {
+                string text = "a\nb\nc\nd\n\n";
+                string[] textLines = { "a", "b", "c", "d", "" };
+                char[] chars = { ' ', '.' };
+                var builder = new SideBySideDiffBuilder(new Differ(), chars);
 
                 builder.BuildDiffModel(text, text);
 

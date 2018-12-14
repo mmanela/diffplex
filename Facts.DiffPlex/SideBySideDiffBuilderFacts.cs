@@ -69,8 +69,8 @@ namespace Facts.DiffPlex
 
                 builder.BuildDiffModel(text, text);
 
-                Assert.Equal(SideBySideDiffBuilder.WordSeparaters.Length, chars.Length);
-                foreach (var c in SideBySideDiffBuilder.WordSeparaters)
+                Assert.Equal(builder.WordSeparaters.Length, chars.Length);
+                foreach (var c in builder.WordSeparaters)
                 {
                     Assert.Contains(c, chars);
                 }

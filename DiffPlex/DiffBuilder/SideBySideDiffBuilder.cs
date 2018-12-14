@@ -11,11 +11,20 @@ namespace DiffPlex.DiffBuilder
 
         private delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
 
-        public static readonly char[] WordSeparaters = {' ', '\t', '.', '(', ')', '{', '}', ',', '!'};
+        public char[] WordSeparaters { get; } = { ' ', '\t', '.', '(', ')', '{', '}', ',', '!' };
 
         public SideBySideDiffBuilder(IDiffer differ)
         {
             this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
+        }
+
+        public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators) : this(differ)
+        {
+            if (wordSeparators is null)
+            {
+                throw new ArgumentNullException(nameof(wordSeparators));
+            }
+            WordSeparaters = wordSeparators;
         }
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)

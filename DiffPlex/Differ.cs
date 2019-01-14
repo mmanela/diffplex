@@ -124,17 +124,51 @@ namespace DiffPlex
         {
             var list = new List<string>();
             int begin = 0;
+            bool processingDelim = false;
+            int delimBegin = 0;
             for (int i = 0; i < str.Length; i++)
             {
                 if (Array.IndexOf(delims, str[i]) != -1)
                 {
-                    list.Add(str.Substring(begin, (i - begin)));
-                    list.Add(str.Substring(i, 1));
+                    if (i >= str.Length - 1)
+                    {
+                        if (processingDelim)
+                        {
+                            list.Add(str.Substring(delimBegin, (i + 1 - delimBegin)));
+                        }
+                        else
+                        {
+                            list.Add(str.Substring(begin, 1));
+                        }
+                    }
+                    else
+                    {
+                        if (!processingDelim)
+                        {
+                            list.Add(str.Substring(begin, (i - begin)));
+                            processingDelim = true;
+                            delimBegin = i;
+                        }
+                    }
+                    
                     begin = i + 1;
                 }
-                else if (i >= str.Length - 1)
+                else
                 {
-                    list.Add(str.Substring(begin, (i + 1 - begin)));
+                    if (processingDelim)
+                    {
+                        if (i - delimBegin > 0)
+                        {
+                            list.Add(str.Substring(delimBegin, (i - delimBegin)));
+                        }
+
+                        processingDelim = false;
+                    }
+
+                    if (i >= str.Length - 1)
+                    {
+                        list.Add(str.Substring(begin, (i + 1 - begin)));
+                    }
                 }
             }
 

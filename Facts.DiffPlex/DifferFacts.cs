@@ -556,18 +556,44 @@ namespace Facts.DiffPlex
                 var res = differ.CreateWordDiffs(string.Format("z{0}a{0}{0}", ' '), string.Format("z{0}v{0}{0}", ';'), false, new[] { ' ', ';' });
 
                 Assert.NotNull(res);
-                Assert.Equal(2, res.DiffBlocks.Count);
+                Assert.Equal(1, res.DiffBlocks.Count);
 
                 Assert.Equal(1, res.DiffBlocks[0].DeleteStartA);
                 Assert.Equal(3, res.DiffBlocks[0].DeleteCountA);
                 Assert.Equal(1, res.DiffBlocks[0].InsertStartB);
                 Assert.Equal(3, res.DiffBlocks[0].InsertCountB);
+            }
 
+            [Fact]
+            public void Will_return_correct_diff_for_multiple_chained_separators()
+            {
+                var differ = new TestableDiffer();
 
-                Assert.Equal(5, res.DiffBlocks[1].DeleteStartA);
-                Assert.Equal(1, res.DiffBlocks[1].DeleteCountA);
-                Assert.Equal(5, res.DiffBlocks[1].InsertStartB);
-                Assert.Equal(1, res.DiffBlocks[1].InsertCountB);
+                var res = differ.CreateWordDiffs("z a       ", "z a", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+
+                Assert.Equal(3, res.DiffBlocks[0].DeleteStartA);
+                Assert.Equal(1, res.DiffBlocks[0].DeleteCountA);
+                Assert.Equal(3, res.DiffBlocks[0].InsertStartB);
+                Assert.Equal(0, res.DiffBlocks[0].InsertCountB);
+            }
+
+            [Fact]
+            public void Will_return_correct_diff_for_multiple_chained_separators_ending_with_char()
+            {
+                var differ = new TestableDiffer();
+
+                var res = differ.CreateWordDiffs("z a       b", "z ab", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+
+                Assert.Equal(2, res.DiffBlocks[0].DeleteStartA);
+                Assert.Equal(3, res.DiffBlocks[0].DeleteCountA);
+                Assert.Equal(2, res.DiffBlocks[0].InsertStartB);
+                Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
             }
         }
 

@@ -595,6 +595,58 @@ namespace Facts.DiffPlex
                 Assert.Equal(2, res.DiffBlocks[0].InsertStartB);
                 Assert.Equal(1, res.DiffBlocks[0].InsertCountB);
             }
+
+            [Fact]
+            public void Will_return_correct_diff_for_when_separator_in_the_end()
+            {
+                var differ = new TestableDiffer();
+
+                var res = differ.CreateWordDiffs("one line ", "second line ", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+                Assert.Equal(res.PiecesOld, new List<string>() { "one", " ", "line", " " });
+                Assert.Equal(res.PiecesNew, new List<string>() { "second", " ", "line", " " });
+            }
+
+            [Fact]
+            public void Will_return_correct_diff_for_when_multiple_separators_in_the_end()
+            {
+                var differ = new TestableDiffer();
+
+                var res = differ.CreateWordDiffs("one line  ", "second line  ", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+                Assert.Equal(res.PiecesOld, new List<string>() { "one", " ", "line", "  " });
+                Assert.Equal(res.PiecesNew, new List<string>() { "second", " ", "line", "  " });
+            }
+
+            [Fact]
+            public void Will_return_correct_diff_for_when_letter_in_the_end()
+            {
+                var differ = new TestableDiffer();
+
+                var res = differ.CreateWordDiffs("one lin e", "second lin e", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+                Assert.Equal(res.PiecesOld, new List<string>() { "one", " ", "lin", " ", "e" });
+                Assert.Equal(res.PiecesNew, new List<string>() { "second", " ", "lin", " ", "e" });
+            }
+
+            [Fact]
+            public void Will_return_correct_diff_for_when_multiple_letters_in_the_end()
+            {
+                var differ = new TestableDiffer();
+
+                var res = differ.CreateWordDiffs("one line", "second line", false, new[] { ' ' });
+
+                Assert.NotNull(res);
+                Assert.Equal(1, res.DiffBlocks.Count);
+                Assert.Equal(res.PiecesOld, new List<string>() { "one", " ", "line" });
+                Assert.Equal(res.PiecesNew, new List<string>() { "second", " ", "line" });
+            }
         }
 
         public class BuildModificationData

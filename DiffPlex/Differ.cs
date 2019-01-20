@@ -138,7 +138,8 @@ namespace DiffPlex
                         }
                         else
                         {
-                            list.Add(str.Substring(begin, 1));
+                            list.Add(str.Substring(begin, (i - begin)));
+                            list.Add(str.Substring(i, 1));
                         }
                     }
                     else

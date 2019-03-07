@@ -15,12 +15,15 @@ namespace DiffPlex.DiffBuilder
         }
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText)
+            => BuildDiffModel(oldText, newText, ignoreWhitespace: true);
+
+        public DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace)
         {
             if (oldText == null) throw new ArgumentNullException(nameof(oldText));
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace);
             BuildDiffPieces(diffResult, model.Lines);
             return model;
         }

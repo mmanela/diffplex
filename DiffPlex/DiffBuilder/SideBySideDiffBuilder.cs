@@ -28,24 +28,28 @@ namespace DiffPlex.DiffBuilder
         }
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
+            => BuildDiffModel(oldText, newText, ignoreWhitespace: true);
+
+        public SideBySideDiffModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace)
         {
             return BuildLineDiff(
                 oldText ?? throw new ArgumentNullException(nameof(oldText)),
-                newText ?? throw new ArgumentNullException(nameof(newText)));
+                newText ?? throw new ArgumentNullException(nameof(newText)),
+                ignoreWhitespace);
         }
 
-        private SideBySideDiffModel BuildLineDiff(string oldText, string newText)
+        private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhitespace)
         {
             var model = new SideBySideDiffModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace: true);
+            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
             return model;
         }
 
         private void BuildWordDiffPieces(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
         {
-            var diffResult = differ.CreateWordDiffs(oldText, newText, false, WordSeparaters);
-            BuildDiffPieces(diffResult, oldPieces, newPieces, null);
+            var diffResult = differ.CreateWordDiffs(oldText, newText, ignoreWhitespace: false, WordSeparaters);
+            BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null);
         }
 
         private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder)

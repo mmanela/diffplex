@@ -259,6 +259,85 @@ namespace Facts.DiffPlex
                 Assert.Equal(ChangeType.Unchanged, bidiff.Lines[10].Type);
                 Assert.Equal(8, bidiff.Lines[10].Position);
             }
+
+            [Fact]
+            public void Will_ignore_whitespace_by_default_1()
+            {
+                string textOld = "1\n 2\n3 \n 4 \n5";
+                string textNew = "1\n2\n3\n4\n5";
+                var builder = new InlineDiffBuilder(new Differ());
+                var model = builder.BuildDiffModel(textOld, textNew);
+                Assert.Equal(
+                    model.Lines,
+                    new DiffPiece[]
+                    {
+                        new DiffPiece("1", ChangeType.Unchanged, 1),
+                        new DiffPiece("2", ChangeType.Unchanged, 2),
+                        new DiffPiece("3", ChangeType.Unchanged, 3),
+                        new DiffPiece("4", ChangeType.Unchanged, 4),
+                        new DiffPiece("5", ChangeType.Unchanged, 5),
+                    });
+            }
+
+            [Fact]
+            public void Will_ignore_whitespace_by_default_2()
+            {
+                string textOld = "1\n2\n3\n4\n5";
+                string textNew = "1\n 2\n3 \n 4 \n5";
+                var builder = new InlineDiffBuilder(new Differ());
+                var model = builder.BuildDiffModel(textOld, textNew);
+                Assert.Equal(
+                    model.Lines,
+                    new DiffPiece[]
+                    {
+                        new DiffPiece("1", ChangeType.Unchanged, 1),
+                        new DiffPiece(" 2", ChangeType.Unchanged, 2),
+                        new DiffPiece("3 ", ChangeType.Unchanged, 3),
+                        new DiffPiece(" 4 ", ChangeType.Unchanged, 4),
+                        new DiffPiece("5", ChangeType.Unchanged, 5),
+                    });
+            }
+
+            [Fact]
+            public void Will_ignore_whitespace_by_default_3()
+            {
+                string textOld = "1\n 2\n3 \n 4 \n5";
+                string textNew = "1\n2\n3\n4\n5";
+                var builder = new InlineDiffBuilder(new Differ());
+                var model = builder.BuildDiffModel(textOld, textNew, ignoreWhitespace: true);
+                Assert.Equal(
+                    model.Lines,
+                    new DiffPiece[]
+                    {
+                        new DiffPiece("1", ChangeType.Unchanged, 1),
+                        new DiffPiece("2", ChangeType.Unchanged, 2),
+                        new DiffPiece("3", ChangeType.Unchanged, 3),
+                        new DiffPiece("4", ChangeType.Unchanged, 4),
+                        new DiffPiece("5", ChangeType.Unchanged, 5),
+                    });
+            }
+
+            [Fact]
+            public void Can_compare_whitespace()
+            {
+                string textOld = "1\n 2\n3 \n 4 \n5";
+                string textNew = "1\n2\n3\n4\n5";
+                var builder = new InlineDiffBuilder(new Differ());
+                var model = builder.BuildDiffModel(textOld, textNew, ignoreWhitespace: false);
+                Assert.Equal(
+                    model.Lines,
+                    new DiffPiece[]
+                    {
+                        new DiffPiece("1", ChangeType.Unchanged, 1),
+                        new DiffPiece(" 2", ChangeType.Deleted),
+                        new DiffPiece("3 ", ChangeType.Deleted),
+                        new DiffPiece(" 4 ", ChangeType.Deleted),
+                        new DiffPiece("2", ChangeType.Inserted, 2),
+                        new DiffPiece("3", ChangeType.Inserted, 3),
+                        new DiffPiece("4", ChangeType.Inserted, 4),
+                        new DiffPiece("5", ChangeType.Unchanged, 5),
+                    });
+            }
         }
     }
 }

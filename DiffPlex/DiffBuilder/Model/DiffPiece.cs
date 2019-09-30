@@ -12,7 +12,7 @@ namespace DiffPlex.DiffBuilder.Model
         Modified
     }
 
-    public class DiffPiece : IEquatable<DiffPiece>
+    public class DiffPiece : IEquatable<DiffPiece?>
     {
         public ChangeType Type { get; set; }
         public int? Position { get; set; }
@@ -31,7 +31,7 @@ namespace DiffPlex.DiffBuilder.Model
         {
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as DiffPiece);
         }

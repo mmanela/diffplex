@@ -846,8 +846,8 @@ namespace Facts.DiffPlex
             public void Will_throw_if_arrays_are_null()
             {
                 var differ = new TestableDiffer();
-                int[] a = null;
-                int[] b = null;
+                int[]? a = null;
+                int[]? b = null;
 
                 var ex = Record.Exception(() => differ.TestCalculateEditLength(a!, 0, 0, b!, 0, 0)) as ArgumentNullException;
 

@@ -78,7 +78,7 @@ namespace Facts.DiffPlex
             {
                 string text = "a\nb\nc\nd\n\n";
                 string[] textLines = {"a", "b", "c", "d", ""};
-                char[] chars = null;
+                char[]? chars = null;
                 var differ = new Mock<IDiffer>();
                 differ.Setup(x => x.CreateLineDiffs(text, text, true))
                     .Returns(new DiffResult(textLines, textLines, new List<DiffBlock> {new DiffBlock(1, 1, 1, 1)}));
@@ -89,7 +89,7 @@ namespace Facts.DiffPlex
 
                 builder.BuildDiffModel(text, text);
 
-                Assert.Equal(builder.WordSeparaters.Length, chars.Length);
+                Assert.Equal(builder.WordSeparaters.Length, chars?.Length);
                 foreach (var c in builder.WordSeparaters)
                 {
                     Assert.Contains(c, chars);

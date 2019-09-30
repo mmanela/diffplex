@@ -16,7 +16,7 @@ namespace Facts.DiffPlex
             [Fact]
             public void Will_throw_is_IDiffer_is_null()
             {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(null));
+                var ex = Record.Exception(() => new SideBySideDiffBuilder(null!));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException) ex;
@@ -26,7 +26,7 @@ namespace Facts.DiffPlex
             [Fact]
             public void Will_throw_is_Separators_is_null()
             {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), null));
+                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), null!));
 
                 Assert.IsType<ArgumentException>(ex);
                 var an = (ArgumentException)ex;
@@ -52,7 +52,7 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel(null, "asd"));
+                var ex = Record.Exception(() => builder.BuildDiffModel(null!, "asd"));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException) ex;
@@ -65,7 +65,7 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel("asa", null));
+                var ex = Record.Exception(() => builder.BuildDiffModel("asa", null!));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException) ex;

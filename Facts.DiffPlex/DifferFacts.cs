@@ -17,7 +17,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateCustomDiffs(null, "someString", false, null)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateCustomDiffs(null!, "someString", false, null!)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("oldText", ex.ParamName);
@@ -28,7 +28,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", null, false, null)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", null!, false, null!)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("newText", ex.ParamName);
@@ -39,7 +39,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", "otherString", false, null)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", "otherString", false, null!)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("chunker", ex.ParamName);
@@ -53,7 +53,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateLineDiffs(null, "someString", false)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateLineDiffs(null!, "someString", false)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("oldText", ex.ParamName);
@@ -64,7 +64,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateLineDiffs("someString", null, false)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateLineDiffs("someString", null!, false)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("newText", ex.ParamName);
@@ -241,7 +241,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateCharacterDiffs(null, "someString", false)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateCharacterDiffs(null!, "someString", false)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("oldText", ex.ParamName);
@@ -252,7 +252,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateCharacterDiffs("someString", null, false)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateCharacterDiffs("someString", null!, false)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("newText", ex.ParamName);
@@ -407,7 +407,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateWordDiffs(null, "someString", false, new[] { ' ' })) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateWordDiffs(null!, "someString", false, new[] { ' ' })) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("oldText", ex.ParamName);
@@ -418,7 +418,7 @@ namespace Facts.DiffPlex
             {
                 var differ = new TestableDiffer();
 
-                var ex = Record.Exception(() => differ.CreateWordDiffs("someString", null, false, new[] { ' ' })) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.CreateWordDiffs("someString", null!, false, new[] { ' ' })) as ArgumentNullException;
 
                 Assert.NotNull(ex);
                 Assert.Equal("newText", ex.ParamName);
@@ -849,7 +849,7 @@ namespace Facts.DiffPlex
                 int[] a = null;
                 int[] b = null;
 
-                var ex = Record.Exception(() => differ.TestCalculateEditLength(a, 0, 0, b, 0, 0)) as ArgumentNullException;
+                var ex = Record.Exception(() => differ.TestCalculateEditLength(a!, 0, 0, b!, 0, 0)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
             }

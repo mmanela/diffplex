@@ -16,7 +16,7 @@ namespace Facts.DiffPlex
             [Fact]
             public void Will_throw_is_IDiffer_is_null()
             {
-                var ex = Record.Exception(() => new InlineDiffBuilder(null));
+                var ex = Record.Exception(() => new InlineDiffBuilder(null!));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException)ex;
@@ -32,7 +32,7 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new InlineDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel(null, "asd"));
+                var ex = Record.Exception(() => builder.BuildDiffModel(null!, "asd"));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException)ex;
@@ -45,7 +45,7 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new InlineDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel("asa", null));
+                var ex = Record.Exception(() => builder.BuildDiffModel("asa", null!));
 
                 Assert.IsType<ArgumentNullException>(ex);
                 var an = (ArgumentNullException)ex;

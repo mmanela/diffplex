@@ -16,10 +16,10 @@ namespace DiffPlex.DiffBuilder.Model
     {
         public ChangeType Type { get; set; }
         public int? Position { get; set; }
-        public string Text { get; set; }
+        public string? Text { get; set; }
         public List<DiffPiece> SubPieces { get; set; } = new List<DiffPiece>();
 
-        public DiffPiece(string text, ChangeType type, int? position = null)
+        public DiffPiece(string? text, ChangeType type, int? position = null)
         {
             Text = text;
             Position = position;
@@ -27,7 +27,7 @@ namespace DiffPlex.DiffBuilder.Model
         }
 
         public DiffPiece()
-            : this(null, ChangeType.Imaginary)
+            : this(text: null, ChangeType.Imaginary)
         {
         }
 
@@ -36,7 +36,7 @@ namespace DiffPlex.DiffBuilder.Model
             return Equals(obj as DiffPiece);
         }
 
-        public bool Equals(DiffPiece other)
+        public bool Equals(DiffPiece? other)
         {
             return other != null
                 && Type == other.Type
@@ -50,7 +50,7 @@ namespace DiffPlex.DiffBuilder.Model
             var hashCode = 1688038063;
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(Position);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Text);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string?>.Default.GetHashCode(Text);
             hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(SubPieces?.Count);
             return hashCode;
         }

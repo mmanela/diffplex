@@ -52,7 +52,7 @@ namespace DiffPlex.DiffBuilder
             BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null);
         }
 
-        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder)
+        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder? subPieceBuilder)
         {
             int aPos = 0;
             int bPos = 0;

@@ -16,31 +16,22 @@ namespace Facts.DiffPlex
             [Fact]
             public void Will_throw_is_IDiffer_is_null()
             {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(null!));
-
-                Assert.IsType<ArgumentNullException>(ex);
-                var an = (ArgumentNullException) ex;
-                Assert.Equal("differ", an.ParamName);
+                var ex = Assert.Throws<ArgumentNullException>(() => new SideBySideDiffBuilder(null!));
+                Assert.Equal("differ", ex.ParamName);
             }
 
             [Fact]
             public void Will_throw_is_Separators_is_null()
             {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), null!));
-
-                Assert.IsType<ArgumentException>(ex);
-                var an = (ArgumentException)ex;
-                Assert.Equal("wordSeparators", an.ParamName);
+                var ex = Assert.Throws<ArgumentException>(() => new SideBySideDiffBuilder(new Differ(), null!));
+                Assert.Equal("wordSeparators", ex.ParamName);
             }
 
             [Fact]
             public void Will_throw_is_Separators_is_empty()
             {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), new char[] { }));
-
-                Assert.IsType<ArgumentException>(ex);
-                var an = (ArgumentException)ex;
-                Assert.Equal("wordSeparators", an.ParamName);
+                var ex = Assert.Throws<ArgumentException>(() => new SideBySideDiffBuilder(new Differ(), new char[] { }));
+                Assert.Equal("wordSeparators", ex.ParamName);
             }
         }
 
@@ -52,11 +43,8 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel(null!, "asd"));
-
-                Assert.IsType<ArgumentNullException>(ex);
-                var an = (ArgumentNullException) ex;
-                Assert.Equal("oldText", an.ParamName);
+                var ex = Assert.Throws<ArgumentNullException>(() => builder.BuildDiffModel(null!, "asd"));
+                Assert.Equal("oldText", ex.ParamName);
             }
 
             [Fact]
@@ -65,11 +53,8 @@ namespace Facts.DiffPlex
                 var differ = new Mock<IDiffer>();
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
-                var ex = Record.Exception(() => builder.BuildDiffModel("asa", null!));
-
-                Assert.IsType<ArgumentNullException>(ex);
-                var an = (ArgumentNullException) ex;
-                Assert.Equal("newText", an.ParamName);
+                var ex = Assert.Throws<ArgumentNullException>(() => builder.BuildDiffModel("asa", null!));
+                Assert.Equal("newText", ex.ParamName);
             }
 
 

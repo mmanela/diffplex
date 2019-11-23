@@ -7,53 +7,50 @@ namespace DiffPlex
 {
     public class Differ : IDiffer
     {
-        private readonly IChunker lineChunker = new LineChunker();
-        private readonly IChunker characterChunker = new CharacterChunker();
 
         private static readonly string[] emptyStringArray = new string[0];
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
-            return CreateLineDiffs(oldText, newText, ignoreWhitespace, false);
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());
         }
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, ignoreCase, lineChunker);
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
-            return CreateCharacterDiffs(oldText, newText, ignoreWhitespace, false);
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new CharacterChunker());
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, ignoreCase, characterChunker );
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new CharacterChunker());
         }
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)
         {
-            return CreateWordDiffs(oldText, newText, ignoreWhitespace, false, separators);
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new DelimiterChunker(separators));
         }
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
         {
-            var delimiterChunker = new DelimiterChunker(separators);
-            return CreateCustomDiffs(oldText, newText, ignoreWhitespace, ignoreCase, delimiterChunker);
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new DelimiterChunker(separators));
         }
 
         public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker)
         {
-            return CreateCustomDiffs(oldText, newText, ignoreWhiteSpace, false, chunker);
+            return CreateDiffs(oldText, newText, ignoreWhiteSpace, false, new CustomFunctionChunker(chunker));
         }
 
         public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
         {
-            return CreateCustomDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, new CustomFunctionChunker(chunker));
+            return CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, new CustomFunctionChunker(chunker));
         }
 
-        public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+        public DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
         {
             if (oldText == null) throw new ArgumentNullException(nameof(oldText));
             if (newText == null) throw new ArgumentNullException(nameof(newText));
@@ -102,7 +99,7 @@ namespace DiffPlex
 
             return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
         }
-       
+
         /// <summary>
         /// Finds the middle snake and the minimum length of the edit script comparing string A and B
         /// </summary>

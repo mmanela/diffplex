@@ -9,7 +9,11 @@ namespace DiffPlex.Chunkers
 
         public DelimiterChunker(char[] delimiters)
         {
-            if (delimiters == null) throw new ArgumentNullException(nameof(delimiters));
+            if (delimiters is null || delimiters.Length == 0)
+            {
+                throw new ArgumentException($"{nameof(delimiters)} cannot be null or empty.", nameof(delimiters));
+            }
+
             this.delimiters = delimiters;
         }
 

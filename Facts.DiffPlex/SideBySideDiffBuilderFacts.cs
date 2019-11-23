@@ -22,26 +22,6 @@ namespace Facts.DiffPlex
                 var an = (ArgumentNullException) ex;
                 Assert.Equal("differ", an.ParamName);
             }
-
-            [Fact]
-            public void Will_throw_is_Separators_is_null()
-            {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), null));
-
-                Assert.IsType<ArgumentException>(ex);
-                var an = (ArgumentException)ex;
-                Assert.Equal("wordSeparators", an.ParamName);
-            }
-
-            [Fact]
-            public void Will_throw_is_Separators_is_empty()
-            {
-                var ex = Record.Exception(() => new SideBySideDiffBuilder(new Differ(), new char[] { }));
-
-                Assert.IsType<ArgumentException>(ex);
-                var an = (ArgumentException)ex;
-                Assert.Equal("wordSeparators", an.ParamName);
-            }
         }
 
         public class BuildDiffModel
@@ -72,56 +52,15 @@ namespace Facts.DiffPlex
                 Assert.Equal("newText", an.ParamName);
             }
 
-
-            [Fact]
-            public void Will_pass_correct_word_separators_to_create_word_diff()
-            {
-                string text = "a\nb\nc\nd\n\n";
-                string[] textLines = {"a", "b", "c", "d", ""};
-                char[] chars = null;
-                var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(text, text, true))
-                    .Returns(new DiffResult(textLines, textLines, new List<DiffBlock> {new DiffBlock(1, 1, 1, 1)}));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
-                    .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()))
-                    .Callback<string, string, bool, char[]>((a, b, c, d) => chars = d);
-                var builder = new SideBySideDiffBuilder(differ.Object);
-
-                builder.BuildDiffModel(text, text);
-
-                Assert.Equal(builder.WordSeparaters.Length, chars.Length);
-                foreach (var c in builder.WordSeparaters)
-                {
-                    Assert.Contains(c, chars);
-                }
-            }
-
-            [Fact]
-            public void Will_pass_correct_word_separators_to_constructor_to_create_word_diff()
-            {
-                string text = "a\nb\nc\nd\n\n";
-                string[] textLines = { "a", "b", "c", "d", "" };
-                char[] chars = { ' ', '.' };
-                var builder = new SideBySideDiffBuilder(new Differ(), chars);
-
-                builder.BuildDiffModel(text, text);
-
-                Assert.Equal(builder.WordSeparaters.Length, chars.Length);
-                foreach (var c in builder.WordSeparaters)
-                {
-                    Assert.Contains(c, chars);
-                }
-            }
-
             [Fact]
             public void Will_build_diffModel_for_duplicate_strings()
             {
                 string text = "a\nb\nc\nd\n\n";
                 string[] textLines = {"a", "b", "c", "d", ""};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(text, text, true))
+                differ.Setup(x => x.CreateDiffs(text, text, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLines, textLines, new List<DiffBlock>()));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
+                differ.Setup(x => x.CreateDiffs(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
@@ -149,9 +88,9 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = {};
                 string[] textLinesNew = {"z", "y"};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 0, 0, 2)}));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
+                differ.Setup(x => x.CreateDiffs(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
@@ -181,7 +120,7 @@ namespace Facts.DiffPlex
                 string[] textLinesNew = {};
                 string[] textLinesOld = {"z", "y"};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 2, 0, 0)}));
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
@@ -211,9 +150,9 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = {"a", "b", "c", "d", ""};
                 string[] textLinesNew = {"z", "y", "x", "w"};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 5, 0, 4)}));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
+                differ.Setup(x => x.CreateDiffs(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
@@ -270,9 +209,9 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = {"1", "2", "a", "b", "c", "d", ""};
                 string[] textLinesNew = {"1", "2", "z", "y", "x", "w"};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(2, 5, 2, 4)}));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
+                differ.Setup(x => x.CreateDiffs(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(new string[0], new string[0], new List<DiffBlock>()));
                 var builder = new SideBySideDiffBuilder(differ.Object);
 
@@ -341,9 +280,9 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = {"m is h"};
                 string[] textLinesNew = {"m ai is n h"};
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> {new DiffBlock(0, 1, 0, 1)}));
-                differ.Setup(x => x.CreateWordDiffs(It.IsAny<string>(), It.IsAny<string>(), false, It.IsAny<char[]>()))
+                differ.Setup(x => x.CreateDiffs(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(
                                  new[] {"m ", "is ", "h"},
                                  new[] {"m ", "ai ", "is ", "n ", "h"},

@@ -12,27 +12,6 @@ namespace Facts.DiffPlex
     {
         public class CreateCustomDiffs
         {
-            [Fact]
-            public void Will_throw_if_oldText_is_null()
-            {
-                var differ = new TestableDiffer();
-
-                var ex = Record.Exception(() => differ.CreateCustomDiffs(null, "someString", false, null)) as ArgumentNullException;
-
-                Assert.NotNull(ex);
-                Assert.Equal("oldText", ex.ParamName);
-            }
-
-            [Fact]
-            public void Will_throw_if_newText_is_null()
-            {
-                var differ = new TestableDiffer();
-
-                var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", null, false, null)) as ArgumentNullException;
-
-                Assert.NotNull(ex);
-                Assert.Equal("newText", ex.ParamName);
-            }
 
             [Fact]
             public void Will_throw_if_chunker_is_null()

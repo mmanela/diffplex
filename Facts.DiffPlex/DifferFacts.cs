@@ -42,7 +42,7 @@ namespace Facts.DiffPlex
                 var ex = Record.Exception(() => differ.CreateCustomDiffs("someString", "otherString", false, null)) as ArgumentNullException;
 
                 Assert.NotNull(ex);
-                Assert.Equal("chunker", ex.ParamName);
+                Assert.Equal("customChunkerFunc", ex.ParamName);
             }
         }
 

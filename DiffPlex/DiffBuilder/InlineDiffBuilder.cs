@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
 
@@ -19,11 +20,18 @@ namespace DiffPlex.DiffBuilder
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace)
         {
+            var chunker = new LineChunker();
+            return BuildDiffModel(oldText, newText, ignoreWhitespace, false, chunker);
+        }
+
+        public DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, IChunker chunker)
+        {
             if (oldText == null) throw new ArgumentNullException(nameof(oldText));
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace);
+
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase: ignoreCase, chunker);
             BuildDiffPieces(diffResult, model.Lines);
             return model;
         }

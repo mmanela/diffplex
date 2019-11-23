@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
 
@@ -8,23 +9,26 @@ namespace DiffPlex.DiffBuilder
     public class SideBySideDiffBuilder : ISideBySideDiffBuilder
     {
         private readonly IDiffer differ;
+        private readonly IChunker lineChunker;
+        private readonly IChunker wordChunker;
 
         private delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
-
-        public char[] WordSeparaters { get; } = { ' ', '\t', '.', '(', ')', '{', '}', ',', '!' };
-
-        public SideBySideDiffBuilder(IDiffer differ)
+        
+        public SideBySideDiffBuilder(IDiffer differ, IChunker lineChunker, IChunker wordChunker)
         {
             this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
+            this.lineChunker = lineChunker ?? throw new ArgumentNullException(nameof(lineChunker));
+            this.wordChunker = wordChunker ?? throw new ArgumentNullException(nameof(wordChunker));
         }
 
-        public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators) : this(differ)
+        public SideBySideDiffBuilder(IDiffer differ) : 
+            this(differ, new LineChunker(), new WordChunker())
         {
-            if (wordSeparators is null || wordSeparators.Length == 0)
-            {
-                throw new ArgumentException("wordSeparators cannot be null or empty.", nameof(wordSeparators));
-            }
-            WordSeparaters = wordSeparators;
+        }
+
+        public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators) 
+            : this(differ, new LineChunker(), new DelimiterChunker(wordSeparators))
+        {
         }
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
@@ -41,14 +45,14 @@ namespace DiffPlex.DiffBuilder
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhitespace)
         {
             var model = new SideBySideDiffModel();
-            var diffResult = differ.CreateLineDiffs(oldText, newText, ignoreWhitespace);
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, false, lineChunker);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
             return model;
         }
 
         private void BuildWordDiffPieces(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
         {
-            var diffResult = differ.CreateWordDiffs(oldText, newText, ignoreWhitespace: false, WordSeparaters);
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace: false, false, wordChunker);
             BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null);
         }
 

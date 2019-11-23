@@ -58,7 +58,7 @@ namespace Facts.DiffPlex
                 string text = "a\nb\nc\nd\n\n";
                 string[] textLines = { "a", "b", "c", "d", "" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(text, text, true))
+                differ.Setup(x => x.CreateDiffs(text, text, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLines, textLines, new List<DiffBlock>() { new DiffBlock(0, 0, 5, 0) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 
@@ -82,7 +82,7 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = { };
                 string[] textLinesNew = { "z", "y" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> { new DiffBlock(0, 0, 0, 2) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 
@@ -107,7 +107,7 @@ namespace Facts.DiffPlex
                 string[] textLinesNew = { };
                 string[] textLinesOld = { "z", "y" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true,false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> { new DiffBlock(0, 2, 0, 0) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 
@@ -132,7 +132,7 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = { "a", "b", "c", "d", "" };
                 string[] textLinesNew = { "z", "y", "x", "w" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> { new DiffBlock(0, 5, 0, 4) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 
@@ -170,7 +170,7 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = { "1", "2", "a", "b", "c", "d", "e", "f" };
                 string[] textLinesNew = { "1", "2", "z", "y", "x", "w", "e", "f" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> { new DiffBlock(2, 4, 2, 4) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 
@@ -216,7 +216,7 @@ namespace Facts.DiffPlex
                 string[] textLinesOld = { "1", "2", "a", "b", "c", "d", "e", "f" };
                 string[] textLinesNew = { "1", "2", "z", "y", "c", "w", "e", "f" };
                 var differ = new Mock<IDiffer>();
-                differ.Setup(x => x.CreateLineDiffs(textOld, textNew, true))
+                differ.Setup(x => x.CreateDiffs(textOld, textNew, true, false, It.IsNotNull<IChunker>()))
                     .Returns(new DiffResult(textLinesOld, textLinesNew, new List<DiffBlock> { new DiffBlock(2, 2, 2, 2), new DiffBlock(5, 1, 5, 1) }));
                 var builder = new InlineDiffBuilder(differ.Object);
 

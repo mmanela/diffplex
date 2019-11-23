@@ -98,8 +98,40 @@ public interface IDiffer
     /// <param name="chunker">A function that will break the text into chunks.</param>
     /// <returns>A DiffResult object which details the differences</returns>
     DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker);
+
+            /// <summary>
+        /// Create a diff by comparing text line by line
+        /// </summary>
+        /// <param name="oldText">The old text.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">if set to <c>true</c> will ignore white space when determining if lines are the same.</param>
+        /// <param name="ignoreCase">Determine if the text comparision is case sensitive or not</param>
+        /// <param name="chunker">Component responsible for tokenizing the compared texts</param>
+        /// <returns>A DiffResult object which details the differences</returns>
+        DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
 }
 ```
+
+## IChunker Interface
+
+```csharp
+public interface IChunker
+{
+    /// <summary>
+    /// Dive text into sub-parts
+    /// </summary>
+    string[] Chunk(string text);
+}
+```
+
+Currently provided implementations:
+- `CharacterChunker`
+- `CustomFunctionChunker`
+- `DelimiterChunker`
+- `LineChunker`
+- `LineEndingsPreservingChunker`
+- `WordChunker`
+
 
 ## ISidebySideDiffer Interface
 

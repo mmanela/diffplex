@@ -1,9 +1,12 @@
 ﻿namespace DiffPlex
 {
+    /// <summary>
+    /// Responsible for how to turn the document into pieces
+    /// </summary>
     public interface IChunker
     {
         /// <summary>
-        /// Dive text into sub-parts
+        /// Divide text into sub-parts
         /// </summary>
         string[] Chunk(string text);
     }

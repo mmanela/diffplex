@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Authors>Kingcean Tuan</Authors>
+    <Company />
+    <RootNamespace>DiffPlex.Wpf</RootNamespace>
+    <AssemblyName>DiffPlex.Wpf</AssemblyName>
+    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
+    <PackageTags>diff</PackageTags>
+    <SignAssembly>True</SignAssembly>
+    <Description>DiffPlex.Wpf is a WPF controls library that allows you to programatically create text diffs visual control in your application.</Description>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+  </ItemGroup>
+
+</Project>

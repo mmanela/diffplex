@@ -132,6 +132,8 @@ namespace DiffPlex.Wpf.Controls
             InitializeComponent();
 
             LeftContentPanel.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            LeftContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
+            RightContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(ForegroundProperty, new Binding("SplitterForeground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BackgroundProperty, new Binding("SplitterBackground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
@@ -352,6 +354,8 @@ namespace DiffPlex.Wpf.Controls
                     _ => " "
                 }, line.Text, changeType.ToString(), this);
             }
+
+            panel.AdjustScrollView();
         }
 
         //private void InsertLines(Panel panel, List<DiffPiece> lines, bool isOld = false)

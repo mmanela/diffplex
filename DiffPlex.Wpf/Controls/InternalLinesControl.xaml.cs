@@ -14,10 +14,12 @@ using System.Windows.Shapes;
 namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
-    /// Interaction logic for SideBySideDiffControl.xaml
+    /// Interaction logic for InternalLinesControl.xaml
     /// </summary>
     internal partial class InternalLinesControl : UserControl
     {
+        private Dictionary<string, Binding> bindings = new Dictionary<string, Binding>();
+
         public InternalLinesControl()
         {
             InitializeComponent();
@@ -66,8 +68,8 @@ namespace DiffPlex.Wpf.Controls
                 Text = number.HasValue ? number.ToString() : string.Empty,
                 TextAlignment = TextAlignment.Right
             };
-            index.SetBinding(TextBlock.ForegroundProperty, new Binding("LineNumberForeground") { Source = source, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
-            index.SetBinding(TextBlock.BackgroundProperty, new Binding(changeType + "Background") { Source = source, Mode = BindingMode.OneWay });
+            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
+            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
             ApplyTextBlockProperties(index, source);
             NumberPanel.Children.Add(index);
 
@@ -76,8 +78,8 @@ namespace DiffPlex.Wpf.Controls
                 Text = operation,
                 TextAlignment = TextAlignment.Center
             };
-            op.SetBinding(TextBlock.ForegroundProperty, new Binding("ChangeTypeForeground") { Source = source, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
-            op.SetBinding(TextBlock.BackgroundProperty, new Binding(changeType + "Background") { Source = source, Mode = BindingMode.OneWay });
+            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
+            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
             ApplyTextBlockProperties(op, source);
             OperationPanel.Children.Add(op);
 
@@ -85,11 +87,23 @@ namespace DiffPlex.Wpf.Controls
             {
                 Text = value
             };
-            text.SetBinding(TextBlock.ForegroundProperty, new Binding(changeType + "Foreground") { Source = source, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
-            text.SetBinding(TextBlock.BackgroundProperty, new Binding(changeType + "Background") { Source = source, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
+            text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
             ApplyTextBlockProperties(text, source);
             ValuePanel.Children.Add(text);
             return text;
+        }
+
+        private Binding GetBindings(string key, UIElement source)
+        {
+            if (bindings.TryGetValue(key, out var r) && r.Source == source) return r;
+            return bindings[key] = new Binding(key) { Source = source, Mode = BindingMode.OneWay };
+        }
+
+        private Binding GetBindings(string key, UIElement source, object defaultValue)
+        {
+            if (bindings.TryGetValue(key, out var r) && r.Source == source) return r;
+            return bindings[key] = new Binding(key) { Source = source, Mode = BindingMode.OneWay, TargetNullValue = defaultValue };
         }
 
         public void ScrollToVerticalOffset(double offset)
@@ -97,26 +111,38 @@ namespace DiffPlex.Wpf.Controls
             ValueScrollViewer.ScrollToVerticalOffset(offset);
         }
 
+        internal void AdjustScrollView()
+        {
+            var isV = ValueScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible;
+            var hasV = NumberPanel.Margin.Bottom > 10;
+            if (isV)
+            {
+                if (!hasV) NumberPanel.Margin = OperationPanel.Margin = new Thickness(0, 0, 0, 20);
+            }
+            else
+            {
+                if (hasV) NumberPanel.Margin = OperationPanel.Margin = new Thickness(0);
+            }
+        }
+
         private void ApplyTextBlockProperties(TextBlock text, UIElement source)
         {
-            text.SetBinding(TextBlock.FontSizeProperty, new Binding("FontSize") { Source = source, Mode = BindingMode.OneWay });
-            text.SetBinding(TextBlock.FontFamilyProperty, new Binding("FontFamily") { Source = source, Mode = BindingMode.OneWay, TargetNullValue = "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Segoe UI Emoji, Segoe UI Symbol" });
-            text.SetBinding(TextBlock.FontWeightProperty, new Binding("FontWeight") { Source = source, Mode = BindingMode.OneWay });
-            text.SetBinding(TextBlock.FontStretchProperty, new Binding("FontStretch") { Source = source, Mode = BindingMode.OneWay });
-            text.SetBinding(TextBlock.FontStyleProperty, new Binding("FontStyle") { Source = source, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.FontSizeProperty, GetBindings("FontSize", source));
+            text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Segoe UI Emoji, Segoe UI Symbol" ));
+            text.SetBinding(TextBlock.FontWeightProperty, GetBindings("FontWeight", source));
+            text.SetBinding(TextBlock.FontStretchProperty, GetBindings("FontStretch", source));
+            text.SetBinding(TextBlock.FontStyleProperty, GetBindings("FontStyle", source));
         }
 
         private void NumberScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var offset = NumberScrollViewer.VerticalOffset;
-            ScrollVertical(OperationScrollViewer, offset);
             ScrollVertical(ValueScrollViewer, offset);
         }
 
         private void OperationScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var offset = OperationScrollViewer.VerticalOffset;
-            ScrollVertical(NumberScrollViewer, offset);
             ScrollVertical(ValueScrollViewer, offset);
         }
 
@@ -131,6 +157,11 @@ namespace DiffPlex.Wpf.Controls
         {
             if (Math.Abs(scrollViewer.VerticalOffset - offset) > 1)
                 scrollViewer.ScrollToVerticalOffset(offset);
+        }
+
+        private void ValueScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AdjustScrollView();
         }
     }
 }

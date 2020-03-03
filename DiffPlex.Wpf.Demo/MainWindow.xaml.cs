@@ -59,7 +59,6 @@ namespace DiffPlex.Wpf.Demo
             }
 
             SideBySideDiff.DiffModel = sideBySide;
-            //SideBySideDiff.SetDiffModel(new Differ(), TestData.DuplicateText(TestData.OldText, 20), TestData.DuplicateText(TestData.NewText, 20));
         }
     }
 }

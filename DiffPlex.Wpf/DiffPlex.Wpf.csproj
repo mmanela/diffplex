@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>1.0.0</Version>
     <Authors>Kingcean Tuan</Authors>
     <Company />
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
@@ -19,11 +19,16 @@
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>diffplex_icon.png</PackageIcon>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
+    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
+  </ItemGroup>
 </Project>

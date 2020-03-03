@@ -31,6 +31,10 @@ namespace DiffPlex.Wpf.Demo
         {
             InitializeComponent();
 
+            var now = DateTime.Now;
+            var isDark = now.Hour < 6 || now.Hour >= 18;
+            Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(240, 240, 240));
+            SideBySideDiff.Foreground = InlineDiff.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
             SideBySideDiff.SetDiffModel(new Differ(), TestData.OldText, TestData.NewText);
         }
 

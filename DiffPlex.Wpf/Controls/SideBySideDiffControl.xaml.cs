@@ -92,11 +92,6 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty ImaginaryForegroundProperty = RegisterDependencyProperty<Brush>("ImaginaryForeground");
-
-        /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
         public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground");
 
         /// <summary>
@@ -232,15 +227,6 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the foreground brush of the line imaginary.
-        /// </summary>
-        public Brush ImaginaryForeground
-        {
-            get => (Brush)GetValue(ImaginaryForegroundProperty);
-            set => SetValue(ImaginaryForegroundProperty, value);
-        }
-
-        /// <summary>
         /// Gets or sets the background brush of the line imaginary.
         /// </summary>
         public Brush ImaginaryBackground
@@ -297,14 +283,25 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Sets a new diff model.
         /// </summary>
+        /// <param name="oldText">The old text string to compare.</param>
+        /// <param name="newText">The new text string.</param>
+        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(string oldText, string newText, bool ignoreWhitespace = true)
+        {
+            var builder = new SideBySideDiffBuilder(new Differ());
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
+        }
+
+        /// <summary>
+        /// Sets a new diff model.
+        /// </summary>
         /// <param name="differ">The differ instance.</param>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
         public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhitespace = true)
         {
-            if (differ == null) throw new ArgumentNullException(nameof(differ), "differ should not be null.");
-            var builder = new SideBySideDiffBuilder(differ);
+            var builder = new SideBySideDiffBuilder(differ ?? new Differ());
             DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
         }
 
@@ -346,61 +343,32 @@ namespace DiffPlex.Wpf.Controls
                 }
 
                 var changeType = line.Type;
-                if (changeType == ChangeType.Modified) changeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
+                var text = line.Text;
+                switch (line.Type)
+                {
+                    case ChangeType.Modified:
+                        changeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
+                        break;
+                    case ChangeType.Inserted:
+                    case ChangeType.Deleted:
+                    case ChangeType.Unchanged:
+                        break;
+                    default:
+                        changeType = ChangeType.Imaginary;
+                        text = string.Empty;
+                        break;
+                }
+
                 panel.Add(line.Position, changeType switch
                 {
                     ChangeType.Inserted => "+",
                     ChangeType.Deleted => "-",
                     _ => " "
-                }, line.Text, changeType.ToString(), this);
+                }, text, changeType.ToString(), this);
             }
 
             panel.AdjustScrollView();
         }
-
-        //private void InsertLines(Panel panel, List<DiffPiece> lines, bool isOld = false)
-        //{
-        //    if (lines == null || panel == null) return;
-        //    foreach (var line in lines)
-        //    {
-        //        var stack = new StackPanel { Orientation = Orientation.Horizontal };
-        //        panel.Children.Add(stack);
-        //        var lineIndex = CreateTextBlock(null, "LineNumber");
-        //        lineIndex.SetBinding(WidthProperty, new Binding("LineIndexWidth") { Source = this, Mode = BindingMode.OneWay });
-        //        stack.Children.Add(lineIndex);
-        //        if (line == null)
-        //        {
-        //            panel.Children.Add(new TextBlock());
-        //            continue;
-        //        }
-
-        //        if (line.Position.HasValue) lineIndex.Text = line.Position.Value.ToString();
-        //        var changeType = line.Type;
-        //        if (changeType == ChangeType.Modified) changeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
-        //        lineIndex.Text += changeType switch
-        //        {
-        //            ChangeType.Inserted => '+',
-        //            ChangeType.Deleted => '-',
-        //            _ => ' ',
-        //        };
-        //        stack.SetBinding(TextBlock.BackgroundProperty, new Binding(changeType + "Background") { Source = this, Mode = BindingMode.OneWay });
-        //        if (line.SubPieces == null || line.SubPieces.Count == 0)
-        //        {
-        //            var text = CreateTextBlock(line.Text, changeType.ToString());
-        //            stack.Children.Add(text);
-        //            continue;
-        //        }
-
-        //        foreach (var piece in line.SubPieces)
-        //        {
-        //            if (piece == null) continue;
-        //            var subChangeType = piece.Type;
-        //            if (subChangeType == ChangeType.Modified) subChangeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
-        //            var text = CreateTextBlock(piece.Text, subChangeType.ToString());
-        //            stack.Children.Add(text);
-        //        }
-        //    }
-        //}
 
         private void LeftContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {

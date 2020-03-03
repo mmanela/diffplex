@@ -114,14 +114,14 @@ namespace DiffPlex.Wpf.Controls
         internal void AdjustScrollView()
         {
             var isV = ValueScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible;
-            var hasV = NumberPanel.Margin.Bottom > 10;
+            var hasV = ValuePanel.Margin.Bottom > 10;
             if (isV)
             {
-                if (!hasV) NumberPanel.Margin = OperationPanel.Margin = new Thickness(0, 0, 0, 20);
+                if (!hasV) ValuePanel.Margin = NumberPanel.Margin = OperationPanel.Margin = new Thickness(0, 0, 0, 20);
             }
             else
             {
-                if (hasV) NumberPanel.Margin = OperationPanel.Margin = new Thickness(0);
+                if (hasV) ValuePanel.Margin = NumberPanel.Margin = OperationPanel.Margin = new Thickness(0);
             }
         }
 

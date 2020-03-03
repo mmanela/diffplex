@@ -68,16 +68,6 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty ModifiedForegroundProperty = RegisterDependencyProperty<Brush>("ModifiedForeground");
-
-        /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
-        public static readonly DependencyProperty ModifiedBackgroundProperty = RegisterDependencyProperty<Brush>("ModifiedBackground", new SolidColorBrush(Color.FromArgb(64, 255, 216, 0)));
-
-        /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
         public static readonly DependencyProperty DeletedForegroundProperty = RegisterDependencyProperty<Brush>("DeletedForeground");
 
         /// <summary>
@@ -94,16 +84,6 @@ namespace DiffPlex.Wpf.Controls
         /// The property of text inserted background brush.
         /// </summary>
         public static readonly DependencyProperty UnchangedBackgroundProperty = RegisterDependencyProperty<Brush>("UnchangedBackground");
-
-        /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
-        public static readonly DependencyProperty ImaginaryForegroundProperty = RegisterDependencyProperty<Brush>("ImaginaryForeground");
-
-        /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
-        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground");
 
         /// <summary>
         /// The property of grid splitter background brush.
@@ -221,24 +201,6 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the foreground brush of the line imaginary.
-        /// </summary>
-        public Brush ImaginaryForeground
-        {
-            get => (Brush)GetValue(ImaginaryForegroundProperty);
-            set => SetValue(ImaginaryForegroundProperty, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the background brush of the line imaginary.
-        /// </summary>
-        public Brush ImaginaryBackground
-        {
-            get => (Brush)GetValue(ImaginaryBackgroundProperty);
-            set => SetValue(ImaginaryBackgroundProperty, value);
-        }
-
-        /// <summary>
         /// Gets or sets the foreground brush of the grid splitter.
         /// </summary>
         public Brush SplitterForeground
@@ -286,14 +248,25 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Sets a new diff model.
         /// </summary>
+        /// <param name="oldText">The old text string to compare.</param>
+        /// <param name="newText">The new text string.</param>
+        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(string oldText, string newText, bool ignoreWhitespace = true)
+        {
+            var builder = new InlineDiffBuilder(new Differ());
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
+        }
+
+        /// <summary>
+        /// Sets a new diff model.
+        /// </summary>
         /// <param name="differ">The differ instance.</param>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
         public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhitespace = true)
         {
-            if (differ == null) throw new ArgumentNullException(nameof(differ), "differ should not be null.");
-            var builder = new InlineDiffBuilder(differ);
+            var builder = new InlineDiffBuilder(differ ?? new Differ());
             DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
         }
 
@@ -327,13 +300,28 @@ namespace DiffPlex.Wpf.Controls
                 }
 
                 var changeType = line.Type;
+                var text = line.Text;
+                switch (line.Type)
+                {
+                    case ChangeType.Modified:
+                        changeType = ChangeType.Inserted;
+                        break;
+                    case ChangeType.Inserted:
+                    case ChangeType.Deleted:
+                    case ChangeType.Unchanged:
+                        break;
+                    default:
+                        changeType = ChangeType.Imaginary;
+                        text = string.Empty;
+                        break;
+                }
+
                 ContentPanel.Add(line.Position, changeType switch
                 {
                     ChangeType.Inserted => "+",
                     ChangeType.Deleted => "-",
-                    ChangeType.Modified => "M",
                     _ => " "
-                }, line.Text, changeType.ToString(), this);
+                }, text, changeType.ToString(), this);
             }
 
             ContentPanel.AdjustScrollView();

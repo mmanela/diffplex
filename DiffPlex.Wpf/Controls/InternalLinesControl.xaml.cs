@@ -87,7 +87,8 @@ namespace DiffPlex.Wpf.Controls
             {
                 Text = value
             };
-            text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
+            if (!string.IsNullOrEmpty(value))
+                text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
             text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
             ApplyTextBlockProperties(text, source);
             ValuePanel.Children.Add(text);

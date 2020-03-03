@@ -24,5 +24,9 @@
     <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Include="Icon.png" />
+  </ItemGroup>
 
 </Project>

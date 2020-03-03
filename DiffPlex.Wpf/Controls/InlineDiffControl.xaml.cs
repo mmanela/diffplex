@@ -18,7 +18,7 @@ namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
     /// The inline diff control for text.
-    /// Interaction logic for SideBySideDiffControl.xaml
+    /// Interaction logic for InlineDiffControl.xaml
     /// </summary>
     public partial class InlineDiffControl : UserControl
     {
@@ -136,6 +136,7 @@ namespace DiffPlex.Wpf.Controls
         public InlineDiffControl()
         {
             InitializeComponent();
+            ContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
         }
 
         /// <summary>
@@ -334,6 +335,8 @@ namespace DiffPlex.Wpf.Controls
                     _ => " "
                 }, line.Text, changeType.ToString(), this);
             }
+
+            ContentPanel.AdjustScrollView();
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

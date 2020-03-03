@@ -19,7 +19,7 @@
         <ScrollViewer x:Name="OperationScrollViewer" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" ScrollChanged="OperationScrollViewer_ScrollChanged">
             <StackPanel x:Name="OperationPanel"/>
         </ScrollViewer>
-        <ScrollViewer x:Name="ValueScrollViewer" Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="ValueScrollViewer_ScrollChanged">
+        <ScrollViewer x:Name="ValueScrollViewer" Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="ValueScrollViewer_ScrollChanged" SizeChanged="ValueScrollViewer_SizeChanged">
             <StackPanel x:Name="ValuePanel"/>
         </ScrollViewer>
     </Grid>

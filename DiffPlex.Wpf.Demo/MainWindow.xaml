@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DiffPlex.Wpf.Demo"
         xmlns:diff="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
         mc:Ignorable="d"
-        Title="Diff Demo" Height="450" Width="800">
+        Title="Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
     <Grid>
         <diff:SideBySideDiffControl x:Name="SideBySideDiff" Margin="0,0,0,20" />
         <diff:InlineDiffControl x:Name="InlineDiff" Margin="0,0,0,20" Visibility="Collapsed" />

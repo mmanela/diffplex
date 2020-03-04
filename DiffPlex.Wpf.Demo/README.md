@@ -2,7 +2,7 @@
 
 This is a simple demo for `DiffPlex.Wpf` [library](../DiffPlex.Wpf).
 
-In `MainWindow.xaml` file you can see there are a `SideBySideDiffControl` control and a `InlineDiffControl` control.
+In `MainWindow.xaml` file you can see there are a `SideBySideDiffViewer` control and a `InlineDiffViewer` control.
 A button below controls which control displays.
 
 In `MainWindow.xaml.cs` file, we just set the `DiffModel` property of these controls above to get the textual diffs in UI.
@@ -34,13 +34,13 @@ public Brush InsertedBackgroundProperty { get; set; }
 // The background brush of the line deleted.
 public Brush DeletedBackgroundProperty { get; set; }
 
-// The background brush of the line imaginary, `SideBySideDiffControl` only.
+// The background brush of the line imaginary, `SideBySideDiffViewer` only.
 public Brush ImaginaryBackgroundProperty { get; set; }
 
-// The background brush of the grid splitter, `SideBySideDiffControl` only.
+// The background brush of the grid splitter, `SideBySideDiffViewer` only.
 public Brush SplitterBackgroundProperty { get; set; }
 
-// The width of the grid splitter, `SideBySideDiffControl` only.
+// The width of the grid splitter, `SideBySideDiffViewer` only.
 public Brush SplitterWidthProperty { get; set; }
 
 // The text color (foreground brush) of the line number.

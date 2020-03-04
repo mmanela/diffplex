@@ -16,10 +16,10 @@ xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
 
 ## Side-by-side diff
 
-Control class `SideBySideDiffControl` is used to render side-by-side textual diffs.
+Control class `SideBySideDiffViewer` is used to render side-by-side textual diffs.
 
 ```xaml
-<diffplex:SideBySideDiffControl x:Name="DiffView" />
+<diffplex:SideBySideDiffViewer x:Name="DiffView" />
 ```
 
 ```csharp
@@ -28,10 +28,10 @@ DiffView.SetDiffModel(OldText, NewText);
 
 ## Inline diff
 
-Control class `SideBySideDiffControl` is used to render inline textual diffs.
+Control class `InlineDiffViewer` is used to render inline textual diffs.
 
 ```xaml
-<diffplex:InlineDiffControl x:Name="DiffView" />
+<diffplex:InlineDiffViewer x:Name="DiffView" />
 ```
 
 ```csharp

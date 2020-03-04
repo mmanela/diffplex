@@ -27,6 +27,9 @@ namespace DiffPlex.Wpf.Demo
         private SideBySideDiffModel sideBySide;
         private DiffPaneModel inline;
 
+        /// <summary>
+        /// Initializes a new instance of the MainWindow class.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();

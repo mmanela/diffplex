@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DiffPlex.Wpf.Controls.SideBySideDiffControl"
+﻿<UserControl x:Class="DiffPlex.Wpf.Controls.SideBySideDiffViewer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,8 +11,8 @@
             <ColumnDefinition x:Name="LeftColumn"/>
             <ColumnDefinition x:Name="RightColumn"/>
         </Grid.ColumnDefinitions>
-        <local:InternalLinesControl x:Name="LeftContentPanel" ScrollChanged="LeftContentPanel_ScrollChanged" />
+        <local:InternalLinesViewer x:Name="LeftContentPanel" ScrollChanged="LeftContentPanel_ScrollChanged" />
         <GridSplitter x:Name="Splitter" Width="5" />
-        <local:InternalLinesControl x:Name="RightContentPanel" ScrollChanged="RightContentPanel_ScrollChanged" Grid.Column="1" />
+        <local:InternalLinesViewer x:Name="RightContentPanel" ScrollChanged="RightContentPanel_ScrollChanged" Grid.Column="1" />
     </Grid>
 </UserControl>

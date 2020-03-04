@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DiffPlex.Wpf.Demo"
-        xmlns:diff="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
+        xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
         mc:Ignorable="d"
         Title="Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
     <Grid>
-        <diff:SideBySideDiffControl x:Name="SideBySideDiff" Margin="0,0,0,20" />
-        <diff:InlineDiffControl x:Name="InlineDiff" Margin="0,0,0,20" Visibility="Collapsed" />
+        <diffplex:SideBySideDiffControl x:Name="SideBySideDiff" Margin="0,0,0,20" />
+        <diffplex:InlineDiffControl x:Name="InlineDiff" Margin="0,0,0,20" Visibility="Collapsed" />
         <Button VerticalAlignment="Bottom" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" />
     </Grid>
 </Window>

@@ -55,7 +55,7 @@ namespace DiffPlex.Wpf.Controls
         });
 
         /// <summary>
-        /// The property of change type foreground brush.
+        /// The property of change type symbol foreground brush.
         /// </summary>
         public static readonly DependencyProperty ChangeTypeForegroundProperty = RegisterDependencyProperty<Brush>("ChangeTypeForeground", new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)));
 
@@ -92,7 +92,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground");
+        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground", new SolidColorBrush(Color.FromArgb(24, 128, 128, 128)));
 
         /// <summary>
         /// The property of grid splitter background brush.
@@ -164,7 +164,7 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the foreground brush of the change type.
+        /// Gets or sets the foreground brush of the change type symbol.
         /// </summary>
         public Brush ChangeTypeForeground
         {
@@ -285,11 +285,11 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(string oldText, string newText, bool ignoreWhitespace = true)
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(string oldText, string newText, bool ignoreWhiteSpace = true)
         {
             var builder = new SideBySideDiffBuilder(new Differ());
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
         }
 
         /// <summary>
@@ -298,11 +298,11 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="differ">The differ instance.</param>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhitespace = true)
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true)
         {
             var builder = new SideBySideDiffBuilder(differ ?? new Differ());
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
         }
 
         /// <summary>
@@ -311,11 +311,19 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="builder">The differ builder instance.</param>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(SideBySideDiffBuilder builder, string oldText, string newText, bool ignoreWhitespace = true)
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(SideBySideDiffBuilder builder, string oldText, string newText, bool ignoreWhiteSpace = true)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder), "builder should not be null.");
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+        }
+
+        /// <summary>
+        /// Refreshes.
+        /// </summary>
+        public void Refresh()
+        {
+            UpdateContent(DiffModel);
         }
 
         /// <summary>

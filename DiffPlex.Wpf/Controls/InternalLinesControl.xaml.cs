@@ -18,7 +18,7 @@ namespace DiffPlex.Wpf.Controls
     /// </summary>
     internal partial class InternalLinesControl : UserControl
     {
-        private Dictionary<string, Binding> bindings = new Dictionary<string, Binding>();
+        private readonly Dictionary<string, Binding> bindings = new Dictionary<string, Binding>();
 
         public InternalLinesControl()
         {

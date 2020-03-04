@@ -17,26 +17,26 @@ using DiffPlex.DiffBuilder.Model;
 namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
-    /// The side by side diff control for text.
-    /// Interaction logic for SideBySideDiffControl.xaml
+    /// The inline diff control for text.
+    /// Interaction logic for InlineDiffViewer.xaml
     /// </summary>
-    public partial class SideBySideDiffControl : UserControl
+    public partial class InlineDiffViewer : UserControl
     {
         /// <summary>
         /// The property of diff model.
         /// </summary>
         public static readonly DependencyProperty DiffModelProperty =
-             DependencyProperty.Register("DiffModel", typeof(SideBySideDiffModel),
-             typeof(SideBySideDiffControl), new FrameworkPropertyMetadata(null, (d, e) =>
+             DependencyProperty.Register("DiffModel", typeof(DiffPaneModel),
+             typeof(InlineDiffViewer), new FrameworkPropertyMetadata(null, (d, e) =>
              {
-                 if (!(d is SideBySideDiffControl c) || e.OldValue == e.NewValue) return;
+                 if (!(d is InlineDiffViewer c) || e.OldValue == e.NewValue) return;
                  if (e.NewValue == null)
                  {
                      c.UpdateContent(null);
                      return;
                  }
 
-                 if (!(e.NewValue is SideBySideDiffModel model)) return;
+                 if (!(e.NewValue is DiffPaneModel model)) return;
                  c.UpdateContent(model);
              }));
 
@@ -46,13 +46,9 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty LineNumberForegroundProperty = RegisterDependencyProperty<Brush>("LineNumberForeground", new SolidColorBrush(Color.FromArgb(255, 64, 128, 160)));
 
         /// <summary>
-        /// The property of line number width.
+        /// The property of line number.
         /// </summary>
-        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60, (d, e) =>
-        {
-            if (!(d is SideBySideDiffControl c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
-            c.LineNumberWidth = n;
-        });
+        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60);
 
         /// <summary>
         /// The property of change type symbol foreground brush.
@@ -90,11 +86,6 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty UnchangedBackgroundProperty = RegisterDependencyProperty<Brush>("UnchangedBackground");
 
         /// <summary>
-        /// The property of text inserted background brush.
-        /// </summary>
-        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground", new SolidColorBrush(Color.FromArgb(24, 128, 128, 128)));
-
-        /// <summary>
         /// The property of grid splitter background brush.
         /// </summary>
         public static readonly DependencyProperty SplitterForegroundProperty = RegisterDependencyProperty<Brush>("SplitterForeground");
@@ -120,28 +111,20 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
 
         /// <summary>
-        /// Initializes a new instance of the SideBySideDiffControl class.
+        /// Initializes a new instance of the InlineDiffViewer class.
         /// </summary>
-        public SideBySideDiffControl()
+        public InlineDiffViewer()
         {
             InitializeComponent();
-
-            LeftContentPanel.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            LeftContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            RightContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(ForegroundProperty, new Binding("SplitterForeground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BackgroundProperty, new Binding("SplitterBackground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterThickness") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(WidthProperty, new Binding("SplitterWidth") { Source = this, Mode = BindingMode.OneWay });
+            ContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
         }
 
         /// <summary>
         /// Gets or sets the side by side diff model.
         /// </summary>
-        public SideBySideDiffModel DiffModel
+        public DiffPaneModel DiffModel
         {
-            get => (SideBySideDiffModel)GetValue(DiffModelProperty);
+            get => (DiffPaneModel)GetValue(DiffModelProperty);
             set => SetValue(DiffModelProperty, value);
         }
 
@@ -152,15 +135,6 @@ namespace DiffPlex.Wpf.Controls
         {
             get => (Brush)GetValue(LineNumberForegroundProperty);
             set => SetValue(LineNumberForegroundProperty, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the line number width.
-        /// </summary>
-        public int LineNumberWidth
-        {
-            get => (int)GetValue(LineNumberWidthProperty);
-            set => SetValue(LineNumberWidthProperty, value);
         }
 
         /// <summary>
@@ -227,15 +201,6 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the background brush of the line imaginary.
-        /// </summary>
-        public Brush ImaginaryBackground
-        {
-            get => (Brush)GetValue(ImaginaryBackgroundProperty);
-            set => SetValue(ImaginaryBackgroundProperty, value);
-        }
-
-        /// <summary>
         /// Gets or sets the foreground brush of the grid splitter.
         /// </summary>
         public Brush SplitterForeground
@@ -288,7 +253,7 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
         public void SetDiffModel(string oldText, string newText, bool ignoreWhiteSpace = true)
         {
-            var builder = new SideBySideDiffBuilder(new Differ());
+            var builder = new InlineDiffBuilder(Helper.Instance);
             DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
         }
 
@@ -301,7 +266,7 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
         public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true)
         {
-            var builder = new SideBySideDiffBuilder(differ ?? new Differ());
+            var builder = new InlineDiffBuilder(differ ?? Helper.Instance);
             DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
         }
 
@@ -311,11 +276,11 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="builder">The differ builder instance.</param>
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(SideBySideDiffBuilder builder, string oldText, string newText, bool ignoreWhiteSpace = true)
+        /// <param name="ignoreWhitespace">true if ignore the white space; otherwise, false.</param>
+        public void SetDiffModel(InlineDiffBuilder builder, string oldText, string newText, bool ignoreWhitespace = true)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder), "builder should not be null.");
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhitespace);
         }
 
         /// <summary>
@@ -330,23 +295,15 @@ namespace DiffPlex.Wpf.Controls
         /// Updates the content.
         /// </summary>
         /// <param name="m">The diff model.</param>
-        private void UpdateContent(SideBySideDiffModel m)
+        private void UpdateContent(DiffPaneModel m)
         {
-            LeftContentPanel.Clear();
-            RightContentPanel.Clear();
-            if (m == null) return;
-            InsertLines(LeftContentPanel, m.OldText?.Lines, true);
-            InsertLines(RightContentPanel, m.NewText?.Lines);
-        }
-
-        private void InsertLines(InternalLinesControl panel, List<DiffPiece> lines, bool isOld = false)
-        {
-            if (lines == null || panel == null) return;
-            foreach (var line in lines)
+            ContentPanel.Clear();
+            if (m?.Lines == null) return;
+            foreach (var line in m.Lines)
             {
                 if (line == null)
                 {
-                    panel.Add(null, null, null, ChangeType.Unchanged.ToString(), this);
+                    ContentPanel.Add(null, null, null, ChangeType.Unchanged.ToString(), this);
                     continue;
                 }
 
@@ -355,7 +312,7 @@ namespace DiffPlex.Wpf.Controls
                 switch (line.Type)
                 {
                     case ChangeType.Modified:
-                        changeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
+                        changeType = ChangeType.Inserted;
                         break;
                     case ChangeType.Inserted:
                     case ChangeType.Deleted:
@@ -367,7 +324,7 @@ namespace DiffPlex.Wpf.Controls
                         break;
                 }
 
-                panel.Add(line.Position, changeType switch
+                ContentPanel.Add(line.Position, changeType switch
                 {
                     ChangeType.Inserted => "+",
                     ChangeType.Deleted => "-",
@@ -375,31 +332,17 @@ namespace DiffPlex.Wpf.Controls
                 }, text, changeType.ToString(), this);
             }
 
-            panel.AdjustScrollView();
-        }
-
-        private void LeftContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            var offset = LeftContentPanel.VerticalOffset;
-            if (Math.Abs(RightContentPanel.VerticalOffset - offset) > 1)
-                RightContentPanel.ScrollToVerticalOffset(offset);
-        }
-
-        private void RightContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            var offset = RightContentPanel.VerticalOffset;
-            if (Math.Abs(LeftContentPanel.VerticalOffset - offset) > 1)
-                LeftContentPanel.ScrollToVerticalOffset(offset);
+            ContentPanel.AdjustScrollView();
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)
         {
-            return DependencyProperty.Register(name, typeof(T), typeof(SideBySideDiffControl), null);
+            return DependencyProperty.Register(name, typeof(T), typeof(InlineDiffViewer), null);
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name, T defaultValue, PropertyChangedCallback propertyChangedCallback = null)
         {
-            return DependencyProperty.Register(name, typeof(T), typeof(SideBySideDiffControl), new PropertyMetadata(defaultValue, propertyChangedCallback));
+            return DependencyProperty.Register(name, typeof(T), typeof(InlineDiffViewer), new PropertyMetadata(defaultValue, propertyChangedCallback));
         }
     }
 }

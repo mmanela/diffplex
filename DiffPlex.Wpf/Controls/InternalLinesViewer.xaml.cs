@@ -14,13 +14,13 @@ using System.Windows.Shapes;
 namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
-    /// Interaction logic for InternalLinesControl.xaml
+    /// Interaction logic for InternalLinesViewer.xaml
     /// </summary>
-    internal partial class InternalLinesControl : UserControl
+    internal partial class InternalLinesViewer : UserControl
     {
         private readonly Dictionary<string, Binding> bindings = new Dictionary<string, Binding>();
 
-        public InternalLinesControl()
+        public InternalLinesViewer()
         {
             InitializeComponent();
         }

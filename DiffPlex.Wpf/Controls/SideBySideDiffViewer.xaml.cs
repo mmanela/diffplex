@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Security;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -362,9 +364,51 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        /// <exception cref="ArgumentNullException">builder was null.</exception>
         public void SetDiffModel(SideBySideDiffBuilder builder, string oldText, string newText, bool ignoreWhiteSpace = true)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder), "builder should not be null.");
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+        }
+
+        /// <summary>
+        /// Sets a new diff model.
+        /// </summary>
+        /// <param name="oldFile">The old text file to compare.</param>
+        /// <param name="newFile">The new text file.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
+        /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
+        /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
+        /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
+        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, bool ignoreWhiteSpace = true)
+        {
+            if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
+            if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
+            var oldText = File.ReadAllText(oldFile.FullName);
+            var newText = File.ReadAllText(newFile.FullName);
+            var builder = new SideBySideDiffBuilder(Helper.Instance);
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+        }
+
+        /// <summary>
+        /// Sets a new diff model.
+        /// </summary>
+        /// <param name="oldFile">The old text file to compare.</param>
+        /// <param name="newFile">The new text file.</param>
+        /// <param name="encoding">The encoding applied to the contents of the file.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
+        /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
+        /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
+        /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
+        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, Encoding encoding, bool ignoreWhiteSpace = true)
+        {
+            if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
+            if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
+            var oldText = File.ReadAllText(oldFile.FullName, encoding);
+            var newText = File.ReadAllText(newFile.FullName, encoding);
+            var builder = new SideBySideDiffBuilder(Helper.Instance);
             DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
         }
 

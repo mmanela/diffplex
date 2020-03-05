@@ -212,16 +212,16 @@ public FontStretch FontStretch { get; set; }
 public Brush Foreground { get; set; }
 
 // The background brush of the line inserted.
-public Brush InsertedBackgroundProperty { get; set; }
+public Brush InsertedBackground { get; set; }
 
 // The background brush of the line deleted.
-public Brush DeletedBackgroundProperty { get; set; }
+public Brush DeletedBackground { get; set; }
 
 // The text color (foreground brush) of the line number.
-public Brush LineNumberForegroundProperty { get; set; }
+public Brush LineNumberForeground { get; set; }
 
 // The width of the line number and change type symbol.
-public int LineNumberWidthProperty { get; set; }
+public int LineNumberWidth { get; set; }
 
 // The text color (foreground brush) of the change type symbol.
 public Brush ChangeTypeForeground { get; set; }
@@ -240,13 +240,13 @@ public event DragDeltaEventHandler SplitterDragDelta;
 public event DragStartedEventHandler SplitterDragStarted;
 
 // The background brush of the line imaginary.
-public Brush ImaginaryBackgroundProperty { get; set; }
+public Brush ImaginaryBackground { get; set; }
 
 // The background brush of the grid splitter.
-public Brush SplitterBackgroundProperty { get; set; }
+public Brush SplitterBackground { get; set; }
 
 // The width of the grid splitter.
-public Brush SplitterWidthProperty { get; set; }
+public Brush SplitterWidth { get; set; }
 
 // A value that represents the actual calculated width of the left side panel.
 public double LeftSideActualWidth { get; }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -97,11 +99,6 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of grid splitter background brush.
         /// </summary>
-        public static readonly DependencyProperty SplitterForegroundProperty = RegisterDependencyProperty<Brush>("SplitterForeground");
-
-        /// <summary>
-        /// The property of grid splitter background brush.
-        /// </summary>
         public static readonly DependencyProperty SplitterBackgroundProperty = RegisterDependencyProperty<Brush>("SplitterBackground", new SolidColorBrush(Color.FromArgb(64, 128, 128, 128)));
 
         /// <summary>
@@ -129,16 +126,46 @@ namespace DiffPlex.Wpf.Controls
             LeftContentPanel.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
             LeftContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
             RightContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(ForegroundProperty, new Binding("SplitterForeground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BackgroundProperty, new Binding("SplitterBackground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterThickness") { Source = this, Mode = BindingMode.OneWay });
+            Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterBorderThickness") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(WidthProperty, new Binding("SplitterWidth") { Source = this, Mode = BindingMode.OneWay });
+        }
+
+        /// <summary>
+        /// Occurs when the grid splitter loses mouse capture.
+        /// </summary>
+        [Category("Behavior")]
+        public event DragCompletedEventHandler SplitterDragCompleted
+        {
+            add => Splitter.DragCompleted += value;
+            remove => Splitter.DragCompleted -= value;
+        }
+
+        /// <summary>
+        /// Occurs one or more times as the mouse changes position when the grid splitter has logical focus and mouse capture.
+        /// </summary>
+        [Category("Behavior")]
+        public event DragDeltaEventHandler SplitterDragDelta
+        {
+            add => Splitter.DragDelta += value;
+            remove => Splitter.DragDelta -= value;
+        }
+
+        /// <summary>
+        /// Occurs when the grid splitter receives logical focus and mouse capture.
+        /// </summary>
+        [Category("Behavior")]
+        public event DragStartedEventHandler SplitterDragStarted
+        {
+            add => Splitter.DragStarted += value;
+            remove => Splitter.DragStarted -= value;
         }
 
         /// <summary>
         /// Gets or sets the side by side diff model.
         /// </summary>
+        [Category("Appearance")]
         public SideBySideDiffModel DiffModel
         {
             get => (SideBySideDiffModel)GetValue(DiffModelProperty);
@@ -148,6 +175,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the foreground brush of the line number.
         /// </summary>
+        [Bindable(true)]
         public Brush LineNumberForeground
         {
             get => (Brush)GetValue(LineNumberForegroundProperty);
@@ -157,6 +185,8 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the line number width.
         /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
         public int LineNumberWidth
         {
             get => (int)GetValue(LineNumberWidthProperty);
@@ -166,6 +196,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the foreground brush of the change type symbol.
         /// </summary>
+        [Bindable(true)]
         public Brush ChangeTypeForeground
         {
             get => (Brush)GetValue(ChangeTypeForegroundProperty);
@@ -175,6 +206,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the foreground brush of the line added.
         /// </summary>
+        [Bindable(true)]
         public Brush InsertedForeground
         {
             get => (Brush)GetValue(InsertedForegroundProperty);
@@ -184,6 +216,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the background brush of the line added.
         /// </summary>
+        [Bindable(true)]
         public Brush InsertedBackground
         {
             get => (Brush)GetValue(InsertedBackgroundProperty);
@@ -193,6 +226,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the foreground brush of the line deleted.
         /// </summary>
+        [Bindable(true)]
         public Brush DeletedForeground
         {
             get => (Brush)GetValue(DeletedForegroundProperty);
@@ -202,6 +236,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the background brush of the line deleted.
         /// </summary>
+        [Bindable(true)]
         public Brush DeletedBackground
         {
             get => (Brush)GetValue(DeletedBackgroundProperty);
@@ -211,6 +246,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the foreground brush of the line unchanged.
         /// </summary>
+        [Bindable(true)]
         public Brush UnchangedForeground
         {
             get => (Brush)GetValue(UnchangedForegroundProperty);
@@ -220,6 +256,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the background brush of the line unchanged.
         /// </summary>
+        [Bindable(true)]
         public Brush UnchangedBackground
         {
             get => (Brush)GetValue(UnchangedBackgroundProperty);
@@ -229,6 +266,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the background brush of the line imaginary.
         /// </summary>
+        [Bindable(true)]
         public Brush ImaginaryBackground
         {
             get => (Brush)GetValue(ImaginaryBackgroundProperty);
@@ -236,17 +274,9 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the foreground brush of the grid splitter.
-        /// </summary>
-        public Brush SplitterForeground
-        {
-            get => (Brush)GetValue(SplitterForegroundProperty);
-            set => SetValue(SplitterForegroundProperty, value);
-        }
-
-        /// <summary>
         /// Gets or sets the background brush of the grid splitter.
         /// </summary>
+        [Bindable(true)]
         public Brush SplitterBackground
         {
             get => (Brush)GetValue(SplitterBackgroundProperty);
@@ -256,6 +286,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the border brush of the grid splitter.
         /// </summary>
+        [Bindable(true)]
         public Brush SplitterBorderBrush
         {
             get => (Brush)GetValue(SplitterBackgroundProperty);
@@ -265,6 +296,8 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the border thickness of the grid splitter.
         /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
         public Thickness SplitterBorderThickness
         {
             get => (Thickness)GetValue(SplitterBorderThicknessProperty);
@@ -272,13 +305,30 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the border thickness of the grid splitter.
+        /// Gets or sets the width of the grid splitter.
         /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
         public double SplitterWidth
         {
             get => (double)GetValue(SplitterWidthProperty);
             set => SetValue(SplitterWidthProperty, value);
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the grid splitter has logical focus and mouse capture and the left mouse button is pressed.
+        /// </summary>
+        public bool IsSplitterDragging => Splitter.IsDragging;
+
+        /// <summary>
+        /// Gets a value that represents the actual calculated width of the left side panel.
+        /// </summary>
+        public double LeftSideActualWidth => LeftColumn.ActualWidth;
+
+        /// <summary>
+        /// Gets a value that represents the actual calculated width of the right side panel.
+        /// </summary>
+        public double RightSideActualWidth => RightColumn.ActualWidth;
 
         /// <summary>
         /// Sets a new diff model.

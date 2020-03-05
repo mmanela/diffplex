@@ -129,7 +129,7 @@ namespace DiffPlex.Wpf.Controls
         private void ApplyTextBlockProperties(TextBlock text, UIElement source)
         {
             text.SetBinding(TextBlock.FontSizeProperty, GetBindings("FontSize", source));
-            text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Segoe UI Emoji, Segoe UI Symbol" ));
+            text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, Helper.FontFamily ));
             text.SetBinding(TextBlock.FontWeightProperty, GetBindings("FontWeight", source));
             text.SetBinding(TextBlock.FontStretchProperty, GetBindings("FontStretch", source));
             text.SetBinding(TextBlock.FontStyleProperty, GetBindings("FontStyle", source));

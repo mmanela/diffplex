@@ -4,7 +4,7 @@ DiffPlex [![Build Status](https://mmanela.visualstudio.com/DiffPlex/_apis/build/
 DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0`.
 
 
-## About the API
+# About the API
 
 The DiffPlex library currently exposes two interfaces for generating diffs:
 
@@ -155,4 +155,102 @@ public interface ISideBySideDiffBuilder
 
 DiffPlex also contains a sample website that shows how to create a basic side by side diff in an ASP MVC website.
 
-![](https://raw.githubusercontent.com/mmanela/diffplex/master/images/website.png)
+![Web page sample](./images/website.png)
+
+# WPF Controls
+
+DiffPlex WPF controls library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
+
+```csharp
+using DiffPlex.Wpf.Controls;
+```
+
+To import the controls into your window/page/control, please insert following attribute into the root node (such as `<Window />`) of your xaml files.
+
+```
+xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
+```
+
+Then you can add one of following controls in UI.
+
+- `SideBySideDiffViewer` Side-by-side (splitted) textual diffs viewer control.
+- `InlineDiffViewer` Inline textual diffs viewer control.
+
+For example,
+
+```xaml
+<diffplex:SideBySideDiffViewer x:Name="DiffView" />
+```
+
+And set the property `DiffModel` or call `SetDiffModel` member method to bind the result to show.
+
+```csharp
+DiffView.SetDiffModel(OldText, NewText);
+```
+
+![WPF sample](./images/wpf_side_light.jpg)
+
+You can also customize the style of these controls. Following are some of the properties you can get or set.
+
+```csharp
+// The font size.
+public double FontSize { get; set; }
+
+// The preferred font family.
+public FontFamily FontFamily { get; set; }
+
+// The font weight.
+public FontWeight FontWeight { get; set; }
+
+// The font style.
+public FontStyle FontStyle { get; set; }
+
+// The font-stretching characteristics.
+public FontStretch FontStretch { get; set; }
+
+// The default text color (foreground brush).
+public Brush Foreground { get; set; }
+
+// The background brush of the line inserted.
+public Brush InsertedBackgroundProperty { get; set; }
+
+// The background brush of the line deleted.
+public Brush DeletedBackgroundProperty { get; set; }
+
+// The text color (foreground brush) of the line number.
+public Brush LineNumberForegroundProperty { get; set; }
+
+// The width of the line number and change type symbol.
+public int LineNumberWidthProperty { get; set; }
+
+// The text color (foreground brush) of the change type symbol.
+public Brush ChangeTypeForeground { get; set; }
+```
+
+For `SideBySideDiffViewer`, we also provide following properties and event handlers.
+
+```csharp
+// Occurs when the grid splitter loses mouse capture.
+public event DragCompletedEventHandler SplitterDragCompleted;
+
+// Occurs one or more times as the mouse changes position when the grid splitter has logical focus and mouse capture.
+public event DragDeltaEventHandler SplitterDragDelta;
+
+// Occurs when the grid splitter receives logical focus and mouse capture.
+public event DragStartedEventHandler SplitterDragStarted;
+
+// The background brush of the line imaginary.
+public Brush ImaginaryBackgroundProperty { get; set; }
+
+// The background brush of the grid splitter.
+public Brush SplitterBackgroundProperty { get; set; }
+
+// The width of the grid splitter.
+public Brush SplitterWidthProperty { get; set; }
+
+// A value that represents the actual calculated width of the left side panel.
+public double LeftSideActualWidth { get; }
+
+// A value that represents the actual calculated width of the right side panel.
+public double RightSideActualWidth { get; }
+```

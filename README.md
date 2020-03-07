@@ -3,7 +3,6 @@ DiffPlex [![Build Status](https://mmanela.visualstudio.com/DiffPlex/_apis/build/
 
 DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0`.
 
-
 # About the API
 
 The DiffPlex library currently exposes two interfaces for generating diffs:
@@ -28,8 +27,7 @@ For use of the `ISidebySideDiffer` interface see:
 ## Sample code
 
 ```csharp
-var diffBuilder = new InlineDiffBuilder(new Differ());
-var diff = diffBuilder.BuildDiffModel(before, after);
+var diff = InlineDiffBuilder.Diff(before, after);
 
 foreach (var line in diff.Lines)
 {
@@ -125,6 +123,7 @@ public interface IChunker
 ```
 
 Currently provided implementations:
+
 - `CharacterChunker`
 - `CustomFunctionChunker`
 - `DelimiterChunker`
@@ -133,7 +132,7 @@ Currently provided implementations:
 - `WordChunker`
 
 
-## ISidebySideDiffer Interface
+## ISideBySideDifferBuilder Interface
 
 ```csharp
 /// <summary>
@@ -176,28 +175,38 @@ xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
 
 Then you can add one of following controls in UI.
 
-- `SideBySideDiffViewer` Side-by-side (splitted) textual diffs viewer control.
-- `InlineDiffViewer` Inline textual diffs viewer control.
+- `DiffViewer` Textual diffs viewer control with view mode switching by setting an old text and a new text to diff.
+- `SideBySideDiffViewer` Side-by-side (splitted) textual diffs viewer control by setting a diff model `SideBySideDiffModel`.
+- `InlineDiffViewer` Inline textual diffs viewer control by setting a diff model `DiffPaneModel`.
 
 For example,
 
 ```xaml
-<diffplex:SideBySideDiffViewer x:Name="DiffView" />
+<diffplex:DiffViewer x:Name="DiffView" />
 ```
 
-And set the property `DiffModel` or call `SetDiffModel` member method to bind the result to show.
-
 ```csharp
-DiffView.SetDiffModel(OldText, NewText);
+DiffView.OldText = oldText;
+DiffView.NewText = newText;
 ```
 
 ![WPF sample](./images/wpf_side_light.jpg)
 
-You can also customize the style of these controls. Following are some of the properties you can get or set.
+You can also customize the style.
+Following are some of the properties you can get or set.
 
 ```csharp
+// The header of old text.
+public string OldTextHeader { get; set; }
+
+// The header of new text.
+public string NewTextHeader { get; set; }
+
+// The header of new text.
+public string NewTextHeader { get; }
+
 // The font size.
-public double FontSize { get; set; }
+public double IsSideBySideViewMode { get; set; }
 
 // The preferred font family.
 public FontFamily FontFamily { get; set; }
@@ -226,24 +235,17 @@ public Brush LineNumberForeground { get; set; }
 // The width of the line number and change type symbol.
 public int LineNumberWidth { get; set; }
 
-// The text color (foreground brush) of the change type symbol.
-public Brush ChangeTypeForeground { get; set; }
-```
-
-For `SideBySideDiffViewer`, we also provide following properties and event handlers.
-
-```csharp
-// Occurs when the grid splitter loses mouse capture.
-public event DragCompletedEventHandler SplitterDragCompleted;
-
-// Occurs one or more times as the mouse changes position when the grid splitter has logical focus and mouse capture.
-public event DragDeltaEventHandler SplitterDragDelta;
-
-// Occurs when the grid splitter receives logical focus and mouse capture.
-public event DragStartedEventHandler SplitterDragStarted;
-
 // The background brush of the line imaginary.
 public Brush ImaginaryBackground { get; set; }
+
+// The text color (foreground brush) of the change type symbol.
+public Brush ChangeTypeForeground { get; set; }
+
+// The background brush of the header.
+public Brush HeaderBackground { get; set; }
+
+// The height of the header.
+public double HeaderHeight { get; set; }
 
 // The background brush of the grid splitter.
 public Brush SplitterBackground { get; set; }
@@ -256,4 +258,21 @@ public double LeftSideActualWidth { get; }
 
 // A value that represents the actual calculated width of the right side panel.
 public double RightSideActualWidth { get; }
+```
+
+And you can listen following event handlers.
+
+```csharp
+
+// Occurs when the grid splitter loses mouse capture.
+public event DragCompletedEventHandler SplitterDragCompleted;
+
+// Occurs one or more times as the mouse changes position when the grid splitter has logical focus and mouse capture.
+public event DragDeltaEventHandler SplitterDragDelta;
+
+// Occurs when the grid splitter receives logical focus and mouse capture.
+public event DragStartedEventHandler SplitterDragStarted;
+
+// Occurs when the view mode is changed.
+public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 ```

@@ -28,6 +28,32 @@ namespace DiffPlex.Wpf.Controls
     public partial class DiffViewer : UserControl
     {
         /// <summary>
+        /// The event arguments of view mode changed.
+        /// </summary>
+        public class ViewModeChangedEventArgs : EventArgs
+        {
+            /// <summary>
+            /// Initializes a new instance of the ViewModeChangedEventArgs class.
+            /// </summary>
+            /// <param name="isSideBySide">true if it is side-by-side view mode.</param>
+            public ViewModeChangedEventArgs(bool isSideBySide)
+            {
+                IsSideBySideViewMode = isSideBySide;
+                IsInlineViewMode = !isSideBySide;
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether it is side-by-side view mode.
+            /// </summary>
+            public bool IsSideBySideViewMode { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether it is inline view mode.
+            /// </summary>
+            public bool IsInlineViewMode { get; }
+        }
+
+        /// <summary>
         /// The property of old text.
         /// </summary>
         public static readonly DependencyProperty OldTextProperty = RegisterRefreshDependencyProperty<string>("OldText", null);
@@ -71,7 +97,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty OldTextHeaderProperty = RegisterDependencyProperty<string>("OldTextHeader", null, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is string s)) return;
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
         });
 
@@ -80,17 +106,18 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty NewTextHeaderProperty = RegisterDependencyProperty<string>("NewTextHeader", null, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is string s)) return;
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
         });
 
         /// <summary>
         /// The property of header height.
         /// </summary>
-        public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>("HeaderHeight", 20, (d, e) =>
+        public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>("HeaderHeight", 0, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is double n)) return;
             c.HeaderRow.Height = new GridLength(n);
+            c.isHeaderEnabled = true;
         });
 
         /// <summary>
@@ -193,6 +220,11 @@ namespace DiffPlex.Wpf.Controls
             ApplyHeaderTextProperties(RightHeaderText);
             ApplyHeaderTextProperties(InlineHeaderText);
         }
+
+        /// <summary>
+        /// Occurs when the view mode is changed.
+        /// </summary>
+        public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
         /// <summary>
         /// Occurs when the grid splitter loses mouse capture.
@@ -549,6 +581,7 @@ namespace DiffPlex.Wpf.Controls
             InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Collapsed;
             LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Visible;
             GetSideBySideDiffModel();
+            ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs(true));
         }
 
         /// <summary>
@@ -559,6 +592,7 @@ namespace DiffPlex.Wpf.Controls
             LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Collapsed;
             InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Visible;
             GetInlineDiffModel();
+            ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs(false));
         }
 
         /// <summary>
@@ -618,8 +652,7 @@ namespace DiffPlex.Wpf.Controls
 
             InlineHeaderText.Text = $"{OldTextHeader ?? string.Empty} → {NewTextHeader ?? string.Empty}";
             if (isHeaderEnabled) return;
-            HeaderRow.Height = new GridLength(HeaderHeight);
-            isHeaderEnabled = true;
+            HeaderHeight = 20;
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

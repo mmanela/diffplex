@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -21,28 +22,30 @@ using DiffPlex.DiffBuilder.Model;
 namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
-    /// The side by side diff control for text.
-    /// Interaction logic for SideBySideDiffViewer.xaml
+    /// The diff control for text.
+    /// Interaction logic for DiffViewer.xaml
     /// </summary>
-    public partial class SideBySideDiffViewer : UserControl
+    public partial class DiffViewer : UserControl
     {
         /// <summary>
-        /// The property of diff model.
+        /// The property of old text.
         /// </summary>
-        public static readonly DependencyProperty DiffModelProperty =
-             DependencyProperty.Register("DiffModel", typeof(SideBySideDiffModel),
-             typeof(SideBySideDiffViewer), new FrameworkPropertyMetadata(null, (d, e) =>
-             {
-                 if (!(d is SideBySideDiffViewer c) || e.OldValue == e.NewValue) return;
-                 if (e.NewValue == null)
-                 {
-                     c.UpdateContent(null);
-                     return;
-                 }
+        public static readonly DependencyProperty OldTextProperty = RegisterRefreshDependencyProperty<string>("OldText", null);
 
-                 if (!(e.NewValue is SideBySideDiffModel model)) return;
-                 c.UpdateContent(model);
-             }));
+        /// <summary>
+        /// The property of new text.
+        /// </summary>
+        public static readonly DependencyProperty NewTextProperty = RegisterRefreshDependencyProperty<string>("NewText", null);
+
+        /// <summary>
+        /// The property of a flag to ignore white space.
+        /// </summary>
+        public static readonly DependencyProperty IgnoreWhiteSpaceProperty = RegisterRefreshDependencyProperty("IgnoreWhiteSpace", true);
+
+        /// <summary>
+        /// The property of a flag to ignore case.
+        /// </summary>
+        public static readonly DependencyProperty IgnoreCaseProperty = RegisterRefreshDependencyProperty("IgnoreCase", false);
 
         /// <summary>
         /// The property of line number background brush.
@@ -54,14 +57,51 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60, (d, e) =>
         {
-            if (!(d is SideBySideDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
-            c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = n;
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
+            c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = c.InlineContentPanel.LineNumberWidth = n;
         });
 
         /// <summary>
         /// The property of change type symbol foreground brush.
         /// </summary>
         public static readonly DependencyProperty ChangeTypeForegroundProperty = RegisterDependencyProperty<Brush>("ChangeTypeForeground", new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)));
+
+        /// <summary>
+        /// The property of old text header.
+        /// </summary>
+        public static readonly DependencyProperty OldTextHeaderProperty = RegisterDependencyProperty<string>("OldTextHeader", null, (d, e) =>
+        {
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is string s)) return;
+            c.UpdateHeaderText();
+        });
+
+        /// <summary>
+        /// The property of new text header.
+        /// </summary>
+        public static readonly DependencyProperty NewTextHeaderProperty = RegisterDependencyProperty<string>("NewTextHeader", null, (d, e) =>
+        {
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is string s)) return;
+            c.UpdateHeaderText();
+        });
+
+        /// <summary>
+        /// The property of header height.
+        /// </summary>
+        public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>("HeaderHeight", 20, (d, e) =>
+        {
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is double n)) return;
+            c.HeaderRow.Height = new GridLength(n);
+        });
+
+        /// <summary>
+        /// The property of header background brush.
+        /// </summary>
+        public static readonly DependencyProperty HeaderForegroundProperty = RegisterDependencyProperty<Brush>("HeaderForeground");
+
+        /// <summary>
+        /// The property of header background brush.
+        /// </summary>
+        public static readonly DependencyProperty HeaderBackgroundProperty = RegisterDependencyProperty<Brush>("HeaderBackground", new SolidColorBrush(Color.FromArgb(12, 128, 128, 128)));
 
         /// <summary>
         /// The property of text inserted background brush.
@@ -119,19 +159,39 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
 
         /// <summary>
-        /// Initializes a new instance of the SideBySideDiffViewer class.
+        /// The side-by-side diffs result.
         /// </summary>
-        public SideBySideDiffViewer()
+        private SideBySideDiffModel sideBySideResult;
+
+        /// <summary>
+        /// The inline diffs result.
+        /// </summary>
+        private DiffPaneModel inlineResult;
+
+        /// <summary>
+        /// The flag to enable header.
+        /// </summary>
+        private bool isHeaderEnabled;
+
+        /// <summary>
+        /// Initializes a new instance of the DiffViewer class.
+        /// </summary>
+        public DiffViewer()
         {
             InitializeComponent();
 
             LeftContentPanel.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
             LeftContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
             RightContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
+            InlineContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BackgroundProperty, new Binding("SplitterBackground") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterBorderThickness") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(WidthProperty, new Binding("SplitterWidth") { Source = this, Mode = BindingMode.OneWay });
+            HeaderBorder.SetBinding(BackgroundProperty, new Binding("HeaderBackground") { Source = this, Mode = BindingMode.OneWay });
+            ApplyHeaderTextProperties(LeftHeaderText);
+            ApplyHeaderTextProperties(RightHeaderText);
+            ApplyHeaderTextProperties(InlineHeaderText);
         }
 
         /// <summary>
@@ -165,13 +225,43 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the side by side diff model.
+        /// Gets or sets the old text.
         /// </summary>
         [Category("Appearance")]
-        public SideBySideDiffModel DiffModel
+        public string OldText
         {
-            get => (SideBySideDiffModel)GetValue(DiffModelProperty);
-            set => SetValue(DiffModelProperty, value);
+            get => (string)GetValue(OldTextProperty);
+            set => SetValue(OldTextProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the new text.
+        /// </summary>
+        [Category("Appearance")]
+        public string NewText
+        {
+            get => (string)GetValue(NewTextProperty);
+            set => SetValue(NewTextProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore the white space.
+        /// </summary>
+        [Category("Appearance")]
+        public bool IgnoreWhiteSpace
+        {
+            get => (bool)GetValue(IgnoreWhiteSpaceProperty);
+            set => SetValue(IgnoreWhiteSpaceProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore case.
+        /// </summary>
+        [Category("Appearance")]
+        public bool IgnoreCase
+        {
+            get => (bool)GetValue(IgnoreCaseProperty);
+            set => SetValue(IgnoreCaseProperty, value);
         }
 
         /// <summary>
@@ -203,6 +293,59 @@ namespace DiffPlex.Wpf.Controls
         {
             get => (Brush)GetValue(ChangeTypeForegroundProperty);
             set => SetValue(ChangeTypeForegroundProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the header of the old text.
+        /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
+        public string OldTextHeader
+        {
+            get => (string)GetValue(OldTextHeaderProperty);
+            set => SetValue(OldTextHeaderProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the header of the new text.
+        /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
+        public string NewTextHeader
+        {
+            get => (string)GetValue(NewTextHeaderProperty);
+            set => SetValue(NewTextHeaderProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the foreground brush of the line added.
+        /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
+        public double HeaderHeight
+        {
+            get => (double)GetValue(HeaderHeightProperty);
+            set => SetValue(HeaderHeightProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the foreground brush of the line added.
+        /// </summary>
+        [Bindable(true)]
+        public Brush HeaderForeground
+        {
+            get => (Brush)GetValue(HeaderForegroundProperty);
+            set => SetValue(HeaderForegroundProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the background brush of the line added.
+        /// </summary>
+        [Bindable(true)]
+        public Brush HeaderBackground
+        {
+            get => (Brush)GetValue(HeaderBackgroundProperty);
+            set => SetValue(HeaderBackgroundProperty, value);
         }
 
         /// <summary>
@@ -333,86 +476,35 @@ namespace DiffPlex.Wpf.Controls
         public double RightSideActualWidth => RightColumn.ActualWidth;
 
         /// <summary>
-        /// Sets a new diff model.
+        /// Gets a value indicating whether it is side-by-side view mode.
         /// </summary>
-        /// <param name="oldText">The old text string to compare.</param>
-        /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
-        public void SetDiffModel(string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false)
+        public bool IsSideBySideViewMode => InlineContentPanel.Visibility != Visibility.Visible;
+
+        /// <summary>
+        /// Gets a value indicating whether it is inline view mode.
+        /// </summary>
+        public bool IsInlineViewMode => InlineContentPanel.Visibility == Visibility.Visible;
+
+        /// <summary>
+        /// Gets the side-by-side diffs result.
+        /// </summary>
+        public SideBySideDiffModel GetSideBySideDiffModel()
         {
-            DiffModel = SideBySideDiffBuilder.Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+            if (sideBySideResult != null || OldText == null || NewText == null) return sideBySideResult;
+            sideBySideResult = SideBySideDiffBuilder.Diff(OldText, NewText, IgnoreWhiteSpace, IgnoreCase);
+            RenderSideBySideDiffs();
+            return sideBySideResult;
         }
 
         /// <summary>
-        /// Sets a new diff model.
+        /// Gets the inline diffs result.
         /// </summary>
-        /// <param name="differ">The differ instance.</param>
-        /// <param name="oldText">The old text string to compare.</param>
-        /// <param name="newText">The new text string.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
-        public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false)
+        public DiffPaneModel GetInlineDiffModel()
         {
-            DiffModel = SideBySideDiffBuilder.Diff(differ, oldText, newText, ignoreWhiteSpace, ignoreCase);
-        }
-
-        /// <summary>
-        /// Sets a new diff model.
-        /// </summary>
-        /// <param name="builder">The differ builder instance.</param>
-        /// <param name="oldText">The old text string to compare.</param>
-        /// <param name="newText">The new text string.</param>
-        public void SetDiffModel(ISideBySideDiffBuilder builder, string oldText, string newText)
-        {
-            if (builder == null)
-            {
-                DiffModel = SideBySideDiffBuilder.Diff(oldText, newText);
-                return;
-            }
-
-            DiffModel = builder.BuildDiffModel(oldText, newText);
-        }
-
-        /// <summary>
-        /// Sets a new diff model.
-        /// </summary>
-        /// <param name="oldFile">The old text file to compare.</param>
-        /// <param name="newFile">The new text file.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
-        /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
-        /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
-        /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
-        /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
-        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, bool ignoreWhiteSpace = true, bool ignoreCase = false)
-        {
-            if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
-            if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
-            var oldText = File.ReadAllText(oldFile.FullName);
-            var newText = File.ReadAllText(newFile.FullName);
-            DiffModel = SideBySideDiffBuilder.Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
-        }
-
-        /// <summary>
-        /// Sets a new diff model.
-        /// </summary>
-        /// <param name="oldFile">The old text file to compare.</param>
-        /// <param name="newFile">The new text file.</param>
-        /// <param name="encoding">The encoding applied to the contents of the file.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
-        /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
-        /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
-        /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
-        /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
-        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, Encoding encoding, bool ignoreWhiteSpace = true, bool ignoreCase = false)
-        {
-            if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
-            if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
-            var oldText = File.ReadAllText(oldFile.FullName, encoding);
-            var newText = File.ReadAllText(newFile.FullName, encoding);
-            DiffModel = SideBySideDiffBuilder.Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+            if (inlineResult != null || OldText == null || NewText == null) return inlineResult;
+            inlineResult = InlineDiffBuilder.Diff(OldText, NewText, IgnoreWhiteSpace, IgnoreCase);
+            RenderInlineDiffs();
+            return inlineResult;
         }
 
         /// <summary>
@@ -420,20 +512,74 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public void Refresh()
         {
-            UpdateContent(DiffModel);
+            if (InlineContentPanel.Visibility == Visibility.Visible)
+            {
+                sideBySideResult = null;
+                RenderSideBySideDiffs();
+                if (NewText == null || OldText == null)
+                {
+                    inlineResult = null;
+                    RenderInlineDiffs();
+                    return;
+                }
+
+                inlineResult = InlineDiffBuilder.Diff(OldText, NewText, IgnoreWhiteSpace, IgnoreCase);
+                RenderInlineDiffs();
+                return;
+            }
+
+            inlineResult = null;
+            RenderInlineDiffs();
+            if (NewText == null || OldText == null)
+            {
+                sideBySideResult = null;
+                RenderSideBySideDiffs();
+                return;
+            }
+
+            sideBySideResult = SideBySideDiffBuilder.Diff(OldText, NewText, IgnoreWhiteSpace, IgnoreCase);
+            RenderSideBySideDiffs();
         }
 
         /// <summary>
-        /// Updates the content.
+        /// Switches to the view of side-by-side diff mode.
         /// </summary>
-        /// <param name="m">The diff model.</param>
-        private void UpdateContent(SideBySideDiffModel m)
+        public void ShowSideBySide()
+        {
+            InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Collapsed;
+            LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Visible;
+            GetSideBySideDiffModel();
+        }
+
+        /// <summary>
+        /// Switches to the view of inline diff mode.
+        /// </summary>
+        public void ShowInline()
+        {
+            LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Collapsed;
+            InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Visible;
+            GetInlineDiffModel();
+        }
+
+        /// <summary>
+        /// Updates the side-by-side diffs view.
+        /// </summary>
+        private void RenderSideBySideDiffs()
         {
             LeftContentPanel.Clear();
             RightContentPanel.Clear();
+            var m = sideBySideResult;
             if (m == null) return;
             Helper.InsertLines(LeftContentPanel, m.OldText?.Lines, true, this);
             Helper.InsertLines(RightContentPanel, m.NewText?.Lines, false, this);
+        }
+
+        /// <summary>
+        /// Updates the inline diffs view.
+        /// </summary>
+        private void RenderInlineDiffs()
+        {
+            Helper.RenderInlineDiffs(InlineContentPanel, inlineResult, this);
         }
 
         private void LeftContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -450,14 +596,49 @@ namespace DiffPlex.Wpf.Controls
                 LeftContentPanel.ScrollToVerticalOffset(offset);
         }
 
+        private void ApplyHeaderTextProperties(TextBlock text)
+        {
+            text.SetBinding(TextBlock.FontSizeProperty, new Binding("FontSize") { Source = this, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.FontFamilyProperty, new Binding("FontFamily") { Source = this, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.FontWeightProperty, new Binding("FontWeight") { Source = this, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.FontStretchProperty, new Binding("FontStretch") { Source = this, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.FontStyleProperty, new Binding("FontStyle") { Source = this, Mode = BindingMode.OneWay });
+            text.SetBinding(TextBlock.ForegroundProperty, new Binding("HeaderForeground") { Source = this, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
+        }
+
+        private void UpdateHeaderText()
+        {
+            LeftHeaderText.Text = OldTextHeader;
+            RightHeaderText.Text = NewTextHeader;
+            if (string.IsNullOrEmpty(OldTextHeader) && string.IsNullOrEmpty(NewTextHeader))
+            {
+                InlineHeaderText.Text = null;
+                return;
+            }
+
+            InlineHeaderText.Text = $"{OldTextHeader ?? string.Empty} → {NewTextHeader ?? string.Empty}";
+            if (isHeaderEnabled) return;
+            HeaderRow.Height = new GridLength(HeaderHeight);
+            isHeaderEnabled = true;
+        }
+
         private static DependencyProperty RegisterDependencyProperty<T>(string name)
         {
-            return DependencyProperty.Register(name, typeof(T), typeof(SideBySideDiffViewer), null);
+            return DependencyProperty.Register(name, typeof(T), typeof(DiffViewer), null);
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name, T defaultValue, PropertyChangedCallback propertyChangedCallback = null)
         {
-            return DependencyProperty.Register(name, typeof(T), typeof(SideBySideDiffViewer), new PropertyMetadata(defaultValue, propertyChangedCallback));
+            return DependencyProperty.Register(name, typeof(T), typeof(DiffViewer), new PropertyMetadata(defaultValue, propertyChangedCallback));
+        }
+
+        private static DependencyProperty RegisterRefreshDependencyProperty<T>(string name, T defaultValue)
+        {
+            return DependencyProperty.Register(name, typeof(T), typeof(DiffViewer), new PropertyMetadata(defaultValue, (d, e) =>
+            {
+                if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
+                c.Refresh();
+            }));
         }
     }
 }

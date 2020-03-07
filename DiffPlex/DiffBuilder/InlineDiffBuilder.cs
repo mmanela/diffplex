@@ -10,9 +10,14 @@ namespace DiffPlex.DiffBuilder
     {
         private readonly IDiffer differ;
 
-        public InlineDiffBuilder(IDiffer differ)
+        /// <summary>
+        /// Gets the default singleton instance of the inline diff builder.
+        /// </summary>
+        public static InlineDiffBuilder Instance { get; } = new InlineDiffBuilder();
+
+        public InlineDiffBuilder(IDiffer differ = null)
         {
-            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
+            this.differ = differ ?? Differ.Instance;
         }
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText)
@@ -32,6 +37,41 @@ namespace DiffPlex.DiffBuilder
             var model = new DiffPaneModel();
 
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase: ignoreCase, chunker);
+            BuildDiffPieces(diffResult, model.Lines);
+            return model;
+        }
+
+        /// <summary>
+        /// Gets the inline textual diffs.
+        /// </summary>
+        /// <param name="oldText">The old text to diff.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="chunker">The chunker.</param>
+        /// <returns>The diffs result.</returns>
+        public static DiffPaneModel Diff(string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
+        {
+            return Diff(Differ.Instance, oldText, newText, ignoreWhiteSpace, ignoreCase, chunker);
+        }
+
+        /// <summary>
+        /// Gets the inline textual diffs.
+        /// </summary>
+        /// <param name="differ">The differ instance.</param>
+        /// <param name="oldText">The old text to diff.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="chunker">The chunker.</param>
+        /// <returns>The diffs result.</returns>
+        public static DiffPaneModel Diff(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
+        {
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+
+            var model = new DiffPaneModel();
+            var diffResult = (differ ?? Differ.Instance).CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
             BuildDiffPieces(diffResult, model.Lines);
             return model;
         }

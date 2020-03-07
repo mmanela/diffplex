@@ -33,7 +33,7 @@ namespace DiffPlex
         DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker);
 
         /// <summary>
-        /// Create a diff by comparing text line by line
+        /// Creates a diff by comparing text line by line.
         /// </summary>
         /// <param name="oldText">The old text.</param>
         /// <param name="newText">The new text.</param>

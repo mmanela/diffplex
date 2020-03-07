@@ -5,6 +5,12 @@ namespace DiffPlex.Chunkers
     public class LineEndingsPreservingChunker:IChunker
     {
         private readonly string[] emptyArray = new string[0];
+
+        /// <summary>
+        /// Gets the default singleton instance of the chunker.
+        /// </summary>
+        public static LineEndingsPreservingChunker Instance { get; } = new LineEndingsPreservingChunker();
+
         public string[] Chunk(string text)
         {
             if (string.IsNullOrEmpty(text))

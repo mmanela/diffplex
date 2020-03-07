@@ -8,8 +8,7 @@
         mc:Ignorable="d"
         Title="Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
     <Grid>
-        <diffplex:SideBySideDiffViewer x:Name="SideBySideDiff" Margin="0,0,0,20" />
-        <diffplex:InlineDiffViewer x:Name="InlineDiff" Margin="0,0,0,20" Visibility="Collapsed" />
+        <diffplex:DiffViewer x:Name="DiffView" Margin="0,0,0,20" OldTextHeader="Old" NewTextHeader="New" HeaderForeground="#808080" />
         <Button VerticalAlignment="Bottom" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" />
     </Grid>
 </Window>

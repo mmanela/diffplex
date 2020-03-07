@@ -5,7 +5,7 @@
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.0</Version>
-    <Authors>Kingcean Tuan</Authors>
+    <Authors>Kingcean Tuan, Matthew Manela</Authors>
     <Company />
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
@@ -13,9 +13,9 @@
     <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
-    <PackageTags>diff</PackageTags>
+    <PackageTags>diff, wpf</PackageTags>
     <SignAssembly>True</SignAssembly>
-    <Description>DiffPlex.Wpf is a WPF controls library that allows you to programatically create text diffs visual control in your application.</Description>
+    <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application.</Description>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

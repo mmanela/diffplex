@@ -160,7 +160,7 @@ DiffPlex also contains a sample website that shows how to create a basic side by
 
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
-DiffPlex WPF controls library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
+DiffPlex WPF control library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
 It targets `.NET Core 3.1`.
 
 ```csharp

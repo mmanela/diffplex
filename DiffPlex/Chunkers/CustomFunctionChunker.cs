@@ -8,7 +8,8 @@ namespace DiffPlex.Chunkers
 
         public CustomFunctionChunker(Func<string, string[]> customChunkerFunc)
         {
-            this.customChunkerFunc = customChunkerFunc ?? throw new ArgumentNullException(nameof(customChunkerFunc));
+            if (customChunkerFunc == null) throw new ArgumentNullException(nameof(customChunkerFunc));
+            this.customChunkerFunc = customChunkerFunc;
         }
 
         public string[] Chunk(string text)

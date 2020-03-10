@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+
 using DiffPlex.DiffBuilder.Model;
 
 namespace DiffPlex.Wpf.Controls

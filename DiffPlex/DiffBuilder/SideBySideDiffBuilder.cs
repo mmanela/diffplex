@@ -14,14 +14,19 @@ namespace DiffPlex.DiffBuilder
 
         private delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
         
+        /// <summary>
+        /// Gets the default singleton instance.
+        /// </summary>
+        public static SideBySideDiffBuilder Instance { get; } = new SideBySideDiffBuilder();
+
         public SideBySideDiffBuilder(IDiffer differ, IChunker lineChunker, IChunker wordChunker)
         {
-            this.differ = differ ?? throw new ArgumentNullException(nameof(differ));
+            this.differ = differ ?? Differ.Instance;
             this.lineChunker = lineChunker ?? throw new ArgumentNullException(nameof(lineChunker));
             this.wordChunker = wordChunker ?? throw new ArgumentNullException(nameof(wordChunker));
         }
 
-        public SideBySideDiffBuilder(IDiffer differ) : 
+        public SideBySideDiffBuilder(IDiffer differ = null) : 
             this(differ, new LineChunker(), new WordChunker())
         {
         }
@@ -40,6 +45,58 @@ namespace DiffPlex.DiffBuilder
                 oldText ?? throw new ArgumentNullException(nameof(oldText)),
                 newText ?? throw new ArgumentNullException(nameof(newText)),
                 ignoreWhitespace);
+        }
+
+        /// <summary>
+        /// Gets the side-by-side textual diffs.
+        /// </summary>
+        /// <param name="oldText">The old text to diff.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <returns>The diffs result.</returns>
+        public static SideBySideDiffModel Diff(string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false)
+        {
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+
+            var model = new SideBySideDiffModel();
+            var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, LineChunker.Instance);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPiecesInternal);
+            return model;
+        }
+
+        /// <summary>
+        /// Gets the side-by-side textual diffs.
+        /// </summary>
+        /// <param name="differ">The differ instance.</param>
+        /// <param name="oldText">The old text to diff.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="lineChunker">The line chunker.</param>
+        /// <param name="wordChunker">The word chunker.</param>
+        /// <returns>The diffs result.</returns>
+        public static SideBySideDiffModel Diff(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker lineChunker = null, IChunker wordChunker = null)
+        {
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+
+            if (differ == null) return Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+            var model = new SideBySideDiffModel();
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, lineChunker ?? LineChunker.Instance);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, (ot, nt, op, np) =>
+            {
+                var r = differ.CreateDiffs(oldText, newText, false, false, wordChunker ?? WordChunker.Instance);
+                BuildDiffPieces(r, op, np, null);
+            });
+            return model;
+        }
+
+        private static void BuildWordDiffPiecesInternal(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
+        {
+            var diffResult = Differ.Instance.CreateDiffs(oldText, newText, false, false, WordChunker.Instance);
+            BuildDiffPieces(diffResult, oldPieces, newPieces, null);
         }
 
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhitespace)

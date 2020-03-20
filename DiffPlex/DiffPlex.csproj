@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net35;net40;netstandard1.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <Authors>Matthew Manela</Authors>
     <Company />
     <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
@@ -13,7 +13,8 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>opensource.snk</AssemblyOriginatorKeyFile>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library.</Description>
-    <PackageReleaseNotes>* Add new chunkers for more flexible text splitting</PackageReleaseNotes>
+    <PackageReleaseNotes>* Add helper functions and singletons.</PackageReleaseNotes>
+    <PackageIcon>diffplex_icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -24,4 +25,8 @@
     <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
+    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
+  </ItemGroup>
 </Project>

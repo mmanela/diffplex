@@ -10,6 +10,11 @@ namespace DiffPlex
 
         private static readonly string[] emptyStringArray = new string[0];
 
+        /// <summary>
+        /// Gets the default singleton instance of differ instance.
+        /// </summary>
+        public static Differ Instance { get; } = new Differ();
+
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
             return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());

@@ -14,13 +14,10 @@ namespace Facts.DiffPlex
         public class Constructor
         {
             [Fact]
-            public void Will_throw_is_IDiffer_is_null()
+            public void Will_not_throw_if_IDiffer_is_null()
             {
-                var ex = Record.Exception(() => new InlineDiffBuilder(null));
-
-                Assert.IsType<ArgumentNullException>(ex);
-                var an = (ArgumentNullException)ex;
-                Assert.Equal("differ", an.ParamName);
+                var builder = new InlineDiffBuilder(null);
+                Assert.NotNull(builder);
             }
         }
 

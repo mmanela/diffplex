@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>Kingcean Tuan, Matthew Manela</Authors>
     <Company />
     <RootNamespace>DiffPlex.Wpf</RootNamespace>

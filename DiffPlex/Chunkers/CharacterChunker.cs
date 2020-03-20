@@ -2,6 +2,11 @@
 {
     public class CharacterChunker:IChunker
     {
+        /// <summary>
+        /// Gets the default singleton instance of the chunker.
+        /// </summary>
+        public static CharacterChunker Instance { get; } = new CharacterChunker();
+
         public string[] Chunk(string text)
         {
             var s = new string[text.Length];

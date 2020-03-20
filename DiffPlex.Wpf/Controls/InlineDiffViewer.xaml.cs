@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 
@@ -51,7 +52,11 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of line number.
         /// </summary>
-        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60);
+        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60, (d, e) =>
+        {
+            if (!(d is InlineDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
+            c.ContentPanel.LineNumberWidth = n;
+        });
 
         /// <summary>
         /// The property of change type symbol foreground brush.
@@ -119,6 +124,7 @@ namespace DiffPlex.Wpf.Controls
         public InlineDiffViewer()
         {
             InitializeComponent();
+
             ContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
         }
 
@@ -140,6 +146,17 @@ namespace DiffPlex.Wpf.Controls
         {
             get => (Brush)GetValue(LineNumberForegroundProperty);
             set => SetValue(LineNumberForegroundProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the line number width.
+        /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
+        public int LineNumberWidth
+        {
+            get => (int)GetValue(LineNumberWidthProperty);
+            set => SetValue(LineNumberWidthProperty, value);
         }
 
         /// <summary>
@@ -270,10 +287,10 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(string oldText, string newText, bool ignoreWhiteSpace = true)
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        public void SetDiffModel(string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false)
         {
-            var builder = new InlineDiffBuilder(Helper.Instance);
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            DiffModel = InlineDiffBuilder.Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
         }
 
         /// <summary>
@@ -283,10 +300,10 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true)
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        public void SetDiffModel(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false)
         {
-            var builder = new InlineDiffBuilder(differ ?? Helper.Instance);
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            DiffModel = InlineDiffBuilder.Diff(differ, oldText, newText, ignoreWhiteSpace, ignoreCase);
         }
 
         /// <summary>
@@ -296,11 +313,17 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="oldText">The old text string to compare.</param>
         /// <param name="newText">The new text string.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
-        /// <exception cref="ArgumentNullException">builder was null.</exception>
-        public void SetDiffModel(InlineDiffBuilder builder, string oldText, string newText, bool ignoreWhiteSpace = true)
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="chunker">The chunker.</param>
+        public void SetDiffModel(IInlineDiffBuilder builder, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder), "builder should not be null.");
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            if (builder == null)
+            {
+                DiffModel = InlineDiffBuilder.Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+                return;
+            }
+
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
         }
 
         /// <summary>
@@ -309,18 +332,20 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="oldFile">The old text file to compare.</param>
         /// <param name="newFile">The new text file.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="chunker">The chunker.</param>
         /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
         /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
         /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
         /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
-        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, bool ignoreWhiteSpace = true)
+        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
         {
             if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
             if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
             var oldText = File.ReadAllText(oldFile.FullName);
             var newText = File.ReadAllText(newFile.FullName);
-            var builder = new InlineDiffBuilder(Helper.Instance);
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            var builder = new InlineDiffBuilder();
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
         }
 
         /// <summary>
@@ -330,18 +355,20 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="newFile">The new text file.</param>
         /// <param name="encoding">The encoding applied to the contents of the file.</param>
         /// <param name="ignoreWhiteSpace">true if ignore the white space; otherwise, false.</param>
+        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="chunker">The chunker.</param>
         /// <exception cref="ArgumentNullException">oldFile or newFile was null.</exception>
         /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
         /// <exception cref="IOException">Read file failed because of I/O exception.</exception>
         /// <exception cref="UnauthorizedAccessException">Cannot access the file.</exception>
-        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, Encoding encoding, bool ignoreWhiteSpace = true)
+        public void SetDiffModel(FileInfo oldFile, FileInfo newFile, Encoding encoding, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
         {
             if (oldFile == null) throw new ArgumentNullException(nameof(oldFile), "oldFile should not be null.");
             if (newFile == null) throw new ArgumentNullException(nameof(newFile), "newFile should not be null.");
             var oldText = File.ReadAllText(oldFile.FullName, encoding);
             var newText = File.ReadAllText(newFile.FullName, encoding);
-            var builder = new InlineDiffBuilder(Helper.Instance);
-            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace);
+            var builder = new InlineDiffBuilder();
+            DiffModel = builder.BuildDiffModel(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
         }
 
         /// <summary>
@@ -358,42 +385,7 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="m">The diff model.</param>
         private void UpdateContent(DiffPaneModel m)
         {
-            ContentPanel.Clear();
-            if (m?.Lines == null) return;
-            foreach (var line in m.Lines)
-            {
-                if (line == null)
-                {
-                    ContentPanel.Add(null, null, null, ChangeType.Unchanged.ToString(), this);
-                    continue;
-                }
-
-                var changeType = line.Type;
-                var text = line.Text;
-                switch (line.Type)
-                {
-                    case ChangeType.Modified:
-                        changeType = ChangeType.Inserted;
-                        break;
-                    case ChangeType.Inserted:
-                    case ChangeType.Deleted:
-                    case ChangeType.Unchanged:
-                        break;
-                    default:
-                        changeType = ChangeType.Imaginary;
-                        text = string.Empty;
-                        break;
-                }
-
-                ContentPanel.Add(line.Position, changeType switch
-                {
-                    ChangeType.Inserted => "+",
-                    ChangeType.Deleted => "-",
-                    _ => " "
-                }, text, changeType.ToString(), this);
-            }
-
-            ContentPanel.AdjustScrollView();
+            Helper.RenderInlineDiffs(ContentPanel, m, this);
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

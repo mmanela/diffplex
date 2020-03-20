@@ -8,7 +8,7 @@ namespace DiffPlex.Chunkers
 
         public CustomFunctionChunker(Func<string, string[]> customChunkerFunc)
         {
-            if(customChunkerFunc == null) throw new ArgumentNullException(nameof(customChunkerFunc));
+            if (customChunkerFunc == null) throw new ArgumentNullException(nameof(customChunkerFunc));
             this.customChunkerFunc = customChunkerFunc;
         }
 

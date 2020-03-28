@@ -18,17 +18,23 @@ namespace DiffPlex.Wpf.Demo
         }
 
         internal const string OldText =
-            @"We the people
+            @"ABCDEFG hijklmn 01234567 _!# 98?
+
+We the people
 of the united states of america
 establish justice
 ensure domestic tranquility
 provide for the common defence
 secure the blessing of liberty
 to ourselves and our posterity
+
+=======
 ";
 
         internal const string NewText =
-            @"We the people
+            @"ABCDEFG opq rst uvw xyz 01234567 _&^ 98.
+
+We the people
 in order to form a more perfect union
 establish justice
 ensure domestic tranquility
@@ -41,6 +47,7 @@ for the United States of America
 
 
 
+=======
 ";
     }
 }

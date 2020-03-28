@@ -85,15 +85,21 @@ namespace DiffPlex.Wpf.Controls
             ApplyTextBlockProperties(op, source);
             OperationPanel.Children.Add(op);
 
+            var panel = new StackPanel { Orientation = Orientation.Horizontal };
+            panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
             var text = new TextBlock
             {
                 Text = value
-            };
+            }; ;
             if (!string.IsNullOrEmpty(value))
+            {
                 text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
-            text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-            ApplyTextBlockProperties(text, source);
-            ValuePanel.Children.Add(text);
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+                ApplyTextBlockProperties(text, source);
+            }
+
+            panel.Children.Add(text);
+            ValuePanel.Children.Add(panel);
             return text;
         }
 
@@ -119,31 +125,9 @@ namespace DiffPlex.Wpf.Controls
             ApplyTextBlockProperties(op, source);
             OperationPanel.Children.Add(op);
 
-            if (value == null || value.Count == 0)
-            {
-                var text = new TextBlock();
-                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-                ValuePanel.Children.Add(text);
-                return;
-            }
-
-            if (value.Count == 1)
-            {
-                var ele = value[0];
-                var text = new TextBlock
-                {
-                    Text = ele.Key
-                };
-                if (!string.IsNullOrEmpty(ele.Key))
-                    text.SetBinding(TextBlock.ForegroundProperty, GetBindings((ele.Value ?? changeType) + "Foreground", source, Foreground));
-                text.SetBinding(TextBlock.BackgroundProperty, GetBindings((ele.Value ?? changeType) + "Background", source));
-                ApplyTextBlockProperties(text, source);
-                ValuePanel.Children.Add(text);
-                return;
-            }
-
             var panel = new StackPanel { Orientation = Orientation.Horizontal };
             panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
+            if (value == null) value = new List<KeyValuePair<string, string>>();
             foreach (var ele in value)
             {
                 if (string.IsNullOrEmpty(ele.Key)) continue;
@@ -162,6 +146,7 @@ namespace DiffPlex.Wpf.Controls
                 panel.Children.Add(text);
             }
 
+            if (panel.Children.Count == 0) panel.Children.Add(new TextBlock());
             ValuePanel.Children.Add(panel);
         }
 

@@ -38,6 +38,7 @@ namespace DiffPlex.Wpf.Demo
             var now = DateTime.Now;
             var isDark = now.Hour < 6 || now.Hour >= 18;
             Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
+            DiffButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
             DiffView.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
             DiffView.OldText = TestData.DuplicateText(TestData.OldText, 50);
             DiffView.NewText = TestData.DuplicateText(TestData.NewText, 50);

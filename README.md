@@ -179,7 +179,7 @@ Then you can add one of following controls in UI.
 - `SideBySideDiffViewer` Side-by-side (splitted) textual diffs viewer control by setting a diff model `SideBySideDiffModel`.
 - `InlineDiffViewer` Inline textual diffs viewer control by setting a diff model `DiffPaneModel`.
 
-For example,
+For example.
 
 ```xaml
 <diffplex:DiffViewer x:Name="DiffView" />

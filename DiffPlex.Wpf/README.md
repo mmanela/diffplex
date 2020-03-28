@@ -1,5 +1,7 @@
 ﻿# DiffPlex controls for WPF
 
+[![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
+
 This library contains WPF controls for textual diffs.
 
 ### Import
@@ -26,6 +28,8 @@ Class `DiffViewer` is used to render textual diffs by setting new text and old t
 DiffView.OldText = OldText;
 DiffView.NewText = NewText;
 ```
+
+![WPF sample](../images/wpf_side_light.jpg)
 
 And you can switch to side-by-side view mode by call `ShowSideBySide` member method or switch to inline view mode by `ShowInline` member method.
 

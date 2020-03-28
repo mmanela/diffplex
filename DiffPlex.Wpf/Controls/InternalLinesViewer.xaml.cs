@@ -37,6 +37,8 @@ namespace DiffPlex.Wpf.Controls
             set => ValueScrollViewer.VerticalScrollBarVisibility = value;
         }
 
+        public Guid TrackingId { get; set; }
+
         public double VerticalOffset => ValueScrollViewer.VerticalOffset;
 
         public int LineNumberWidth
@@ -93,6 +95,74 @@ namespace DiffPlex.Wpf.Controls
             ApplyTextBlockProperties(text, source);
             ValuePanel.Children.Add(text);
             return text;
+        }
+
+        public void Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
+        {
+            var index = new TextBlock
+            {
+                Text = number.HasValue ? number.ToString() : string.Empty,
+                TextAlignment = TextAlignment.Right
+            };
+            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
+            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+            ApplyTextBlockProperties(index, source);
+            NumberPanel.Children.Add(index);
+
+            var op = new TextBlock
+            {
+                Text = operation,
+                TextAlignment = TextAlignment.Center
+            };
+            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
+            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+            ApplyTextBlockProperties(op, source);
+            OperationPanel.Children.Add(op);
+
+            if (value == null || value.Count == 0)
+            {
+                var text = new TextBlock();
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+                ValuePanel.Children.Add(text);
+                return;
+            }
+
+            if (value.Count == 1)
+            {
+                var ele = value[0];
+                var text = new TextBlock
+                {
+                    Text = ele.Key
+                };
+                if (!string.IsNullOrEmpty(ele.Key))
+                    text.SetBinding(TextBlock.ForegroundProperty, GetBindings((ele.Value ?? changeType) + "Foreground", source, Foreground));
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings((ele.Value ?? changeType) + "Background", source));
+                ApplyTextBlockProperties(text, source);
+                ValuePanel.Children.Add(text);
+                return;
+            }
+
+            var panel = new StackPanel { Orientation = Orientation.Horizontal };
+            panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
+            foreach (var ele in value)
+            {
+                if (string.IsNullOrEmpty(ele.Key)) continue;
+                var text = new TextBlock
+                {
+                    Text = ele.Key
+                };
+                if (!string.IsNullOrEmpty(ele.Value))
+                {
+                    if (!string.IsNullOrEmpty(ele.Key))
+                        text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", source, Foreground));
+                    text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", source));
+                }
+                
+                ApplyTextBlockProperties(text, source);
+                panel.Children.Add(text);
+            }
+
+            ValuePanel.Children.Add(panel);
         }
 
         private Binding GetBindings(string key, UIElement source)

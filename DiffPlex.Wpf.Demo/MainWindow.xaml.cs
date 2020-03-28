@@ -30,7 +30,11 @@ namespace DiffPlex.Wpf.Demo
         public MainWindow()
         {
             InitializeComponent();
+            LoadData();
+        }
 
+        private void LoadData()
+        {
             var now = DateTime.Now;
             var isDark = now.Hour < 6 || now.Hour >= 18;
             Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Authors>Kingcean Tuan</Authors>
@@ -14,6 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
     <PackageIcon>diffplex_icon.png</PackageIcon>
+    <StartupObject>DiffPlex.Wpf.Demo.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

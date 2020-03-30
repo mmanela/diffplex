@@ -596,6 +596,18 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="lineIndex">The index of line.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(int lineIndex, bool isLeftLine = false)
+        {
+            if (IsSideBySideViewMode) return Helper.GoTo(isLeftLine ? LeftContentPanel : RightContentPanel, lineIndex);
+            else return Helper.GoTo(InlineContentPanel, lineIndex);
+        }
+
+        /// <summary>
         /// Updates the side-by-side diffs view.
         /// </summary>
         private void RenderSideBySideDiffs()

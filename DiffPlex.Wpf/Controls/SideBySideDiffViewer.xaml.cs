@@ -424,6 +424,17 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="lineIndex">The index of line.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(int lineIndex, bool isLeftLine = false)
+        {
+            return Helper.GoTo(isLeftLine ? LeftContentPanel : RightContentPanel, lineIndex);
+        }
+
+        /// <summary>
         /// Updates the content.
         /// </summary>
         /// <param name="m">The diff model.</param>

@@ -26,7 +26,8 @@ namespace DiffPlex.Wpf.Controls
             {
                 if (line == null)
                 {
-                    viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
                     continue;
                 }
 
@@ -42,7 +43,8 @@ namespace DiffPlex.Wpf.Controls
                         if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                         {
                             var details = GetSubPiecesInfo(line, true);
-                            viewer.Add(line.Position, "+", details, changeType.ToString(), source);
+                            var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
+                            c.Tag = line;
                             hasAdded = true;
                         }
 
@@ -51,7 +53,8 @@ namespace DiffPlex.Wpf.Controls
                         if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                         {
                             var details = GetSubPiecesInfo(line, false);
-                            viewer.Add(line.Position, "-", details, changeType.ToString(), source);
+                            var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
+                            c.Tag = line;
                             hasAdded = true;
                         }
 
@@ -64,12 +67,16 @@ namespace DiffPlex.Wpf.Controls
                         break;
                 }
 
-                if (!hasAdded) viewer.Add(line.Position, changeType switch
+                if (!hasAdded)
                 {
-                    ChangeType.Inserted => "+",
-                    ChangeType.Deleted => "-",
-                    _ => " "
-                }, text, changeType.ToString(), source);
+                    var c = viewer.Add(line.Position, changeType switch
+                    {
+                        ChangeType.Inserted => "+",
+                        ChangeType.Deleted => "-",
+                        _ => " "
+                    }, text, changeType.ToString(), source);
+                    c.Tag = line;
+                }
             }
 
             viewer.AdjustScrollView();
@@ -95,6 +102,21 @@ namespace DiffPlex.Wpf.Controls
                     InsertLinesInteral(panel, lines.Skip(300).ToList(), isOld, source, disablePieces);
                 });
             });
+        }
+
+        internal static bool GoTo(InternalLinesViewer panel, int lineIndex)
+        {
+            var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
+            var point = new Point(0, currentScrollPosition);
+            foreach (var item in panel.ValuePanel.Children)
+            {
+                if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
+                var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
+                panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                return true;
+            }
+
+            return false;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:", Justification = "Not supported.")]
@@ -135,7 +157,8 @@ namespace DiffPlex.Wpf.Controls
             {
                 if (line == null)
                 {
-                    panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
                     continue;
                 }
 
@@ -149,7 +172,8 @@ namespace DiffPlex.Wpf.Controls
                         if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                         {
                             var details = GetSubPiecesInfo(line, isOld);
-                            panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
+                            var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
+                            c.Tag = line;
                             hasAdded = true;
                         }
 
@@ -164,12 +188,16 @@ namespace DiffPlex.Wpf.Controls
                         break;
                 }
 
-                if (!hasAdded) panel.Add(line.Position, changeType switch
+                if (!hasAdded)
                 {
-                    ChangeType.Inserted => "+",
-                    ChangeType.Deleted => "-",
-                    _ => " "
-                }, text, changeType.ToString(), source);
+                    var c = panel.Add(line.Position, changeType switch
+                    {
+                        ChangeType.Inserted => "+",
+                        ChangeType.Deleted => "-",
+                        _ => " "
+                    }, text, changeType.ToString(), source);
+                    c.Tag = line;
+                }
             }
 
             panel.AdjustScrollView();

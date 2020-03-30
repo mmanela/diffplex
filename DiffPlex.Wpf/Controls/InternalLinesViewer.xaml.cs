@@ -63,7 +63,7 @@ namespace DiffPlex.Wpf.Controls
             ValuePanel.Children.Clear();
         }
 
-        public TextBlock Add(int? number, string operation, string value, string changeType, UIElement source)
+        public StackPanel Add(int? number, string operation, string value, string changeType, UIElement source)
         {
             var index = new TextBlock
             {
@@ -100,10 +100,10 @@ namespace DiffPlex.Wpf.Controls
 
             panel.Children.Add(text);
             ValuePanel.Children.Add(panel);
-            return text;
+            return panel;
         }
 
-        public void Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
+        public StackPanel Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
         {
             var index = new TextBlock
             {
@@ -148,6 +148,7 @@ namespace DiffPlex.Wpf.Controls
 
             if (panel.Children.Count == 0) panel.Children.Add(new TextBlock());
             ValuePanel.Children.Add(panel);
+            return panel;
         }
 
         private Binding GetBindings(string key, UIElement source)

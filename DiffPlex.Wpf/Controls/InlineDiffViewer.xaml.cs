@@ -380,6 +380,16 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="lineIndex">The index of line.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(int lineIndex)
+        {
+            return Helper.GoTo(ContentPanel, lineIndex);
+        }
+
+        /// <summary>
         /// Updates the content.
         /// </summary>
         /// <param name="m">The diff model.</param>

@@ -186,6 +186,15 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
 
         /// <summary>
+        /// The property of IsSideBySide.
+        /// </summary>
+        public static readonly DependencyProperty IsSideBySideProperty = RegisterDependencyProperty<bool>(nameof(IsSideBySide), true, (d, e) =>
+        {
+            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b)) return;
+            c.ChangeViewMode(b);
+        });
+
+        /// <summary>
         /// The side-by-side diffs result.
         /// </summary>
         private SideBySideDiffModel sideBySideResult;
@@ -493,6 +502,17 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Gets or sets the IsSideBySide.
+        /// </summary>
+        [Bindable(true)]
+        [Category("Appearance")]
+        public bool IsSideBySide
+        {
+            get => (bool)GetValue(IsSideBySideProperty);
+            set => SetValue(IsSideBySideProperty, value);
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the grid splitter has logical focus and mouse capture and the left mouse button is pressed.
         /// </summary>
         public bool IsSplitterDragging => Splitter.IsDragging;
@@ -578,10 +598,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public void ShowSideBySide()
         {
-            InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Collapsed;
-            LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Visible;
-            GetSideBySideDiffModel();
-            ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs(true));
+            IsSideBySide = true;
         }
 
         /// <summary>
@@ -589,10 +606,22 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public void ShowInline()
         {
-            LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility = Visibility.Collapsed;
-            InlineContentPanel.Visibility = InlineHeaderText.Visibility = Visibility.Visible;
-            GetInlineDiffModel();
-            ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs(false));
+            IsSideBySide = false;
+        }
+
+        private void ChangeViewMode(bool isSideBySide)
+        {
+            InlineContentPanel.Visibility = InlineHeaderText.Visibility
+                = (isSideBySide ? Visibility.Collapsed : Visibility.Visible);
+            LeftContentPanel.Visibility = RightContentPanel.Visibility = LeftHeaderText.Visibility = RightHeaderText.Visibility = Splitter.Visibility
+                = (isSideBySide ? Visibility.Visible : Visibility.Collapsed);
+
+            if (isSideBySide)
+                GetSideBySideDiffModel();
+            else
+                GetInlineDiffModel();
+
+            ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs(isSideBySide));
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -61,8 +62,14 @@ namespace DiffPlex.DiffBuilder
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new SideBySideDiffModel();
+            bool hasDifferences;
+            
             var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, LineChunker.Instance);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPiecesInternal);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, out hasDifferences, BuildWordDiffPiecesInternal);
+
+            model.NewText.HasDifferences = hasDifferences;
+            model.OldText.HasDifferences = hasDifferences;
+
             return model;
         }
 
@@ -84,36 +91,49 @@ namespace DiffPlex.DiffBuilder
 
             if (differ == null) return Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
             var model = new SideBySideDiffModel();
+            bool hasDifferences;
+            
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, lineChunker ?? LineChunker.Instance);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, (ot, nt, op, np) =>
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, out hasDifferences, (ot, nt, op, np) =>
             {
                 var r = differ.CreateDiffs(oldText, newText, false, false, wordChunker ?? WordChunker.Instance);
-                BuildDiffPieces(r, op, np, null);
+                BuildDiffPieces(r, op, np, out hasDifferences, null);
             });
+            model.NewText.HasDifferences = hasDifferences;
+            model.OldText.HasDifferences = hasDifferences;
+            
             return model;
         }
 
         private static void BuildWordDiffPiecesInternal(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
         {
             var diffResult = Differ.Instance.CreateDiffs(oldText, newText, false, false, WordChunker.Instance);
-            BuildDiffPieces(diffResult, oldPieces, newPieces, null);
+            bool hasDifferences;
+            BuildDiffPieces(diffResult, oldPieces, newPieces, out hasDifferences, null);
         }
 
         private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhitespace)
         {
             var model = new SideBySideDiffModel();
+            bool hasDifferences;
+            
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, false, lineChunker);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, out hasDifferences, BuildWordDiffPieces);
+
+            model.NewText.HasDifferences = hasDifferences;
+            model.OldText.HasDifferences = hasDifferences;
+            
             return model;
         }
 
         private void BuildWordDiffPieces(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
         {
+            bool hasDifferences;
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace: false, false, wordChunker);
-            BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null);
+            BuildDiffPieces(diffResult, oldPieces, newPieces, out hasDifferences, subPieceBuilder: null);
         }
 
-        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder)
+        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, out bool hasDifferences, PieceBuilder subPieceBuilder)
         {
             int aPos = 0;
             int bPos = 0;
@@ -173,6 +193,8 @@ namespace DiffPlex.DiffBuilder
                 aPos++;
                 bPos++;
             }
+            
+            hasDifferences = newPieces.Any(x => x.Type != ChangeType.Unchanged);
         }
     }
 }

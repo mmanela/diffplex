@@ -69,6 +69,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Unchanged, bidiff.Lines[i].Type);
                     Assert.Equal(i + 1, bidiff.Lines[i].Position);
                 }
+
+                Assert.False(bidiff.HasDifferences);
             }
 
             [Fact]
@@ -94,6 +96,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Inserted, bidiff.Lines[j].Type);
                     Assert.Equal(j + 1, bidiff.Lines[j].Position);
                 }
+                
+                Assert.True(bidiff.HasDifferences);
             }
 
             [Fact]
@@ -119,6 +123,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Deleted, bidiff.Lines[j].Type);
                     Assert.Null(bidiff.Lines[j].Position);
                 }
+                
+                Assert.True(bidiff.HasDifferences);
             }
 
             [Fact]
@@ -157,6 +163,7 @@ namespace Facts.DiffPlex
                 Assert.Equal("", bidiff.Lines[8].Text);
                 Assert.Equal(ChangeType.Deleted, bidiff.Lines[8].Type);
                 Assert.Null(bidiff.Lines[8].Position);
+                Assert.True(bidiff.HasDifferences);
             }
 
             [Fact]
@@ -203,6 +210,7 @@ namespace Facts.DiffPlex
                 Assert.Equal("f", bidiff.Lines[11].Text);
                 Assert.Equal(ChangeType.Unchanged, bidiff.Lines[11].Type);
                 Assert.Equal(8, bidiff.Lines[11].Position);
+                Assert.True(bidiff.HasDifferences);
             }
 
             [Fact]
@@ -255,6 +263,7 @@ namespace Facts.DiffPlex
                 Assert.Equal("f", bidiff.Lines[10].Text);
                 Assert.Equal(ChangeType.Unchanged, bidiff.Lines[10].Type);
                 Assert.Equal(8, bidiff.Lines[10].Position);
+                Assert.True(bidiff.HasDifferences);
             }
 
             [Fact]

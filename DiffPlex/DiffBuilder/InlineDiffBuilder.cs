@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -35,9 +36,12 @@ namespace DiffPlex.DiffBuilder
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
+            bool hasDifferences;
 
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase: ignoreCase, chunker);
-            BuildDiffPieces(diffResult, model.Lines);
+            BuildDiffPieces(diffResult, model.Lines, out hasDifferences);
+            model.HasDifferences = hasDifferences;
+            
             return model;
         }
 
@@ -71,12 +75,16 @@ namespace DiffPlex.DiffBuilder
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             var model = new DiffPaneModel();
+            bool hasDifferences;
+            
             var diffResult = (differ ?? Differ.Instance).CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
-            BuildDiffPieces(diffResult, model.Lines);
+            BuildDiffPieces(diffResult, model.Lines, out hasDifferences);
+            model.HasDifferences = hasDifferences;
+            
             return model;
         }
 
-        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> pieces)
+        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> pieces, out bool hasDifferences)
         {
             int bPos = 0;
 
@@ -113,6 +121,8 @@ namespace DiffPlex.DiffBuilder
 
             for (; bPos < diffResult.PiecesNew.Length; bPos++)
                 pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+
+            hasDifferences = pieces.Any(x => x.Type != ChangeType.Unchanged);
         }
     }
 }

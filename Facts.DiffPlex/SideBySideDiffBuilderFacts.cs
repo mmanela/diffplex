@@ -75,6 +75,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Unchanged, bidiff.NewText.Lines[i].Type);
                     Assert.Equal(i + 1, bidiff.NewText.Lines[i].Position);
                 }
+
+                Assert.False(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
             [Fact]
@@ -107,6 +109,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Imaginary, bidiff.OldText.Lines[j].Type);
                     Assert.False(bidiff.OldText.Lines[j].Position.HasValue);
                 }
+                
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
             [Fact]
@@ -137,6 +141,8 @@ namespace Facts.DiffPlex
                     Assert.Equal(ChangeType.Imaginary, bidiff.NewText.Lines[j].Type);
                     Assert.False(bidiff.NewText.Lines[j].Position.HasValue);
                 }
+                
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
             [Fact]
@@ -196,6 +202,8 @@ namespace Facts.DiffPlex
                         Assert.False(bidiff.NewText.Lines[j].Position.HasValue);
                     }
                 }
+                
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
             [Fact]
@@ -266,6 +274,8 @@ namespace Facts.DiffPlex
                         Assert.False(bidiff.NewText.Lines[j].Position.HasValue);
                     }
                 }
+                
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
 
@@ -302,6 +312,8 @@ namespace Facts.DiffPlex
                 Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[2].Type);
                 Assert.Equal(ChangeType.Imaginary, bidiff.OldText.Lines[0].SubPieces[3].Type);
                 Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[4].Type);
+                
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
             }
 
             [Fact]

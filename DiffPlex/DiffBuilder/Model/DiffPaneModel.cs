@@ -6,7 +6,7 @@ namespace DiffPlex.DiffBuilder.Model
     {
         public List<DiffPiece> Lines { get; }
         
-        public bool HasDifferences { get; internal set; } = false;
+        public bool? HasDifferences { get; internal set; }
 
         public DiffPaneModel()
         {

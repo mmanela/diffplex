@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -65,9 +64,6 @@ namespace DiffPlex.DiffBuilder
             var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, LineChunker.Instance);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPiecesInternal);
 
-            model.NewText.HasDifferences = HasDifferences(model.NewText.Lines);
-            model.OldText.HasDifferences = HasDifferences(model.NewText.Lines);
-
             return model;
         }
 
@@ -95,8 +91,6 @@ namespace DiffPlex.DiffBuilder
                 var r = differ.CreateDiffs(oldText, newText, false, false, wordChunker ?? WordChunker.Instance);
                 BuildDiffPieces(r, op, np, null);
             });
-            model.NewText.HasDifferences = HasDifferences(model.NewText.Lines);
-            model.OldText.HasDifferences = HasDifferences(model.OldText.Lines);
             
             return model;
         }
@@ -112,9 +106,6 @@ namespace DiffPlex.DiffBuilder
             var model = new SideBySideDiffModel();
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, false, lineChunker);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
-
-            model.NewText.HasDifferences = HasDifferences(model.NewText.Lines);
-            model.OldText.HasDifferences = HasDifferences(model.OldText.Lines);
             
             return model;
         }
@@ -186,7 +177,5 @@ namespace DiffPlex.DiffBuilder
                 bPos++;
             }
         }
-
-        private static bool HasDifferences(List<DiffPiece> lines) => lines.Any(x => x.Type != ChangeType.Unchanged);
     }
 }

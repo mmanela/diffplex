@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -38,7 +37,6 @@ namespace DiffPlex.DiffBuilder
             var model = new DiffPaneModel();
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase: ignoreCase, chunker);
             BuildDiffPieces(diffResult, model.Lines);
-            model.HasDifferences = model.Lines.Any(x => x.Type != ChangeType.Unchanged);
             
             return model;
         }
@@ -75,7 +73,6 @@ namespace DiffPlex.DiffBuilder
             var model = new DiffPaneModel();
             var diffResult = (differ ?? Differ.Instance).CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, chunker ?? LineChunker.Instance);
             BuildDiffPieces(diffResult, model.Lines);
-            model.HasDifferences = model.Lines.Any(x => x.Type != ChangeType.Unchanged);
             
             return model;
         }

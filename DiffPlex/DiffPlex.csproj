@@ -2,7 +2,7 @@
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
     <TargetFrameworks>net35;net40;netstandard1.0;netstandard2.0</TargetFrameworks>
-    <Version>1.6.2</Version>
+    <Version>1.6.3</Version>
     <PackageTags>diff</PackageTags>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library.</Description>
     <PackageReleaseNotes>* Add HasDifferences property.</PackageReleaseNotes>

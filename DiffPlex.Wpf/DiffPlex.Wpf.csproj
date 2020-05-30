@@ -1,33 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+  <Import Project="..\NuGet.props" />
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.1.1</Version>
-    <Authors>Kingcean Tuan, Matthew Manela</Authors>
-    <Company />
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
-    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
     <PackageTags>diff, wpf</PackageTags>
-    <SignAssembly>True</SignAssembly>
     <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application.</Description>
-    <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>true</IncludeSource>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageIcon>diffplex_icon.png</PackageIcon>
-    <AssemblyOriginatorKeyFile>..\DiffPlex\opensource.snk</AssemblyOriginatorKeyFile>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />

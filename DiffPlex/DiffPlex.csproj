@@ -1,32 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\NuGet.props" />
   <PropertyGroup>
     <TargetFrameworks>net35;net40;netstandard1.0;netstandard2.0</TargetFrameworks>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.6.2</Version>
-    <Authors>Matthew Manela</Authors>
-    <Company />
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
     <PackageTags>diff</PackageTags>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>opensource.snk</AssemblyOriginatorKeyFile>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library.</Description>
     <PackageReleaseNotes>* Add HasDifferences property.</PackageReleaseNotes>
-    <PackageIcon>diffplex_icon.png</PackageIcon>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net40'" Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Condition="'$(TargetFramework)' == 'net35'" Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>
 </Project>

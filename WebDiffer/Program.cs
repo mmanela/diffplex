@@ -1,12 +1,9 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using DiffPlex.DiffBuilder;
-using DiffPlex;
 
 namespace WebDiffer
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -15,12 +12,6 @@ namespace WebDiffer
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .ConfigureServices((services) =>
-                {
-                    services.AddScoped<ISideBySideDiffBuilder, SideBySideDiffBuilder>();
-                    services.AddScoped<IDiffer, Differ>();
-                })
                 .Build();
 
             host.Run();

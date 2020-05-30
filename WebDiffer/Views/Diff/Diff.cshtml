@@ -4,11 +4,11 @@
     <div id="leftPane">
         <div class="diffHeader">Old Text</div>
 
-        @Html.Partial("DiffPane", Model.OldText)
+        @await Html.PartialAsync("DiffPane", Model.OldText)
     </div>
     <div id="rightPane">
         <div class="diffHeader">New Text</div>
-        @Html.Partial("DiffPane", Model.NewText)
+        @await Html.PartialAsync("DiffPane", Model.NewText)
     </div>
     <div class="clear">
     </div>

@@ -2,10 +2,10 @@ version: 1.4.{build}
 branches:
   only:
   - master
-image: Visual Studio 2017
+image: Visual Studio 2019
 configuration: Release
 before_build:
-  appveyor-retry nuget restore
+  appveyor-retry dotnet restore
 build:
   parallel: true
   verbosity: minimal

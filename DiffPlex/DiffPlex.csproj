@@ -9,6 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net40'" Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Condition="'$(TargetFramework)' == 'net35'" Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Condition="'$(TargetFramework)' == 'net35'" Include="jnm2.ReferenceAssemblies.net35" Version="1.0.1" PrivateAssets="all" />
   </ItemGroup>
 </Project>

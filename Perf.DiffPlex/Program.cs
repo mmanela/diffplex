@@ -1,15 +1,10 @@
 ﻿using System;
+using BenchmarkDotNet.Running;
 
 namespace Perf.DiffPlex
 {
     internal static class Program
     {
-        private static void Main()
-        {
-            Console.WriteLine(@"DiffPlex Perf Tester");
-
-            new DiffPerfTester().Run();
-            Console.WriteLine();
-        }
+        public static void Main(string[] args) => BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
     }
 }

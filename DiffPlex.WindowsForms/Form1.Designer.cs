@@ -29,10 +29,10 @@
 		private void InitializeComponent()
 		{
 			this.groupBoxInline = new System.Windows.Forms.GroupBox();
-			this.groupBoxSideBySide = new System.Windows.Forms.GroupBox();
 			this.richTextBoxInline = new System.Windows.Forms.RichTextBox();
-			this.richTextBoxSideLeft = new System.Windows.Forms.RichTextBox();
+			this.groupBoxSideBySide = new System.Windows.Forms.GroupBox();
 			this.richTextBoxSideRight = new System.Windows.Forms.RichTextBox();
+			this.richTextBoxSideLeft = new System.Windows.Forms.RichTextBox();
 			this.groupBoxInline.SuspendLayout();
 			this.groupBoxSideBySide.SuspendLayout();
 			this.SuspendLayout();
@@ -47,6 +47,14 @@
 			this.groupBoxInline.TabStop = false;
 			this.groupBoxInline.Text = "Inline Example";
 			// 
+			// richTextBoxInline
+			// 
+			this.richTextBoxInline.Location = new System.Drawing.Point(6, 19);
+			this.richTextBoxInline.Name = "richTextBoxInline";
+			this.richTextBoxInline.Size = new System.Drawing.Size(683, 216);
+			this.richTextBoxInline.TabIndex = 0;
+			this.richTextBoxInline.Text = "";
+			// 
 			// groupBoxSideBySide
 			// 
 			this.groupBoxSideBySide.Controls.Add(this.richTextBoxSideRight);
@@ -58,13 +66,13 @@
 			this.groupBoxSideBySide.TabStop = false;
 			this.groupBoxSideBySide.Text = "Side-By-Side Example";
 			// 
-			// richTextBoxInline
+			// richTextBoxSideRight
 			// 
-			this.richTextBoxInline.Location = new System.Drawing.Point(6, 19);
-			this.richTextBoxInline.Name = "richTextBoxInline";
-			this.richTextBoxInline.Size = new System.Drawing.Size(683, 216);
-			this.richTextBoxInline.TabIndex = 0;
-			this.richTextBoxInline.Text = "";
+			this.richTextBoxSideRight.Location = new System.Drawing.Point(359, 19);
+			this.richTextBoxSideRight.Name = "richTextBoxSideRight";
+			this.richTextBoxSideRight.Size = new System.Drawing.Size(330, 204);
+			this.richTextBoxSideRight.TabIndex = 1;
+			this.richTextBoxSideRight.Text = "";
 			// 
 			// richTextBoxSideLeft
 			// 
@@ -74,14 +82,6 @@
 			this.richTextBoxSideLeft.TabIndex = 0;
 			this.richTextBoxSideLeft.Text = "";
 			// 
-			// richTextBoxSideRight
-			// 
-			this.richTextBoxSideRight.Location = new System.Drawing.Point(359, 19);
-			this.richTextBoxSideRight.Name = "richTextBoxSideRight";
-			this.richTextBoxSideRight.Size = new System.Drawing.Size(330, 204);
-			this.richTextBoxSideRight.TabIndex = 1;
-			this.richTextBoxSideRight.Text = "";
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -90,7 +90,7 @@
 			this.Controls.Add(this.groupBoxSideBySide);
 			this.Controls.Add(this.groupBoxInline);
 			this.Name = "Form1";
-			this.Text = "DiffPlex Windows Form Demo";
+			this.Text = "DiffPlex Windows Forms Demo";
 			this.groupBoxInline.ResumeLayout(false);
 			this.groupBoxSideBySide.ResumeLayout(false);
 			this.ResumeLayout(false);

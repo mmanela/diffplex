@@ -395,7 +395,7 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="m">The diff model.</param>
         private void UpdateContent(DiffPaneModel m)
         {
-            Helper.RenderInlineDiffs(ContentPanel, m, this);
+            Helper.RenderInlineDiffs(ContentPanel, m.Lines, this);
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

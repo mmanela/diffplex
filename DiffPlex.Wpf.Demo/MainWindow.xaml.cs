@@ -40,8 +40,8 @@ namespace DiffPlex.Wpf.Demo
             Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
             DiffButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
             DiffView.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
-            DiffView.OldText = TestData.DuplicateText(TestData.OldText, 50);
-            DiffView.NewText = TestData.DuplicateText(TestData.NewText, 50);
+            DiffView.OldText = TestData.DuplicateText(TestData.OldText, 1);
+            DiffView.NewText = TestData.DuplicateText(TestData.NewText, 1);
         }
 
         private void DiffButton_Click(object sender, RoutedEventArgs e)

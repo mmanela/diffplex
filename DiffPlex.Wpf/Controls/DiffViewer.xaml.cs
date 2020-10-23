@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -184,6 +185,28 @@ namespace DiffPlex.Wpf.Controls
         /// The property of grid splitter width.
         /// </summary>
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
+
+        /// <summary>
+        /// The property of flag of hiding unchanged lines
+        /// </summary>
+        public static readonly DependencyProperty IgnoreUnchangedProperty = RegisterDependencyProperty<bool>(nameof(IgnoreUnchanged), false,
+            (o, args) =>
+            {
+                if (!(o is DiffViewer c))
+                    return;
+                c.Refresh();
+            });
+
+        /// <summary>
+        /// The property of flag of lines count that will be displayed before and after of unchanged line
+        /// </summary>
+        public static readonly DependencyProperty LinesContextProperty = RegisterDependencyProperty<int>(nameof(LinesContext), 1,
+            (o, args) =>
+            {
+                if (!(o is DiffViewer c))
+                    return;
+                c.Refresh();
+            });
 
         /// <summary>
         /// The property of IsSideBySide.
@@ -504,12 +527,31 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the IsSideBySide.
         /// </summary>
-        [Bindable(true)]
         [Category("Appearance")]
         public bool IsSideBySide
         {
             get => (bool)GetValue(IsSideBySideProperty);
             set => SetValue(IsSideBySideProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the IgnoreUnchanged
+        /// </summary>
+        [Category("Appearance")]
+        public bool IgnoreUnchanged
+        {
+            get => (bool)GetValue(IgnoreUnchangedProperty);
+            set => SetValue(IgnoreUnchangedProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the LinesContext
+        /// </summary>
+        [Category("Appearance")]
+        public int LinesContext
+        {
+            get => (int)GetValue(LinesContextProperty);
+            set => SetValue(LinesContextProperty, value);
         }
 
         /// <summary>
@@ -645,8 +687,33 @@ namespace DiffPlex.Wpf.Controls
             RightContentPanel.Clear();
             var m = sideBySideResult;
             if (m == null) return;
-            Helper.InsertLines(LeftContentPanel, m.OldText?.Lines, true, this);
-            Helper.InsertLines(RightContentPanel, m.NewText?.Lines, false, this);
+            var list = Enumerable.Range(
+                    Math.Min((int) m.OldText.Lines.Min(x => x.Position), (int) m.NewText.Lines.Min(x => x.Position)),
+                    Math.Max((int) m.OldText.Lines.Max(x => x.Position), (int) m.NewText.Lines.Max(x => x.Position)))
+                .Select(x => new
+                {
+                    Position = x,
+                    OldLine = m.OldText.Lines.FirstOrDefault(l => l.Position == x),
+                    NewLine = m.NewText.Lines.FirstOrDefault(l => l.Position == x),
+                })
+                .ToList();
+            if (IgnoreUnchanged)
+            {
+                list = list.Where(x => x.OldLine != null && x.NewLine != null)
+                    .Where(x => x.OldLine.Type != ChangeType.Unchanged && x.NewLine.Type != ChangeType.Unchanged)
+                    .ToList();
+            }
+            List<DiffPiece> oldLines = list.Select(x => x.OldLine).ToList();
+            List<DiffPiece> newLines = list.Select(x => x.NewLine).ToList();
+
+            Helper.InsertLines(LeftContentPanel, oldLines, true, this);
+            Helper.InsertLines(RightContentPanel, newLines, false, this);
+        }
+
+        private class LinesToSelectesion
+        {
+            public bool IsSelected { get; set; }
+            public DiffPiece Line { get; set; }
         }
 
         /// <summary>
@@ -654,7 +721,41 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         private void RenderInlineDiffs()
         {
-            Helper.RenderInlineDiffs(InlineContentPanel, inlineResult, this);
+            if (inlineResult?.Lines == null) return;
+            ICollection<DiffPiece> selectedLines = inlineResult.Lines;
+            if (IgnoreUnchanged)
+            {
+                IEnumerable<int> indixies = FindUnchangedLines(inlineResult.Lines).ToList();
+                List<LinesToSelectesion> linesToSelectesions = inlineResult.Lines.Select(x => new LinesToSelectesion() {IsSelected = false, Line = x}).ToList();
+                int dist = LinesContext;
+                foreach (int i in indixies)
+                {
+                    for (int ii = i - dist; ii < i + dist; ii++)
+                    {
+                        if (ii >= 0 && ii < inlineResult.Lines.Count)
+                        {
+                            linesToSelectesions.ElementAt(ii).IsSelected = true;
+                        }
+                    }
+                }
+
+                selectedLines = linesToSelectesions.Where(x => x.IsSelected).Select(x => x.Line).ToList();
+            }
+
+            Helper.RenderInlineDiffs(InlineContentPanel, selectedLines, this);
+        }
+
+        private IEnumerable<DiffPiece> SelectDiffPieces(IList<DiffPiece> list, int index)
+        {
+            yield return list.ElementAt(index);
+        }
+
+        private IEnumerable<int> FindUnchangedLines(IList<DiffPiece> lines)
+        {
+            foreach (var diffPiece in lines.Where(x => x.Type != ChangeType.Unchanged).ToList())
+            {
+                yield return lines.IndexOf(diffPiece);
+            }
         }
 
         private void LeftContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)

@@ -12,7 +12,9 @@
          <RowDefinition/>
          <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-        <diffplex:DiffViewer x:Name="DiffView" OldTextHeader="Old" NewTextHeader="New" HeaderForeground="#808080" />
+        <diffplex:DiffViewer x:Name="DiffView" OldTextHeader="Old" NewTextHeader="New" HeaderForeground="#808080"
+                             IgnoreUnchanged="True"
+                             LinesContext="2"/>
       <StackPanel Grid.Row="1">
          <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsSideBySide, ElementName=DiffView}" Content="IsSideBySide"/>
          <Button  Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" />

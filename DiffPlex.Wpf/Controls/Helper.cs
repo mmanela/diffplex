@@ -17,12 +17,13 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Updates the inline diffs view.
         /// </summary>
-        internal static void RenderInlineDiffs(InternalLinesViewer viewer, DiffPaneModel m, UIElement source)
+        internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source)
         {
             viewer.Clear();
-            if (m?.Lines == null) return;
-            var disableSubPieces = m.Lines.Count > MaxCount;    // For performance.
-            foreach (var line in m.Lines)
+            if (lines == null) return;
+            if (lines.Any() == false) return;
+            var disableSubPieces = lines.Count > MaxCount;    // For performance.
+            foreach (var line in lines)
             {
                 if (line == null)
                 {

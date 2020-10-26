@@ -8,16 +8,27 @@
         mc:Ignorable="d"
         Title="Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
     <Grid>
-      <Grid.RowDefinitions>
-         <RowDefinition/>
-         <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <diffplex:DiffViewer x:Name="DiffView" OldTextHeader="Old" NewTextHeader="New" HeaderForeground="#808080"
                              IgnoreUnchanged="True"
-                             LinesContext="2"/>
-      <StackPanel Grid.Row="1">
-         <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsSideBySide, ElementName=DiffView}" Content="IsSideBySide"/>
-         <Button  Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" />
-      </StackPanel>
-   </Grid>
+                             LinesContext="2" />
+        <Grid Grid.Row="1" Background="#aaa">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="8" Width="300" >
+                    <StackPanel Margin="8 0">
+                        <CheckBox HorizontalAlignment="Stretch" IsChecked="{Binding IsSideBySide, ElementName=DiffView}" Content="IsSideBySide" />
+                        <Button  Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" 
+                                 Margin="0 8 0 0"/>
+                    </StackPanel>
+                    <StackPanel Margin="8 0">
+                        <CheckBox HorizontalAlignment="Stretch" x:Name="IgnoreUnchangedCheckBox" IsChecked="{Binding IgnoreUnchanged, ElementName=DiffView}" Content="IgnoreUnchanged" />
+                        <HeaderedContentControl Header="LinesContext" Margin="32 0 0 0" IsEnabled="{Binding IsChecked, ElementName=IgnoreUnchangedCheckBox}">
+                            <TextBox   HorizontalAlignment="Stretch" Text="{Binding LinesContext, ElementName=DiffView, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                    </StackPanel>
+                </StackPanel>
+        </Grid>
+    </Grid>
 </Window>

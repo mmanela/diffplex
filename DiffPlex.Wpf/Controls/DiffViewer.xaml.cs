@@ -699,9 +699,11 @@ namespace DiffPlex.Wpf.Controls
                 .ToList();
             if (IgnoreUnchanged)
             {
-                list = list.Where(x => x.OldLine != null && x.NewLine != null)
-                    .Where(x => x.OldLine.Type != ChangeType.Unchanged && x.NewLine.Type != ChangeType.Unchanged)
-                    .ToList();
+                IEnumerable<int> indixies = FindUnchangedLines(list,
+                    x => x.OldLine != null && x.NewLine != null
+                                           && (x.OldLine.Type != ChangeType.Unchanged || x.NewLine.Type != ChangeType.Unchanged)).ToList();
+                list = GetLinesByContext(list, indixies, LinesContext).ToList();
+
             }
             List<DiffPiece> oldLines = list.Select(x => x.OldLine).ToList();
             List<DiffPiece> newLines = list.Select(x => x.NewLine).ToList();
@@ -710,10 +712,10 @@ namespace DiffPlex.Wpf.Controls
             Helper.InsertLines(RightContentPanel, newLines, false, this);
         }
 
-        private class LinesToSelectesion
+        private class LinesToSelectesion<T>
         {
             public bool IsSelected { get; set; }
-            public DiffPiece Line { get; set; }
+            public T Line { get; set; }
         }
 
         /// <summary>
@@ -725,34 +727,34 @@ namespace DiffPlex.Wpf.Controls
             ICollection<DiffPiece> selectedLines = inlineResult.Lines;
             if (IgnoreUnchanged)
             {
-                IEnumerable<int> indixies = FindUnchangedLines(inlineResult.Lines).ToList();
-                List<LinesToSelectesion> linesToSelectesions = inlineResult.Lines.Select(x => new LinesToSelectesion() {IsSelected = false, Line = x}).ToList();
-                int dist = LinesContext;
-                foreach (int i in indixies)
-                {
-                    for (int ii = i - dist; ii < i + dist; ii++)
-                    {
-                        if (ii >= 0 && ii < inlineResult.Lines.Count)
-                        {
-                            linesToSelectesions.ElementAt(ii).IsSelected = true;
-                        }
-                    }
-                }
-
-                selectedLines = linesToSelectesions.Where(x => x.IsSelected).Select(x => x.Line).ToList();
+                IEnumerable<int> indixies = FindUnchangedLines(inlineResult.Lines, x => x.Type != ChangeType.Unchanged).ToList();
+                selectedLines = GetLinesByContext(selectedLines, indixies, LinesContext).ToList();
             }
 
             Helper.RenderInlineDiffs(InlineContentPanel, selectedLines, this);
         }
 
-        private IEnumerable<DiffPiece> SelectDiffPieces(IList<DiffPiece> list, int index)
+        private IEnumerable<T> GetLinesByContext<T>(ICollection<T> list, IEnumerable<int> indixies, int context)
         {
-            yield return list.ElementAt(index);
+            List<LinesToSelectesion<T>> linesToSelectesions = list.Select(x => new LinesToSelectesion<T>() { IsSelected = false, Line = x }).ToList();
+
+            foreach (int i in indixies)
+            {
+                for (int ii = i - context; ii <= i + context; ii++)
+                {
+                    if (ii >= 0 && ii < list.Count)
+                    {
+                        linesToSelectesions.ElementAt(ii).IsSelected = true;
+                    }
+                }
+            }
+
+            return linesToSelectesions.Where(x => x.IsSelected).Select(x => x.Line);
         }
 
-        private IEnumerable<int> FindUnchangedLines(IList<DiffPiece> lines)
+        private IEnumerable<int> FindUnchangedLines<T>(IList<T> lines, Func<T, bool> func)
         {
-            foreach (var diffPiece in lines.Where(x => x.Type != ChangeType.Unchanged).ToList())
+            foreach (var diffPiece in lines.Where(func).ToList())
             {
                 yield return lines.IndexOf(diffPiece);
             }

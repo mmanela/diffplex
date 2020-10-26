@@ -692,9 +692,8 @@ namespace DiffPlex.Wpf.Controls
                     Math.Max((int) m.OldText.Lines.Max(x => x.Position), (int) m.NewText.Lines.Max(x => x.Position)))
                 .Select(x => new
                 {
-                    Position = x,
-                    OldLine = m.OldText.Lines.FirstOrDefault(l => l.Position == x),
-                    NewLine = m.NewText.Lines.FirstOrDefault(l => l.Position == x),
+                    OldLine = m.OldText.Lines.ElementAt(x-1),
+                    NewLine = m.NewText.Lines.ElementAt(x-1),
                 })
                 .ToList();
             if (IgnoreUnchanged)

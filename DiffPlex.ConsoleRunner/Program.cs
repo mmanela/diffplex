@@ -32,57 +32,31 @@ namespace DiffPlex.ConsoleRunner
                 Console.WriteLine(line.Text);
             }
         }
-        internal const string OldText =
-            @"ABCDEFG hijklmn 01234567 _!# 98?
 
-We the people
+        private const string OldText =
+            @"We the people
 of the united states of america
 establish justice
 ensure domestic tranquility
 provide for the common defence
 secure the blessing of liberty
 to ourselves and our posterity
-
-=======
 ";
 
-        internal const string NewText =
-            @"ABCDEFG oooo 01234567 _!# 98?
-
-We the people
-of the united states of america
+        private const string NewText =
+            @"We the people
+in order to form a more perfect union
 establish justice
 ensure domestic tranquility
-provide for the common defence
+promote the general welfare and
 secure the blessing of liberty
 to ourselves and our posterity
+do ordain and establish this constitution
+for the United States of America
 
-=======
+
+
+
 ";
-        //        private const string OldText =
-        //            @"We the people
-        //of the united states of america
-        //establish justice
-        //ensure domestic tranquility
-        //provide for the common defence
-        //secure the blessing of liberty
-        //to ourselves and our posterity
-        //";
-
-        //        private const string NewText =
-        //            @"We the people
-        //in order to form a more perfect union
-        //establish justice
-        //ensure domestic tranquility
-        //promote the general welfare and
-        //secure the blessing of liberty
-        //to ourselves and our posterity
-        //do ordain and establish this constitution
-        //for the United States of America
-
-
-
-
-        //";
     }
 }

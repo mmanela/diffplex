@@ -1,4 +1,4 @@
-﻿# DiffPlex WPF demo
+# DiffPlex WPF demo
 
 This is a simple demo for `DiffPlex.Wpf` library.
 

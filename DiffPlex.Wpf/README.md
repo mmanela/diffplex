@@ -1,4 +1,4 @@
-﻿# DiffPlex controls for WPF
+# DiffPlex controls for WPF
 
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 

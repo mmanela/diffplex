@@ -10,6 +10,16 @@ The DiffPlex library currently exposes two interfaces for generating diffs:
 * `IDiffer` (implemented by the `Differ` class) - This is the core diffing class.  It exposes the low level functions to generate differences between texts.
 * `ISidebySideDiffer` (implemented by the `SideBySideDiffer` class) - This is a higher level interface.  It consumes the `IDiffer` interface and generates a `SideBySideDiffModel`.  This is a model which is suited for displaying the differences of two pieces of text in a side by side view.
 
+<!-- toc -->
+## Contents
+
+  * [Examples](#examples)
+  * [Sample code](#sample-code)
+  * [IDiffer Interface](#idiffer-interface)
+  * [IChunker Interface](#ichunker-interface)
+  * [ISideBySideDifferBuilder Interface](#isidebysidedifferbuilder-interface)
+  * [Sample Website](#sample-website)<!-- endToc -->
+
 ## Examples
 
 For examples of how to use the API please see the the following projects contained in the DiffPlex solution.
@@ -26,8 +36,11 @@ For use of the `ISidebySideDiffer` interface see:
 
 ## Sample code
 
-```csharp
-var diff = InlineDiffBuilder.Diff(before, after);
+<!-- snippet: sample-usage -->
+<a id='snippet-sample-usage'></a>
+```cs
+var diffBuilder = new InlineDiffBuilder(new Differ());
+var diff = diffBuilder.BuildDiffModel(OldText, NewText);
 
 var savedColor = Console.ForegroundColor;
 foreach (var line in diff.Lines)
@@ -43,64 +56,61 @@ foreach (var line in diff.Lines)
             Console.Write("- ");
             break;
         default:
-            Console.ForegroundColor = ConsoleColor.Gray; // compromise for dark or light background
+            // compromise for dark or light background
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write("  ");
             break;
     }
 
     Console.WriteLine(line.Text);
 }
+
 Console.ForegroundColor = savedColor;
 ```
+<sup><a href='/DiffPlex.ConsoleRunner/Program.cs#L11-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-sample-usage' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## IDiffer Interface 
 
-```csharp 
-/// <summary>
-/// Provides methods for generate differences between texts
-/// </summary>
-public interface IDiffer
+<!-- snippet: IDiffer.cs -->
+<a id='snippet-IDiffer.cs'></a>
+```cs
+using System;
+using DiffPlex.Model;
+
+namespace DiffPlex
 {
     /// <summary>
-    /// Create a diff by comparing text line by line
+    /// Responsible for generating differences between texts
     /// </summary>
-    /// <param name="oldText">The old text.</param>
-    /// <param name="newText">The new text.</param>
-    /// <param name="ignoreWhiteSpace">if set to <c>true</c> will ignore white space when determining if lines are the same.</param>
-    /// <returns>A DiffResult object which details the differences</returns>
-    DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhiteSpace);
+    public interface IDiffer
+    {
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators);
+        
+        [Obsolete("Use CreateDiffs method instead", false)]
+        DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker);
+        
+        [Obsolete("Use CreateDiffs method instead", false)] 
+        DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker);
 
-    /// <summary>
-    /// Create a diff by comparing text character by character
-    /// </summary>
-    /// <param name="oldText">The old text.</param>
-    /// <param name="newText">The new text.</param>
-    /// <param name="ignoreWhitespace">if set to <c>true</c> will treat all whitespace characters are empty strings.</param>
-    /// <returns>A DiffResult object which details the differences</returns>
-    DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace);
-
-    /// <summary>
-    /// Create a diff by comparing text word by word
-    /// </summary>
-    /// <param name="oldText">The old text.</param>
-    /// <param name="newText">The new text.</param>
-    /// <param name="ignoreWhitespace">if set to <c>true</c> will ignore white space when determining if words are the same.</param>
-    /// <param name="separators">The list of characters which define word separators.</param>
-    /// <returns>A DiffResult object which details the differences</returns>
-    DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators);
-
-    /// <summary>
-    /// Create a diff by comparing text in chunks determined by the supplied chunker function.
-    /// </summary>
-    /// <param name="oldText">The old text.</param>
-    /// <param name="newText">The new text.</param>
-    /// <param name="ignoreWhiteSpace">if set to <c>true</c> will ignore white space when determining if chunks are the same.</param>
-    /// <param name="chunker">A function that will break the text into chunks.</param>
-    /// <returns>A DiffResult object which details the differences</returns>
-    DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker);
-
-            /// <summary>
-        /// Create a diff by comparing text line by line
+        /// <summary>
+        /// Creates a diff by comparing text line by line.
         /// </summary>
         /// <param name="oldText">The old text.</param>
         /// <param name="newText">The new text.</param>
@@ -109,20 +119,33 @@ public interface IDiffer
         /// <param name="chunker">Component responsible for tokenizing the compared texts</param>
         /// <returns>A DiffResult object which details the differences</returns>
         DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
+    }
 }
 ```
+<sup><a href='/DiffPlex/IDiffer.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-IDiffer.cs' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## IChunker Interface
 
-```csharp
-public interface IChunker
+<!-- snippet: IChunker.cs -->
+<a id='snippet-IChunker.cs'></a>
+```cs
+namespace DiffPlex
 {
     /// <summary>
-    /// Dive text into sub-parts
+    /// Responsible for how to turn the document into pieces
     /// </summary>
-    string[] Chunk(string text);
+    public interface IChunker
+    {
+        /// <summary>
+        /// Divide text into sub-parts
+        /// </summary>
+        string[] Chunk(string text);
+    }
 }
 ```
+<sup><a href='/DiffPlex/IChunker.cs#L1-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-IChunker.cs' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 Currently provided implementations:
 
@@ -136,21 +159,30 @@ Currently provided implementations:
 
 ## ISideBySideDifferBuilder Interface
 
-```csharp
-/// <summary>
-/// Provides methods that generate differences between texts for displaying in a side by side view.
-/// </summary>
-public interface ISideBySideDiffBuilder
+<!-- snippet: ISideBySideDiffBuilder.cs -->
+<a id='snippet-ISideBySideDiffBuilder.cs'></a>
+```cs
+using DiffPlex.DiffBuilder.Model;
+
+namespace DiffPlex.DiffBuilder
 {
     /// <summary>
-    /// Builds a diff model for  displaying diffs in a side by side view
+    /// Provides methods that generate differences between texts for displaying in a side by side view.
     /// </summary>
-    /// <param name="oldText">The old text.</param>
-    /// <param name="newText">The new text.</param>
-    /// <returns>The side by side diff model</returns>
-    SideBySideDiffModel BuildDiffModel(string oldText, string newText);
+    public interface ISideBySideDiffBuilder
+    {
+        /// <summary>
+        /// Builds a diff model for  displaying diffs in a side by side view
+        /// </summary>
+        /// <param name="oldText">The old text.</param>
+        /// <param name="newText">The new text.</param>
+        /// <returns>The side by side diff model</returns>
+        SideBySideDiffModel BuildDiffModel(string oldText, string newText);
+    }
 }
 ```
+<sup><a href='/DiffPlex/DiffBuilder/ISideBySideDiffBuilder.cs#L1-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-ISideBySideDiffBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
 ## Sample Website
 

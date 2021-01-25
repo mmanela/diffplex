@@ -75,7 +75,6 @@ Console.ForegroundColor = savedColor;
 <!-- snippet: IDiffer.cs -->
 <a id='snippet-IDiffer.cs'></a>
 ```cs
-using System;
 using DiffPlex.Model;
 
 namespace DiffPlex
@@ -83,32 +82,8 @@ namespace DiffPlex
     /// <summary>
     /// Responsible for generating differences between texts
     /// </summary>
-    public interface IDiffer
+    public partial interface IDiffer
     {
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators);
-        
-        [Obsolete("Use CreateDiffs method instead", false)]
-        DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker);
-        
-        [Obsolete("Use CreateDiffs method instead", false)] 
-        DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker);
-
         /// <summary>
         /// Creates a diff by comparing text line by line.
         /// </summary>
@@ -122,7 +97,7 @@ namespace DiffPlex
     }
 }
 ```
-<sup><a href='/DiffPlex/IDiffer.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-IDiffer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/DiffPlex/IDiffer.cs#L1-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-IDiffer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## IChunker Interface

@@ -1,4 +1,4 @@
-DiffPlex [![Build Status](https://mmanela.visualstudio.com/DiffPlex/_apis/build/status/mmanela.diffplex?branchName=master)](https://mmanela.visualstudio.com/DiffPlex/_build/latest?definitionId=5&branchName=master) [![DiffPlex NuGet version](https://img.shields.io/nuget/v/DiffPlex.svg)](https://www.nuget.org/packages/DiffPlex/)
+DiffPlex ![.NET](https://github.com/mmanela/diffplex/workflows/.NET/badge.svg?branch=master) [![DiffPlex NuGet version](https://img.shields.io/nuget/v/DiffPlex.svg)](https://www.nuget.org/packages/DiffPlex/)
 ========
 
 DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0+`.

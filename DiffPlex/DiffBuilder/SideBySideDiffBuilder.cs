@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -12,8 +13,8 @@ namespace DiffPlex.DiffBuilder
         private readonly IChunker lineChunker;
         private readonly IChunker wordChunker;
 
-        private delegate void PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces);
-        
+        private delegate ChangeType PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhitespace, bool ignoreCase);
+
         /// <summary>
         /// Gets the default singleton instance.
         /// </summary>
@@ -26,12 +27,12 @@ namespace DiffPlex.DiffBuilder
             this.wordChunker = wordChunker ?? throw new ArgumentNullException(nameof(wordChunker));
         }
 
-        public SideBySideDiffBuilder(IDiffer differ = null) : 
+        public SideBySideDiffBuilder(IDiffer differ = null) :
             this(differ, new LineChunker(), new WordChunker())
         {
         }
 
-        public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators) 
+        public SideBySideDiffBuilder(IDiffer differ, char[] wordSeparators)
             : this(differ, new LineChunker(), new DelimiterChunker(wordSeparators))
         {
         }
@@ -39,12 +40,19 @@ namespace DiffPlex.DiffBuilder
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
             => BuildDiffModel(oldText, newText, ignoreWhitespace: true);
 
-        public SideBySideDiffModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace)
+        public SideBySideDiffModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace) => BuildDiffModel(
+                oldText,
+                newText,
+                ignoreWhitespace,
+                false);
+
+        public SideBySideDiffModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
             return BuildLineDiff(
                 oldText ?? throw new ArgumentNullException(nameof(oldText)),
                 newText ?? throw new ArgumentNullException(nameof(newText)),
-                ignoreWhitespace);
+                ignoreWhitespace,
+                ignoreCase);
         }
 
         /// <summary>
@@ -62,7 +70,7 @@ namespace DiffPlex.DiffBuilder
 
             var model = new SideBySideDiffModel();
             var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, LineChunker.Instance);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPiecesInternal);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPiecesInternal, ignoreWhiteSpace, ignoreCase);
 
             return model;
         }
@@ -84,42 +92,45 @@ namespace DiffPlex.DiffBuilder
             if (newText == null) throw new ArgumentNullException(nameof(newText));
 
             if (differ == null) return Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+
             var model = new SideBySideDiffModel();
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, lineChunker ?? LineChunker.Instance);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, (ot, nt, op, np) =>
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, (ot, nt, op, np, iw, ic) =>
             {
-                var r = differ.CreateDiffs(oldText, newText, false, false, wordChunker ?? WordChunker.Instance);
-                BuildDiffPieces(r, op, np, null);
-            });
-            
+                var r = differ.CreateDiffs(oldText, newText, iw, ic, wordChunker ?? WordChunker.Instance);
+                return BuildDiffPieces(r, op, np, null, iw, ic);
+            }, ignoreWhiteSpace, ignoreCase);
+
             return model;
         }
 
-        private static void BuildWordDiffPiecesInternal(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
+        private static ChangeType BuildWordDiffPiecesInternal(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhiteSpace, bool ignoreCase)
         {
-            var diffResult = Differ.Instance.CreateDiffs(oldText, newText, false, false, WordChunker.Instance);
-            BuildDiffPieces(diffResult, oldPieces, newPieces, null);
+            var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, WordChunker.Instance);
+            return BuildDiffPieces(diffResult, oldPieces, newPieces, null, ignoreWhiteSpace, ignoreCase);
         }
 
-        private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhitespace)
+        private SideBySideDiffModel BuildLineDiff(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase)
         {
             var model = new SideBySideDiffModel();
-            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, false, lineChunker);
-            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces);
-            
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, lineChunker);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, BuildWordDiffPieces, ignoreWhiteSpace, ignoreCase);
+
             return model;
         }
 
-        private void BuildWordDiffPieces(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces)
+        private ChangeType BuildWordDiffPieces(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhiteSpace, bool ignoreCase)
         {
-            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace: false, false, wordChunker);
-            BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null);
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace: ignoreWhiteSpace, ignoreCase, wordChunker);
+            return BuildDiffPieces(diffResult, oldPieces, newPieces, subPieceBuilder: null, ignoreWhiteSpace, ignoreCase);
         }
 
-        private static void BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder)
+        private static ChangeType BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder, bool ignoreWhiteSpace, bool ignoreCase)
         {
             int aPos = 0;
             int bPos = 0;
+
+            ChangeType changeSummary = ChangeType.Unchanged;
 
             foreach (var diffBlock in diffResult.DiffBlocks)
             {
@@ -139,8 +150,8 @@ namespace DiffPlex.DiffBuilder
 
                     if (subPieceBuilder != null)
                     {
-                        subPieceBuilder(diffResult.PiecesOld[aPos], diffResult.PiecesNew[bPos], oldPiece.SubPieces, newPiece.SubPieces);
-                        newPiece.Type = oldPiece.Type = ChangeType.Modified;
+                        var subChangeSummary = subPieceBuilder(diffResult.PiecesOld[aPos], diffResult.PiecesNew[bPos], oldPiece.SubPieces, newPiece.SubPieces, ignoreWhiteSpace, ignoreCase);
+                        newPiece.Type = oldPiece.Type = subChangeSummary;
                     }
 
                     oldPieces.Add(oldPiece);
@@ -176,6 +187,18 @@ namespace DiffPlex.DiffBuilder
                 aPos++;
                 bPos++;
             }
+
+            // Consider the whole diff as "modified" if we found any change, otherwise we consider it unchanged
+            if(oldPieces.Any(x=> x.Type == ChangeType.Modified || x.Type == ChangeType.Inserted || x.Type == ChangeType.Deleted))
+            {
+                changeSummary = ChangeType.Modified;
+            }
+            else if (newPieces.Any(x => x.Type == ChangeType.Modified || x.Type == ChangeType.Inserted || x.Type == ChangeType.Deleted))
+            {
+                changeSummary = ChangeType.Modified;
+            }
+
+            return changeSummary;
         }
     }
 }

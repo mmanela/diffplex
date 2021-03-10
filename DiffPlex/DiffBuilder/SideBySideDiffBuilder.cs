@@ -97,7 +97,7 @@ namespace DiffPlex.DiffBuilder
             var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, lineChunker ?? LineChunker.Instance);
             BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, (ot, nt, op, np, iw, ic) =>
             {
-                var r = differ.CreateDiffs(oldText, newText, iw, ic, wordChunker ?? WordChunker.Instance);
+                var r = differ.CreateDiffs(ot, nt, iw, ic, wordChunker ?? WordChunker.Instance);
                 return BuildDiffPieces(r, op, np, null, iw, ic);
             }, ignoreWhiteSpace, ignoreCase);
 

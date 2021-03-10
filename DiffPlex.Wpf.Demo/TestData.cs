@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 
 namespace DiffPlex.Wpf.Demo
 {
     static class TestData
     {
+        internal static bool FillDiffViewer(Controls.DiffViewer viewer, int duplicateTimes = 50)
+        {
+            var now = DateTime.Now;
+            var isDark = now.Hour < 6 || now.Hour >= 18;
+            viewer.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
+            viewer.OldText = DuplicateText(OldText, duplicateTimes);
+            viewer.NewText = DuplicateText(NewText, duplicateTimes);
+            viewer.SetHeaderAsOldToNew();
+            return isDark;
+        }
+
         internal static string DuplicateText(string text, int repeat = 2)
         {
             var sb = new StringBuilder();

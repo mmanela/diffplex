@@ -1,12 +1,12 @@
-﻿using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
-using DiffPlex.WindowsForms.Extensions;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace DiffPlex.WindowsForms
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
+
+namespace DiffPlex.WinForms.Demo
 {
 	public partial class Form1 : Form
 	{

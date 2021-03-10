@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows;net46</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows;netcoreapp3.1;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <Version>1.1.2</Version>
+    <Version>1.2.0</Version>
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
     <PackageTags>diff, wpf</PackageTags>
@@ -13,6 +13,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Controls\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,16 @@
             <ColumnDefinition x:Name="LeftColumn"/>
             <ColumnDefinition x:Name="RightColumn"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="HeaderBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" />
+        <Border x:Name="HeaderBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" >
+            <Border.ContextMenu>
+                <ContextMenu x:Name="HeaderContextMenu">
+                    <MenuItem x:Name="InlineModeToggle" Header="_Unified view" Click="InlineModeToggle_Click" />
+                    <MenuItem x:Name="SideBySideModeToggle" Header="_Split view" Click="SideBySideModeToggle_Click" IsChecked="True" />
+                    <Separator />
+                    <MenuItem x:Name="CollapseUnchangedSectionsToggle" Header="_Collapse unchanged sections" Click="CollapseUnchangedSectionsToggle_Click" />
+                </ContextMenu>
+            </Border.ContextMenu>
+        </Border>
         <TextBlock x:Name="InlineHeaderText" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Visibility="Collapsed" />
         <local:InternalLinesViewer x:Name="InlineContentPanel" Grid.ColumnSpan="2" Grid.Row="1" Visibility="Collapsed" />
         <TextBlock x:Name="LeftHeaderText" HorizontalAlignment="Center" VerticalAlignment="Center" />

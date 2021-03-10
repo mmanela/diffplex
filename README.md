@@ -163,7 +163,7 @@ DiffPlex also contains a sample website that shows how to create a basic side by
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
 DiffPlex WPF control library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
-It targets `.NET Core 3.1`.
+It targets `.NET 5`, `.NET Core 3.1` and `.NET Framework 4.6`.
 
 ```csharp
 using DiffPlex.Wpf.Controls;
@@ -278,3 +278,11 @@ public event DragStartedEventHandler SplitterDragStarted;
 // Occurs when the view mode is changed.
 public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 ```
+
+## WinForms
+
+By using `ElementHost` control to set its `Child` property as the instance of one of `DiffViewer`, `SideBySideDiffViewer` and `InlineDiffViewer` introduced above (in WPF section),
+you can add the visual element into the control or window of your WinForms project.
+
+`ElementHost` [control](https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.integration.elementhost) is in `System.Windows.Forms.Integration` namespace
+and you can find it in Toolbox of Visual Studio.

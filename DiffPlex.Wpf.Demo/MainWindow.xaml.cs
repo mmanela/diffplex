@@ -35,13 +35,10 @@ namespace DiffPlex.Wpf.Demo
 
         private void LoadData()
         {
-            var now = DateTime.Now;
-            var isDark = now.Hour < 6 || now.Hour >= 18;
+            var isDark = TestData.FillDiffViewer(DiffView);
             Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
-            DiffButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
-            DiffView.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
-            DiffView.OldText = TestData.DuplicateText(TestData.OldText, 50);
-            DiffView.NewText = TestData.DuplicateText(TestData.NewText, 50);
+            DiffButton.Background = FutherActionsButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
+            IgnoreUnchangedCheckBox.Content = DiffView.CollapseUnchangedSectionsToggleTitle;
         }
 
         private void DiffButton_Click(object sender, RoutedEventArgs e)
@@ -53,6 +50,11 @@ namespace DiffPlex.Wpf.Demo
             }
 
             DiffView.ShowInline();
+        }
+
+        private void FutherActionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            DiffView.OpenViewModeContextMenu();
         }
     }
 }

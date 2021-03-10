@@ -39,6 +39,8 @@ namespace DiffPlex.Wpf.Controls
 
         public Guid TrackingId { get; set; }
 
+        public ContextMenu LineContextMenu { get; set; }
+
         public double VerticalOffset => ValueScrollViewer.VerticalOffset;
 
         public int LineNumberWidth
@@ -90,12 +92,13 @@ namespace DiffPlex.Wpf.Controls
             var text = new TextBlock
             {
                 Text = value
-            }; ;
+            };
             if (!string.IsNullOrEmpty(value))
             {
                 text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
                 text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
                 ApplyTextBlockProperties(text, source);
+                panel.ContextMenu = LineContextMenu;
             }
 
             panel.Children.Add(text);
@@ -141,12 +144,20 @@ namespace DiffPlex.Wpf.Controls
                         text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", source, Foreground));
                     text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", source));
                 }
-                
+
                 ApplyTextBlockProperties(text, source);
                 panel.Children.Add(text);
             }
 
-            if (panel.Children.Count == 0) panel.Children.Add(new TextBlock());
+            if (panel.Children.Count == 0)
+            {
+                panel.Children.Add(new TextBlock());
+            }
+            else
+            {
+                panel.ContextMenu = LineContextMenu;
+            }
+
             ValuePanel.Children.Add(panel);
             return panel;
         }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net5.0-windows;net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Authors>Kingcean Tuan</Authors>
@@ -16,7 +16,7 @@
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <StartupObject>DiffPlex.Wpf.Demo.App</StartupObject>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex.Wpf\DiffPlex.Wpf.csproj" />
   </ItemGroup>

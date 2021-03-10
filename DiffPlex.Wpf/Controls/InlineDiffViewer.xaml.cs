@@ -126,6 +126,7 @@ namespace DiffPlex.Wpf.Controls
             InitializeComponent();
 
             ContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
+            ContentPanel.LineContextMenu = Helper.CreateLineContextMenu(this);
         }
 
         /// <summary>
@@ -382,11 +383,41 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Goes to a specific line.
         /// </summary>
-        /// <param name="lineIndex">The index of line.</param>
+        /// <param name="lineIndex">The zero-based index of line to go to.</param>
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         public bool GoTo(int lineIndex)
         {
             return Helper.GoTo(ContentPanel, lineIndex);
+        }
+
+        /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="line">The line to go to.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(DiffPiece line)
+        {
+            return Helper.GoTo(ContentPanel, line);
+        }
+
+        /// <summary>
+        /// Gets the line diff information.
+        /// </summary>
+        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <returns>The line diff information instance; or null, if non-exists.</returns>
+        public DiffPiece GetLine(int lineIndex)
+        {
+            return Helper.GetLine(ContentPanel, lineIndex);
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesInViewport(VisibilityLevels level = VisibilityLevels.Any)
+        {
+            return Helper.GetLinesInViewport(ContentPanel, level);
         }
 
         /// <summary>

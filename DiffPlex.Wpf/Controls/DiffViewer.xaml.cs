@@ -211,9 +211,11 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of IsSideBySide.
         /// </summary>
-        public static readonly DependencyProperty IsSideBySideProperty = RegisterDependencyProperty<bool>(nameof(IsSideBySide), true, (d, e) =>
+        public static readonly DependencyProperty IsSideBySideProperty = RegisterDependencyProperty(nameof(IsSideBySide), true, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b)) return;
+            c.SideBySideModeToggle.IsChecked = b;
+            c.InlineModeToggle.IsChecked = !b;
             c.ChangeViewMode(b);
         });
 
@@ -251,6 +253,11 @@ namespace DiffPlex.Wpf.Controls
             ApplyHeaderTextProperties(LeftHeaderText);
             ApplyHeaderTextProperties(RightHeaderText);
             ApplyHeaderTextProperties(InlineHeaderText);
+            InlineContentPanel.LineContextMenu = LeftContentPanel.LineContextMenu = RightContentPanel.LineContextMenu = Helper.CreateLineContextMenu(this);
+            InlineHeaderText.ContextMenu = LeftHeaderText.ContextMenu = RightHeaderText.ContextMenu = HeaderContextMenu;
+            InlineModeToggle.Header = Helper.GetButtonName(Resource.InlineMode ?? "Unified view", "U");
+            SideBySideModeToggle.Header = Helper.GetButtonName(Resource.SideBySideMode ?? "Split view", "S");
+            CollapseUnchangedSectionsToggle.Header = Helper.GetButtonName(Resource.SkipUnchangedLines ?? "Collapse unchanged sections", "C");
         }
 
         /// <summary>
@@ -555,6 +562,35 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Gets or sets the display name of inline mode toggle.
+        /// </summary>
+        [Category("Appearance")]
+        public object InlineModeToggleTitle
+        {
+            get => InlineModeToggle.Header;
+            set => InlineModeToggle.Header = value;
+        }
+        /// <summary>
+        /// Gets or sets the display name of side by side mode toggle.
+        /// </summary>
+        [Category("Appearance")]
+        public object SideBySideModeToggleTitle
+        {
+            get => SideBySideModeToggle.Header;
+            set => SideBySideModeToggle.Header = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the display name of skip unchanged lines toggle.
+        /// </summary>
+        [Category("Appearance")]
+        public object CollapseUnchangedSectionsToggleTitle
+        {
+            get => CollapseUnchangedSectionsToggle.Header;
+            set => CollapseUnchangedSectionsToggle.Header = value;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the grid splitter has logical focus and mouse capture and the left mouse button is pressed.
         /// </summary>
         public bool IsSplitterDragging => Splitter.IsDragging;
@@ -679,6 +715,79 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="line">The line to go to.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(DiffPiece line, bool isLeftLine = false)
+        {
+            if (IsSideBySideViewMode) return Helper.GoTo(isLeftLine ? LeftContentPanel : RightContentPanel, line);
+            else return Helper.GoTo(InlineContentPanel, line);
+        }
+
+        /// <summary>
+        /// Gets the line diff information.
+        /// </summary>
+        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <returns>The line diff information instance; or null, if non-exists.</returns>
+        public DiffPiece GetLine(int lineIndex, bool isLeftLine = false)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLine(isLeftLine ? LeftContentPanel : RightContentPanel, lineIndex);
+            else return Helper.GetLine(InlineContentPanel, lineIndex);
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesInViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesInViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+            else return Helper.GetLinesInViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesInViewport(VisibilityLevels level)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesInViewport(RightContentPanel, level);
+            else return Helper.GetLinesInViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Opens the context menu for view mode selection.
+        /// </summary>
+        public void OpenViewModeContextMenu()
+        {
+            HeaderContextMenu.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Sets header as old and new.
+        /// </summary>
+        public void SetHeaderAsOldToNew()
+        {
+            OldTextHeader = Resource.Old;
+            NewTextHeader = Resource.New;
+        }
+
+        /// <summary>
+        /// Sets header as left and right.
+        /// </summary>
+        public void SetHeaderAsLeftToRight()
+        {
+            OldTextHeader = Resource.Left;
+            NewTextHeader = Resource.Right;
+        }
+
+        /// <summary>
         /// Updates the side-by-side diffs view.
         /// </summary>
         private void RenderSideBySideDiffs()
@@ -686,6 +795,7 @@ namespace DiffPlex.Wpf.Controls
             LeftContentPanel.Clear();
             RightContentPanel.Clear();
             var m = sideBySideResult;
+            CollapseUnchangedSectionsToggle.IsChecked = IgnoreUnchanged;
             if (m == null) return;
             var list = Enumerable.Range(
                     Math.Min((int) m.OldText.Lines.Min(x => x.Position), (int) m.NewText.Lines.Min(x => x.Position)),
@@ -702,10 +812,10 @@ namespace DiffPlex.Wpf.Controls
                     x => x.OldLine != null && x.NewLine != null
                                            && (x.OldLine.Type != ChangeType.Unchanged || x.NewLine.Type != ChangeType.Unchanged)).ToList();
                 list = GetLinesByContext(list, indixies, LinesContext).ToList();
-
             }
-            List<DiffPiece> oldLines = list.Select(x => x.OldLine).ToList();
-            List<DiffPiece> newLines = list.Select(x => x.NewLine).ToList();
+
+            var oldLines = list.Select(x => x.OldLine).ToList();
+            var newLines = list.Select(x => x.NewLine).ToList();
 
             Helper.InsertLines(LeftContentPanel, oldLines, true, this);
             Helper.InsertLines(RightContentPanel, newLines, false, this);
@@ -796,6 +906,21 @@ namespace DiffPlex.Wpf.Controls
             InlineHeaderText.Text = $"{OldTextHeader ?? string.Empty} → {NewTextHeader ?? string.Empty}";
             if (isHeaderEnabled) return;
             HeaderHeight = 20;
+        }
+
+        private void InlineModeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            IsSideBySide = false;
+        }
+
+        private void SideBySideModeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            IsSideBySide = true;
+        }
+
+        private void CollapseUnchangedSectionsToggle_Click(object sender, RoutedEventArgs e)
+        {
+            IgnoreUnchanged = !IgnoreUnchanged;
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

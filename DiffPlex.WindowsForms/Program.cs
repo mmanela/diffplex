@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DiffPlex.WindowsForms
+namespace DiffPlex.WinForms.Demo
 {
 	static class Program
 	{
@@ -16,7 +16,7 @@ namespace DiffPlex.WindowsForms
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form1());
+			Application.Run(new Form2());	// Replace Form2 to Form1 to test classic version.
 		}
 	}
 }

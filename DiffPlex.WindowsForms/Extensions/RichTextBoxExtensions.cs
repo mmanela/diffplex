@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace DiffPlex.WindowsForms.Extensions
+namespace DiffPlex.WinForms.Demo
 {
 	/// <summary>
 	/// Extension methods for the RichTextBox control.

@@ -132,6 +132,7 @@ namespace DiffPlex.Wpf.Controls
             Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterBorderThickness") { Source = this, Mode = BindingMode.OneWay });
             Splitter.SetBinding(WidthProperty, new Binding("SplitterWidth") { Source = this, Mode = BindingMode.OneWay });
+            LeftContentPanel.LineContextMenu = RightContentPanel.LineContextMenu = Helper.CreateLineContextMenu(this);
         }
 
         /// <summary>
@@ -432,6 +433,49 @@ namespace DiffPlex.Wpf.Controls
         public bool GoTo(int lineIndex, bool isLeftLine = false)
         {
             return Helper.GoTo(isLeftLine ? LeftContentPanel : RightContentPanel, lineIndex);
+        }
+
+        /// <summary>
+        /// Goes to a specific line.
+        /// </summary>
+        /// <param name="line">The line to go to.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
+        public bool GoTo(DiffPiece line, bool isLeftLine = false)
+        {
+            return Helper.GoTo(isLeftLine ? LeftContentPanel : RightContentPanel, line);
+        }
+
+        /// <summary>
+        /// Gets the line diff information.
+        /// </summary>
+        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <returns>The line diff information instance; or null, if non-exists.</returns>
+        public DiffPiece GetLine(int lineIndex, bool isLeftLine = false)
+        {
+            return Helper.GetLine(isLeftLine ? LeftContentPanel : RightContentPanel, lineIndex);
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesInViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            return Helper.GetLinesInViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesInViewport(VisibilityLevels level)
+        {
+            return Helper.GetLinesInViewport(RightContentPanel, level);
         }
 
         /// <summary>

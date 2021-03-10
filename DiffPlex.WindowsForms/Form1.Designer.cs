@@ -1,4 +1,4 @@
-﻿namespace DiffPlex.WindowsForms
+﻿namespace DiffPlex.WinForms.Demo
 {
 	partial class Form1
 	{

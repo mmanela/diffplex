@@ -119,6 +119,34 @@ namespace DiffPlex.Wpf.Controls
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
 
         /// <summary>
+        /// The property of flag of hiding unchanged lines
+        /// </summary>
+        public static readonly DependencyProperty IgnoreUnchangedProperty = RegisterDependencyProperty(nameof(IgnoreUnchanged), false, (o, e) =>
+        {
+            if (!(o is InlineDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b))
+                return;
+            if (b)
+            {
+                Helper.CollapseUnchangedSections(c.ContentPanel, c.LinesContext);
+            }
+            else
+            {
+                Helper.ExpandUnchangedSections(c.ContentPanel);
+            }
+        });
+
+        /// <summary>
+        /// The property of flag of lines count that will be displayed before and after of unchanged line
+        /// </summary>
+        public static readonly DependencyProperty LinesContextProperty = RegisterDependencyProperty(nameof(LinesContext), 1, (o, e) =>
+        {
+            if (!(o is InlineDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int i) || !c.IgnoreUnchanged)
+                return;
+            if (i < 0) i = 0;
+            Helper.CollapseUnchangedSections(c.ContentPanel, i);
+        });
+
+        /// <summary>
         /// Initializes a new instance of the InlineDiffViewer class.
         /// </summary>
         public InlineDiffViewer()
@@ -283,6 +311,26 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Gets or sets the IgnoreUnchanged
+        /// </summary>
+        [Category("Appearance")]
+        public bool IgnoreUnchanged
+        {
+            get => (bool)GetValue(IgnoreUnchangedProperty);
+            set => SetValue(IgnoreUnchangedProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the LinesContext
+        /// </summary>
+        [Category("Appearance")]
+        public int LinesContext
+        {
+            get => (int)GetValue(LinesContextProperty);
+            set => SetValue(LinesContextProperty, value);
+        }
+
+        /// <summary>
         /// Sets a new diff model.
         /// </summary>
         /// <param name="oldText">The old text string to compare.</param>
@@ -426,7 +474,7 @@ namespace DiffPlex.Wpf.Controls
         /// <param name="m">The diff model.</param>
         private void UpdateContent(DiffPaneModel m)
         {
-            Helper.RenderInlineDiffs(ContentPanel, m.Lines, this);
+            Helper.RenderInlineDiffs(ContentPanel, m.Lines, this, IgnoreUnchanged ? LinesContext : -1);
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

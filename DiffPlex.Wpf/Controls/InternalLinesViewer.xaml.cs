@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -57,6 +58,8 @@ namespace DiffPlex.Wpf.Controls
                 NumberColumn.Width = new GridLength(value - aThird);
             }
         }
+
+        public int Count => ValuePanel.Children.Count;
 
         public void Clear()
         {
@@ -160,6 +163,31 @@ namespace DiffPlex.Wpf.Controls
 
             ValuePanel.Children.Add(panel);
             return panel;
+        }
+
+        public void SetLineVisible(int index, bool visible)
+        {
+            try
+            {
+                var number = NumberPanel.Children[index] as TextBlock;
+                var operation = OperationPanel.Children[index] as TextBlock;
+                var value = ValuePanel.Children[index] as StackPanel;
+                var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                if (number != null) number.Visibility = visibility;
+                if (operation != null) operation.Visibility = visibility;
+                if (value != null) value.Visibility = visibility;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+            }
+        }
+
+        public IEnumerable<object> GetTagsOfEachLine()
+        {
+            foreach (var item in ValuePanel.Children)
+            {
+                yield return item is StackPanel p ? p?.Tag : null;
+            }
         }
 
         private Binding GetBindings(string key, UIElement source)

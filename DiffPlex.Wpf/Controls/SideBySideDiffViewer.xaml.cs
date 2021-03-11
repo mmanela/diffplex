@@ -117,6 +117,37 @@ namespace DiffPlex.Wpf.Controls
         /// The property of grid splitter width.
         /// </summary>
         public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
+        
+        /// <summary>
+        /// The property of flag of hiding unchanged lines
+        /// </summary>
+        public static readonly DependencyProperty IgnoreUnchangedProperty = RegisterDependencyProperty(nameof(IgnoreUnchanged), false, (o, e) =>
+        {
+            if (!(o is SideBySideDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b))
+                return;
+            if (b)
+            {
+                Helper.CollapseUnchangedSections(c.LeftContentPanel, c.LinesContext);
+                Helper.CollapseUnchangedSections(c.RightContentPanel, c.LinesContext);
+            }
+            else
+            {
+                Helper.ExpandUnchangedSections(c.LeftContentPanel);
+                Helper.ExpandUnchangedSections(c.RightContentPanel);
+            }
+        });
+
+        /// <summary>
+        /// The property of flag of lines count that will be displayed before and after of unchanged line
+        /// </summary>
+        public static readonly DependencyProperty LinesContextProperty = RegisterDependencyProperty(nameof(LinesContext), 1, (o, e) =>
+        {
+            if (!(o is SideBySideDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int i) || !c.IgnoreUnchanged)
+                return;
+            if (i < 0) i = 0;
+            Helper.CollapseUnchangedSections(c.LeftContentPanel, i);
+            Helper.CollapseUnchangedSections(c.RightContentPanel, i);
+        });
 
         /// <summary>
         /// Initializes a new instance of the SideBySideDiffViewer class.
@@ -334,6 +365,26 @@ namespace DiffPlex.Wpf.Controls
         public double RightSideActualWidth => RightColumn.ActualWidth;
 
         /// <summary>
+        /// Gets or sets the IgnoreUnchanged
+        /// </summary>
+        [Category("Appearance")]
+        public bool IgnoreUnchanged
+        {
+            get => (bool)GetValue(IgnoreUnchangedProperty);
+            set => SetValue(IgnoreUnchangedProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the LinesContext
+        /// </summary>
+        [Category("Appearance")]
+        public int LinesContext
+        {
+            get => (int)GetValue(LinesContextProperty);
+            set => SetValue(LinesContextProperty, value);
+        }
+
+        /// <summary>
         /// Sets a new diff model.
         /// </summary>
         /// <param name="oldText">The old text string to compare.</param>
@@ -487,8 +538,9 @@ namespace DiffPlex.Wpf.Controls
             LeftContentPanel.Clear();
             RightContentPanel.Clear();
             if (m == null) return;
-            Helper.InsertLines(LeftContentPanel, m.OldText?.Lines, true, this);
-            Helper.InsertLines(RightContentPanel, m.NewText?.Lines, false, this);
+            var contextLineCount = IgnoreUnchanged ? LinesContext : -1;
+            Helper.InsertLines(LeftContentPanel, m.OldText?.Lines, true, this, contextLineCount);
+            Helper.InsertLines(RightContentPanel, m.NewText?.Lines, false, this, contextLineCount);
         }
 
         private void LeftContentPanel_ScrollChanged(object sender, ScrollChangedEventArgs e)

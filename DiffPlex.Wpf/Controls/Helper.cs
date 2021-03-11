@@ -38,7 +38,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Updates the inline diffs view.
         /// </summary>
-        internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source)
+        internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source, int contextLineCount)
         {
             viewer.Clear();
             if (lines == null) return;
@@ -101,29 +101,84 @@ namespace DiffPlex.Wpf.Controls
                 }
             }
 
+            if (contextLineCount > -1) CollapseUnchangedSections(viewer, contextLineCount);
             viewer.AdjustScrollView();
         }
 
-        internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source)
+        internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
         {
             if (lines == null || panel == null) return;
             var guid = panel.TrackingId = Guid.NewGuid();
             if (lines.Count < 500)
             {
                 InsertLinesInteral(panel, lines, isOld, source);
+                if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
                 return;
             }
 
             var disablePieces = lines.Count > MaxCount; // For performance.
             InsertLinesInteral(panel, lines.Take(300).ToList(), isOld, source, disablePieces);
+            if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
             Task.Delay(800).ContinueWith(t =>   // For performance.
             {
                 panel.Dispatcher.Invoke(() =>
                 {
                     if (panel.TrackingId != guid) return;
                     InsertLinesInteral(panel, lines.Skip(300).ToList(), isOld, source, disablePieces);
+                    if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
                 });
             });
+        }
+
+        internal static void CollapseUnchangedSections(InternalLinesViewer panel, int contextLineCount)
+        {
+            var i = -1;
+            var was = false;
+            var last = 0;
+            var max = -1;
+            var removing = new List<int>();
+            foreach (var ele in panel.GetTagsOfEachLine())
+            {
+                i++;
+                if (!(ele is DiffPiece e) || e.Type != ChangeType.Unchanged)
+                {
+                    if (!was)
+                    {
+                        was = true;
+                        if (contextLineCount > 0)
+                        {
+                            var first = Math.Max(last, removing.Count - contextLineCount);
+                            removing.RemoveRange(first, removing.Count - first);
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (was)
+                {
+                    was = false;
+                    last = removing.Count;
+                    max = i + contextLineCount;
+                }
+
+                if (i < max) continue;
+                removing.Add(i);
+            }
+
+            ExpandUnchangedSections(panel);
+            foreach (var j in removing)
+            {
+                panel.SetLineVisible(j, false);
+            }
+        }
+
+        internal static void ExpandUnchangedSections(InternalLinesViewer panel)
+        {
+            for (var i = 0; i < panel.Count; i++)
+            {
+                panel.SetLineVisible(i, true);
+            }
         }
 
         /// <summary>
@@ -256,11 +311,11 @@ namespace DiffPlex.Wpf.Controls
 
                 if (string.IsNullOrWhiteSpace(str)) return;
                 copyMenuItem.IsEnabled = true;
-                Clipboard.SetText(str);
+                if (!string.IsNullOrEmpty(str)) Clipboard.SetText(str);
             };
             copyMenuItem.Click += (sender, ev) =>
             {
-                Clipboard.SetText(str);
+                if (!string.IsNullOrEmpty(str)) Clipboard.SetText(str);
             };
             return menu;
         }

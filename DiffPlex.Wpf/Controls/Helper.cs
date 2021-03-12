@@ -171,6 +171,12 @@ namespace DiffPlex.Wpf.Controls
             {
                 panel.SetLineVisible(j, false);
             }
+
+            if (removing.Count > 0 && panel.Count == removing.Count)
+            {
+                panel.SetLineVisible(0, true);
+                panel.SetLineVisible(panel.Count - 1, true);
+            }
         }
 
         internal static void ExpandUnchangedSections(InternalLinesViewer panel)
@@ -189,14 +195,20 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         internal static bool GoTo(InternalLinesViewer panel, int lineIndex)
         {
-            var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
-            var point = new Point(0, currentScrollPosition);
-            foreach (var item in panel.ValuePanel.Children)
+            try
             {
-                if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
-                var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
-                panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
-                return true;
+                var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
+                var point = new Point(0, currentScrollPosition);
+                foreach (var item in panel.ValuePanel.Children)
+                {
+                    if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
+                    var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
+                    panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
             }
             
             return false;
@@ -210,18 +222,24 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         internal static bool GoTo(InternalLinesViewer panel, DiffPiece line)
         {
-            var scrollView = panel.ValueScrollViewer;
-            var point = new Point(0, 0);
-            foreach (var item in panel.ValuePanel.Children)
+            try
             {
-                if (!(item is FrameworkElement ele) || ele.Tag != line) continue;
-                var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight) return true;
-                var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
-                point = new Point(0, currentScrollPosition);
-                pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
-                panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
-                return true;
+                var scrollView = panel.ValueScrollViewer;
+                var point = new Point(0, 0);
+                foreach (var item in panel.ValuePanel.Children)
+                {
+                    if (!(item is FrameworkElement ele) || ele.Tag != line) continue;
+                    var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
+                    if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight) return true;
+                    var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
+                    point = new Point(0, currentScrollPosition);
+                    pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
+                    panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
             }
 
             return false;
@@ -309,13 +327,24 @@ namespace DiffPlex.Wpf.Controls
                     ele = ele.Parent as FrameworkElement;
                 }
 
-                if (string.IsNullOrWhiteSpace(str)) return;
-                copyMenuItem.IsEnabled = true;
-                if (!string.IsNullOrEmpty(str)) Clipboard.SetText(str);
+                copyMenuItem.IsEnabled = !string.IsNullOrWhiteSpace(str);
             };
             copyMenuItem.Click += (sender, ev) =>
             {
-                if (!string.IsNullOrEmpty(str)) Clipboard.SetText(str);
+                if (string.IsNullOrEmpty(str)) return;
+                try
+                {
+                    Clipboard.SetText(str);
+                }
+                catch (System.Runtime.InteropServices.ExternalException)
+                {
+                }
+                catch (InvalidOperationException)
+                {
+                }
+                catch (NotSupportedException)
+                {
+                }
             };
             return menu;
         }

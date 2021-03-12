@@ -169,13 +169,10 @@ namespace DiffPlex.Wpf.Controls
         {
             try
             {
-                var number = NumberPanel.Children[index] as TextBlock;
-                var operation = OperationPanel.Children[index] as TextBlock;
-                var value = ValuePanel.Children[index] as StackPanel;
                 var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-                if (number != null) number.Visibility = visibility;
-                if (operation != null) operation.Visibility = visibility;
-                if (value != null) value.Visibility = visibility;
+                if (NumberPanel.Children[index] is TextBlock number) number.Visibility = visibility;
+                if (OperationPanel.Children[index] is TextBlock operation) operation.Visibility = visibility;
+                if (ValuePanel.Children[index] is StackPanel value) value.Visibility = visibility;
             }
             catch (ArgumentOutOfRangeException)
             {

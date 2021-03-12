@@ -18,6 +18,16 @@ namespace DiffPlex.Wpf.Demo
             return isDark;
         }
 
+        internal static object RemoveHotkey(object content)
+        {
+            if (!(content is string s)) return content;
+            s = s.Trim();
+            if (s.StartsWith("_")) return s.Substring(1);
+            var i = s.Length - 5;
+            return s.IndexOf(" (_") == i ? s.Substring(0, i) : s;
+
+        }
+
         internal static string DuplicateText(string text, int repeat = 2)
         {
             var sb = new StringBuilder();
@@ -77,7 +87,7 @@ Excepteur sint occaecat cupidatat non proident,
 sunt in culpa qui officia deserunt mollit 
 anim id est laborum
 
-
+中文测试
 =======
 ";
     }

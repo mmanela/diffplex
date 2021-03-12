@@ -44,12 +44,12 @@ namespace DiffPlex.Wpf.Controls
             }
 
             /// <summary>
-            /// Gets a value indicating whether it is side-by-side view mode.
+            /// Gets a value indicating whether it is side-by-side (split) view mode.
             /// </summary>
             public bool IsSideBySideViewMode { get; }
 
             /// <summary>
-            /// Gets a value indicating whether it is inline view mode.
+            /// Gets a value indicating whether it is inline (unified) view mode.
             /// </summary>
             public bool IsInlineViewMode { get; }
         }
@@ -57,32 +57,32 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of old text.
         /// </summary>
-        public static readonly DependencyProperty OldTextProperty = RegisterRefreshDependencyProperty<string>("OldText", null);
+        public static readonly DependencyProperty OldTextProperty = RegisterRefreshDependencyProperty<string>(nameof(OldText), null);
 
         /// <summary>
         /// The property of new text.
         /// </summary>
-        public static readonly DependencyProperty NewTextProperty = RegisterRefreshDependencyProperty<string>("NewText", null);
+        public static readonly DependencyProperty NewTextProperty = RegisterRefreshDependencyProperty<string>(nameof(NewText), null);
 
         /// <summary>
         /// The property of a flag to ignore white space.
         /// </summary>
-        public static readonly DependencyProperty IgnoreWhiteSpaceProperty = RegisterRefreshDependencyProperty("IgnoreWhiteSpace", true);
+        public static readonly DependencyProperty IgnoreWhiteSpaceProperty = RegisterRefreshDependencyProperty(nameof(IgnoreWhiteSpace), true);
 
         /// <summary>
         /// The property of a flag to ignore case.
         /// </summary>
-        public static readonly DependencyProperty IgnoreCaseProperty = RegisterRefreshDependencyProperty("IgnoreCase", false);
+        public static readonly DependencyProperty IgnoreCaseProperty = RegisterRefreshDependencyProperty(nameof(IgnoreCase), false);
 
         /// <summary>
         /// The property of line number background brush.
         /// </summary>
-        public static readonly DependencyProperty LineNumberForegroundProperty = RegisterDependencyProperty<Brush>("LineNumberForeground", new SolidColorBrush(Color.FromArgb(255, 64, 128, 160)));
+        public static readonly DependencyProperty LineNumberForegroundProperty = RegisterDependencyProperty<Brush>(nameof(LineNumberForeground), new SolidColorBrush(Color.FromArgb(255, 64, 128, 160)));
 
         /// <summary>
         /// The property of line number width.
         /// </summary>
-        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>("LineNumberWidth", 60, (d, e) =>
+        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>(nameof(LineNumberWidth), 60, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
             c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = c.InlineContentPanel.LineNumberWidth = n;
@@ -91,12 +91,12 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of change type symbol foreground brush.
         /// </summary>
-        public static readonly DependencyProperty ChangeTypeForegroundProperty = RegisterDependencyProperty<Brush>("ChangeTypeForeground", new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)));
+        public static readonly DependencyProperty ChangeTypeForegroundProperty = RegisterDependencyProperty<Brush>(nameof(ChangeTypeForeground), new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)));
 
         /// <summary>
         /// The property of old text header.
         /// </summary>
-        public static readonly DependencyProperty OldTextHeaderProperty = RegisterDependencyProperty<string>("OldTextHeader", null, (d, e) =>
+        public static readonly DependencyProperty OldTextHeaderProperty = RegisterDependencyProperty<string>(nameof(OldTextHeader), null, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
@@ -105,7 +105,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of new text header.
         /// </summary>
-        public static readonly DependencyProperty NewTextHeaderProperty = RegisterDependencyProperty<string>("NewTextHeader", null, (d, e) =>
+        public static readonly DependencyProperty NewTextHeaderProperty = RegisterDependencyProperty<string>(nameof(NewTextHeader), null, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
@@ -114,7 +114,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of header height.
         /// </summary>
-        public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>("HeaderHeight", 0, (d, e) =>
+        public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>(nameof(HeaderHeight), 0, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is double n)) return;
             c.HeaderRow.Height = new GridLength(n);
@@ -124,67 +124,67 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of header background brush.
         /// </summary>
-        public static readonly DependencyProperty HeaderForegroundProperty = RegisterDependencyProperty<Brush>("HeaderForeground");
+        public static readonly DependencyProperty HeaderForegroundProperty = RegisterDependencyProperty<Brush>(nameof(HeaderForeground));
 
         /// <summary>
         /// The property of header background brush.
         /// </summary>
-        public static readonly DependencyProperty HeaderBackgroundProperty = RegisterDependencyProperty<Brush>("HeaderBackground", new SolidColorBrush(Color.FromArgb(12, 128, 128, 128)));
+        public static readonly DependencyProperty HeaderBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(HeaderBackground), new SolidColorBrush(Color.FromArgb(12, 128, 128, 128)));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty InsertedForegroundProperty = RegisterDependencyProperty<Brush>("InsertedForeground");
+        public static readonly DependencyProperty InsertedForegroundProperty = RegisterDependencyProperty<Brush>(nameof(InsertedForeground));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty InsertedBackgroundProperty = RegisterDependencyProperty<Brush>("InsertedBackground", new SolidColorBrush(Color.FromArgb(64, 96, 216, 32)));
+        public static readonly DependencyProperty InsertedBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(InsertedBackground), new SolidColorBrush(Color.FromArgb(64, 96, 216, 32)));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty DeletedForegroundProperty = RegisterDependencyProperty<Brush>("DeletedForeground");
+        public static readonly DependencyProperty DeletedForegroundProperty = RegisterDependencyProperty<Brush>(nameof(DeletedForeground));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty DeletedBackgroundProperty = RegisterDependencyProperty<Brush>("DeletedBackground", new SolidColorBrush(Color.FromArgb(64, 216, 32, 32)));
+        public static readonly DependencyProperty DeletedBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(DeletedBackground), new SolidColorBrush(Color.FromArgb(64, 216, 32, 32)));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty UnchangedForegroundProperty = RegisterDependencyProperty<Brush>("UnchangedForeground");
+        public static readonly DependencyProperty UnchangedForegroundProperty = RegisterDependencyProperty<Brush>(nameof(UnchangedForeground));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty UnchangedBackgroundProperty = RegisterDependencyProperty<Brush>("UnchangedBackground");
+        public static readonly DependencyProperty UnchangedBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(UnchangedBackground));
 
         /// <summary>
         /// The property of text inserted background brush.
         /// </summary>
-        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>("ImaginaryBackground", new SolidColorBrush(Color.FromArgb(24, 128, 128, 128)));
+        public static readonly DependencyProperty ImaginaryBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(ImaginaryBackground), new SolidColorBrush(Color.FromArgb(24, 128, 128, 128)));
 
         /// <summary>
         /// The property of grid splitter background brush.
         /// </summary>
-        public static readonly DependencyProperty SplitterBackgroundProperty = RegisterDependencyProperty<Brush>("SplitterBackground", new SolidColorBrush(Color.FromArgb(64, 128, 128, 128)));
+        public static readonly DependencyProperty SplitterBackgroundProperty = RegisterDependencyProperty<Brush>(nameof(SplitterBackground), new SolidColorBrush(Color.FromArgb(64, 128, 128, 128)));
 
         /// <summary>
         /// The property of grid splitter border brush.
         /// </summary>
-        public static readonly DependencyProperty SplitterBorderBrushProperty = RegisterDependencyProperty<Brush>("SplitterBorderBrush");
+        public static readonly DependencyProperty SplitterBorderBrushProperty = RegisterDependencyProperty<Brush>(nameof(SplitterBorderBrush));
 
         /// <summary>
         /// The property of grid splitter border thickness.
         /// </summary>
-        public static readonly DependencyProperty SplitterBorderThicknessProperty = RegisterDependencyProperty<Thickness>("SplitterBorderThickness");
+        public static readonly DependencyProperty SplitterBorderThicknessProperty = RegisterDependencyProperty<Thickness>(nameof(SplitterBorderThickness));
 
         /// <summary>
         /// The property of grid splitter width.
         /// </summary>
-        public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>("SplitterWidth", 5);
+        public static readonly DependencyProperty SplitterWidthProperty = RegisterDependencyProperty<double>(nameof(SplitterWidth), 5);
 
         /// <summary>
         /// The property of flag of hiding unchanged lines
@@ -195,15 +195,20 @@ namespace DiffPlex.Wpf.Controls
                 return;
             if (b)
             {
-                Helper.CollapseUnchangedSections(c.LeftContentPanel, c.LinesContext);
-                Helper.CollapseUnchangedSections(c.RightContentPanel, c.LinesContext);
-                Helper.CollapseUnchangedSections(c.InlineContentPanel, c.LinesContext);
+                var lines = c.LinesContext;
+                Helper.CollapseUnchangedSections(c.LeftContentPanel, lines);
+                Helper.CollapseUnchangedSections(c.RightContentPanel, lines);
+                Helper.CollapseUnchangedSections(c.InlineContentPanel, lines);
+                c.CollapseUnchangedSectionsToggle.IsChecked = true;
+                c.ContextLinesMenuItems.Visibility = Visibility.Visible;
             }
             else
             {
                 Helper.ExpandUnchangedSections(c.LeftContentPanel);
                 Helper.ExpandUnchangedSections(c.RightContentPanel);
                 Helper.ExpandUnchangedSections(c.InlineContentPanel);
+                c.CollapseUnchangedSectionsToggle.IsChecked = false;
+                c.ContextLinesMenuItems.Visibility = Visibility.Collapsed;
             }
         });
 
@@ -212,12 +217,33 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty LinesContextProperty = RegisterDependencyProperty(nameof(LinesContext), 1, (o, e) =>
         {
-            if (!(o is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int i) || !c.IgnoreUnchanged)
+            if (!(o is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int i))
                 return;
             if (i < 0) i = 0;
-            Helper.CollapseUnchangedSections(c.LeftContentPanel, i);
-            Helper.CollapseUnchangedSections(c.RightContentPanel, i);
-            Helper.CollapseUnchangedSections(c.InlineContentPanel, i);
+            if (c.IgnoreUnchanged)
+            {
+                Helper.CollapseUnchangedSections(c.LeftContentPanel, i);
+                Helper.CollapseUnchangedSections(c.RightContentPanel, i);
+                Helper.CollapseUnchangedSections(c.InlineContentPanel, i);
+            }
+
+            if (i > 9)
+            {
+                c.CustomizedContextLineMenuItem.Header = i.ToString("g");
+                c.CustomizedContextLineMenuItem.Visibility = Visibility.Visible;
+                i = 10;
+            }
+            else
+            {
+                c.CustomizedContextLineMenuItem.Visibility = Visibility.Collapsed;
+            }
+
+            var j = -1;
+            foreach (var menu in c.ContextLinesMenuItems.Items)
+            {
+                j++;
+                if (menu is MenuItem mi) mi.IsChecked = i == j;
+            }
         });
 
         /// <summary>
@@ -254,14 +280,14 @@ namespace DiffPlex.Wpf.Controls
             InitializeComponent();
 
             LeftContentPanel.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            LeftContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            RightContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            InlineContentPanel.SetBinding(ForegroundProperty, new Binding("Foreground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BackgroundProperty, new Binding("SplitterBackground") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BorderBrushProperty, new Binding("SplitterBorderBrush") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(BorderThicknessProperty, new Binding("SplitterBorderThickness") { Source = this, Mode = BindingMode.OneWay });
-            Splitter.SetBinding(WidthProperty, new Binding("SplitterWidth") { Source = this, Mode = BindingMode.OneWay });
-            HeaderBorder.SetBinding(BackgroundProperty, new Binding("HeaderBackground") { Source = this, Mode = BindingMode.OneWay });
+            LeftContentPanel.SetBinding(ForegroundProperty, new Binding(nameof(Foreground)) { Source = this, Mode = BindingMode.OneWay });
+            RightContentPanel.SetBinding(ForegroundProperty, new Binding(nameof(Foreground)) { Source = this, Mode = BindingMode.OneWay });
+            InlineContentPanel.SetBinding(ForegroundProperty, new Binding(nameof(Foreground)) { Source = this, Mode = BindingMode.OneWay });
+            Splitter.SetBinding(BackgroundProperty, new Binding(nameof(SplitterBackground)) { Source = this, Mode = BindingMode.OneWay });
+            Splitter.SetBinding(BorderBrushProperty, new Binding(nameof(SplitterBorderBrush)) { Source = this, Mode = BindingMode.OneWay });
+            Splitter.SetBinding(BorderThicknessProperty, new Binding(nameof(SplitterBorderThickness)) { Source = this, Mode = BindingMode.OneWay });
+            Splitter.SetBinding(WidthProperty, new Binding(nameof(SplitterWidth)) { Source = this, Mode = BindingMode.OneWay });
+            HeaderBorder.SetBinding(BackgroundProperty, new Binding(nameof(HeaderBackground)) { Source = this, Mode = BindingMode.OneWay });
             ApplyHeaderTextProperties(LeftHeaderText);
             ApplyHeaderTextProperties(RightHeaderText);
             ApplyHeaderTextProperties(InlineHeaderText);
@@ -270,6 +296,7 @@ namespace DiffPlex.Wpf.Controls
             InlineModeToggle.Header = Helper.GetButtonName(Resource.InlineMode ?? "Unified view", "U");
             SideBySideModeToggle.Header = Helper.GetButtonName(Resource.SideBySideMode ?? "Split view", "S");
             CollapseUnchangedSectionsToggle.Header = Helper.GetButtonName(Resource.SkipUnchangedLines ?? "Collapse unchanged sections", "C");
+            ContextLinesMenuItems.Header = Helper.GetButtonName(Resource.ContextLines ?? "Lines for context", "L");
         }
 
         /// <summary>
@@ -544,7 +571,7 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the IsSideBySide.
+        /// Gets or sets a value indicating whether it is in side-by-side (split) view mode to diff.
         /// </summary>
         [Category("Appearance")]
         public bool IsSideBySide
@@ -554,7 +581,7 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the IgnoreUnchanged
+        /// Gets or sets a value indicating whether need collapse unchanged sections.
         /// </summary>
         [Category("Appearance")]
         public bool IgnoreUnchanged
@@ -564,7 +591,8 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets the LinesContext
+        /// Gets or sets the count of context line.
+        /// The context line is the one unchanged arround others as their margin.
         /// </summary>
         [Category("Appearance")]
         public int LinesContext
@@ -600,6 +628,16 @@ namespace DiffPlex.Wpf.Controls
         {
             get => CollapseUnchangedSectionsToggle.Header;
             set => CollapseUnchangedSectionsToggle.Header = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the display name of context lines count.
+        /// </summary>
+        [Category("Appearance")]
+        public object ContextLinesMenuItemsTitle
+        {
+            get => ContextLinesMenuItems.Header;
+            set => ContextLinesMenuItems.Header = value;
         }
 
         /// <summary>
@@ -782,6 +820,41 @@ namespace DiffPlex.Wpf.Controls
         }
 
         /// <summary>
+        /// Collapses unchanged sections.
+        /// </summary>
+        /// <param name="contextLineCount">The optional context line count to set.</param>
+        /// <exception cref="ArgumentOutOfRangeException">contextLineCount was less than 0.</exception>
+        public void CollapseUnchangedSections(int? contextLineCount = null)
+        {
+            if (contextLineCount.HasValue)
+            {
+                if (contextLineCount.Value >= 0)
+                {
+                    LinesContext = contextLineCount.Value;
+                }
+                else if (contextLineCount.Value == -1)
+                {
+                    IgnoreUnchanged = false;
+                    return;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(contextLineCount), "contextLineCount should be a natural integer.");
+                }
+            }
+
+            IgnoreUnchanged = true;
+        }
+
+        /// <summary>
+        /// Expands unchanged sections.
+        /// </summary>
+        public void ExpandUnchangedSections()
+        {
+            IgnoreUnchanged = false;
+        }
+
+        /// <summary>
         /// Sets header as old and new.
         /// </summary>
         public void SetHeaderAsOldToNew()
@@ -797,6 +870,12 @@ namespace DiffPlex.Wpf.Controls
         {
             OldTextHeader = Resource.Left;
             NewTextHeader = Resource.Right;
+        }
+
+        private void ContextLineMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuItem m) || !(m.Header is string s) || !int.TryParse(s.Replace("_", string.Empty), out var i) || i < 0) return;
+            LinesContext = i;
         }
 
         /// <summary>

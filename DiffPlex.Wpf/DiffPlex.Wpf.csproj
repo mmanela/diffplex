@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows;netcoreapp3.1;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
     <PackageTags>diff, wpf</PackageTags>

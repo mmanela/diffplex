@@ -61,6 +61,15 @@ namespace DiffPlex.Wpf.Controls {
         }
         
         /// <summary>
+        ///   查找类似 Lines for context 的本地化字符串。
+        /// </summary>
+        internal static string ContextLines {
+            get {
+                return ResourceManager.GetString("ContextLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Copy this line 的本地化字符串。
         /// </summary>
         internal static string CopyThisLine {
@@ -147,6 +156,15 @@ namespace DiffPlex.Wpf.Controls {
         internal static string Open {
             get {
                 return ResourceManager.GetString("Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Open file 的本地化字符串。
+        /// </summary>
+        internal static string OpenFile {
+            get {
+                return ResourceManager.GetString("OpenFile", resourceCulture);
             }
         }
         

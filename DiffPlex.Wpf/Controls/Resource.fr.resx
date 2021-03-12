@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ContextLines" xml:space="preserve">
+    <value>Lignes pour le contexte</value>
+  </data>
   <data name="CopyThisLine" xml:space="preserve">
     <value>Copiez cette ligne</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="Open" xml:space="preserve">
     <value>Ouvert</value>
+  </data>
+  <data name="OpenFile" xml:space="preserve">
+    <value>Fichier ouvert</value>
   </data>
   <data name="Previous" xml:space="preserve">
     <value>Précédente</value>

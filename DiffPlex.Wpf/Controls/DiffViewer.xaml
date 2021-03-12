@@ -22,6 +22,19 @@
                     <MenuItem x:Name="SideBySideModeToggle" Header="_Split view" Click="SideBySideModeToggle_Click" IsChecked="True" />
                     <Separator />
                     <MenuItem x:Name="CollapseUnchangedSectionsToggle" Header="_Collapse unchanged sections" Click="CollapseUnchangedSectionsToggle_Click" />
+                    <MenuItem x:Name="ContextLinesMenuItems" Header="_Lines for context" Visibility="Collapsed">
+                        <MenuItem Header="_0" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_1" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_2" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_3" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_4" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_5" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_6" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_7" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_8" Click="ContextLineMenuItem_Click" />
+                        <MenuItem Header="_9" Click="ContextLineMenuItem_Click" />
+                        <MenuItem x:Name="CustomizedContextLineMenuItem" Header="_X" Click="ContextLineMenuItem_Click" Visibility="Collapsed" />
+                    </MenuItem>
                 </ContextMenu>
             </Border.ContextMenu>
         </Border>

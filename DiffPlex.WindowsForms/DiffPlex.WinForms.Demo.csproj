@@ -57,9 +57,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DiffPlex.Wpf.Demo\TestData.cs">
-      <Link>TestData.cs</Link>
-    </Compile>
     <Compile Include="Extensions\RichTextBoxExtensions.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -67,19 +64,10 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -107,10 +95,6 @@
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj">
       <Project>{54247212-ba10-4593-8e4d-d3b5ac06d2f2}</Project>
       <Name>DiffPlex</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiffPlex.Wpf\DiffPlex.Wpf.csproj">
-      <Project>{cb18d73d-7e84-4b28-b44d-93cb34794a6a}</Project>
-      <Name>DiffPlex.Wpf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

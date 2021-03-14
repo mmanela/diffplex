@@ -163,7 +163,7 @@ DiffPlex also contains a sample website that shows how to create a basic side by
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
 DiffPlex WPF control library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
-It targets `.NET 5`, `.NET Core 3.1` and `.NET Framework 4.6`.
+It targets `.NET 5`, `.NET Core 3.1`, `.NET Framework 4.8` and `.NET Framework 4.6`.
 
 ```csharp
 using DiffPlex.Wpf.Controls;
@@ -205,10 +205,17 @@ public string OldTextHeader { get; set; }
 public string NewTextHeader { get; set; }
 
 // The header of new text.
-public string NewTextHeader { get; }
+public string NewTextHeader { get; set; }
+
+// true if it is in side-by-side (split) view;
+// otherwise, false, in inline (unified) view.
+public bool IsSideBySideViewMode { get; }
+
+// true if collapse unchanged sections; otherwise, false.
+public bool IgnoreUnchanged { get; set; }
 
 // The font size.
-public double IsSideBySideViewMode { get; set; }
+public double FontSize { get; set; }
 
 // The preferred font family.
 public FontFamily FontFamily { get; set; }
@@ -253,7 +260,7 @@ public double HeaderHeight { get; set; }
 public Brush SplitterBackground { get; set; }
 
 // The width of the grid splitter.
-public Brush SplitterWidth { get; set; }
+public Thickness SplitterWidth { get; set; }
 
 // A value that represents the actual calculated width of the left side panel.
 public double LeftSideActualWidth { get; }
@@ -279,10 +286,114 @@ public event DragStartedEventHandler SplitterDragStarted;
 public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 ```
 
-## WinForms
+# WinForms Controls
 
-By using `ElementHost` control to set its `Child` property as the instance of one of `DiffViewer`, `SideBySideDiffViewer` and `InlineDiffViewer` introduced above (in WPF section),
-you can add the visual element into the control or window of your WinForms project.
+[![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
-`ElementHost` [control](https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.integration.elementhost) is in `System.Windows.Forms.Integration` namespace
-and you can find it in Toolbox of Visual Studio.
+Windows Forms control of diff viewer is a WPF element host control.
+It is also included in `DiffPlex.Wpf` assembly.
+You can import it to use in your Windows Forms application.
+It targets `.NET 5`, `.NET Core 3.1`, `.NET Framework 4.8` and `.NET Framework 4.6`.
+
+```csharp
+using DiffPlex.WindowsForms.Controls;
+```
+
+Then you can add the following control in window or user control.
+
+- `DiffViewer` Textual diffs viewer control with view mode switching by setting an old text and a new text to diff.
+
+For example.
+
+```csharp
+public partial class Form1 : Form
+{
+    public Form1()
+    {
+        InitializeComponent();
+
+        var diffView = new DiffViewer
+        {
+            Margin = new Padding(0),
+            Dock = DockStyle.Fill,
+            OldText = oldText,
+            NewText = newText
+        };
+        Controls.Add(diffView);
+    }
+}
+```
+
+![Windows Forms sample](./images/wpf_side_light.jpg)
+
+You can also customize the style.
+Following are some of the properties you can get or set.
+
+```csharp
+// The header of old text.
+public string OldTextHeader { get; set; }
+
+// The header of new text.
+public string NewTextHeader { get; set; }
+
+// The header of new text.
+public string NewTextHeader { get; set; }
+
+// true if it is in side-by-side (split) view;
+// otherwise, false, in inline (unified) view.
+public bool IsSideBySideViewMode { get; }
+
+// true if collapse unchanged sections; otherwise, false.
+public bool IgnoreUnchanged { get; set; }
+
+// The font size.
+public double FontSize { get; set; }
+
+// The preferred font family names in string.
+public string FontFamilyNames { get; set; }
+
+// The font weight.
+public int FontWeight { get; set; }
+
+// The font style.
+public bool IsFontItalic { get; set; }
+
+// The default text color (foreground brush).
+public Color ForeColor { get; set; }
+
+// The background brush of the line inserted.
+public Color InsertedBackColor { get; set; }
+
+// The background brush of the line deleted.
+public Color DeletedBackColor { get; set; }
+
+// The text color (foreground color) of the line number.
+public Color LineNumberForeColor { get; set; }
+
+// The width of the line number and change type symbol.
+public int LineNumberWidth { get; set; }
+
+// The background brush of the line imaginary.
+public Color ImaginaryBackColor { get; set; }
+
+// The text color (foreground color) of the change type symbol.
+public Color ChangeTypeForeColor { get; set; }
+
+// The background brush of the header.
+public Color HeaderBackColor { get; set; }
+
+// The height of the header.
+public double HeaderHeight { get; set; }
+
+// The background brush of the grid splitter.
+public Color SplitterBackColor { get; set; }
+
+// The width of the grid splitter.
+public Padding SplitterWidth { get; set; }
+
+// A value that represents the actual calculated width of the left side panel.
+public double LeftSideActualWidth { get; }
+
+// A value that represents the actual calculated width of the right side panel.
+public double RightSideActualWidth { get; }
+```

@@ -16,7 +16,7 @@ namespace DiffPlex.WinForms.Demo
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form2());	// Replace Form2 to Form1 to test classic version.
+			Application.Run(new Form1());
 		}
 	}
 }

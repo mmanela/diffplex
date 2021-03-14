@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DiffPlex.Wpf.Demo"
         xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
         mc:Ignorable="d"
-        Title="Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
+        Title="WPF Demo - DiffPlex" Height="450" Width="800" Icon="Icon.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -16,12 +16,12 @@
                              IgnoreUnchanged="False"
                              LinesContext="2" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Background="#20808080">
-            <Button Width="100" Height="20" x:Name="DiffButton" Content="Switch _Mode" Click="DiffButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="16 0 1 0" Foreground="{Binding Foreground, ElementName=DiffView}"/>
-            <Button Width="20" Height="20" x:Name="FutherActionsButton" Content="…" Click="FutherActionsButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="0 0 31 0" Foreground="{Binding Foreground, ElementName=DiffView}"/>
+            <Button Width="100" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="16,0,1,0" />
+            <Button Width="20" Height="20" x:Name="FutherActionsButton" Content="…" Click="FutherActionsButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="0,0,31,0" />
             <CheckBox Width="120" Height="20" VerticalContentAlignment="Center" IsChecked="{Binding IsSideBySide, ElementName=DiffView}" Content="Is_SideBySide" Foreground="{Binding Foreground, ElementName=DiffView}" />
-            <CheckBox Height="20" VerticalContentAlignment="Center" x:Name="IgnoreUnchangedCheckBox" IsChecked="{Binding IgnoreUnchanged, ElementName=DiffView}" Content="IgnoreUnchanged" Margin="0,0,16,0" Foreground="{Binding Foreground, ElementName=DiffView}" />
+            <CheckBox Height="20" VerticalContentAlignment="Center" x:Name="IgnoreUnchangedCheckBox" IsChecked="{Binding IgnoreUnchanged, ElementName=DiffView}" Content="IgnoreUnchanged" Margin="0,0,24,0" Foreground="{Binding Foreground, ElementName=DiffView}" />
             <Label Height="20" VerticalContentAlignment="Center" Padding="0,0,8,0" x:Name="MarginLineCountLabel" Target="{Binding ElementName=MarginLineCount}" Foreground="{Binding Foreground, ElementName=DiffView}">LinesContext</Label>
-            <TextBox Width="100" Height="20" VerticalContentAlignment="Center" x:Name="MarginLineCount" Padding="8,0,8,0" Text="{Binding LinesContext, ElementName=DiffView, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Width="100" Height="20" VerticalContentAlignment="Center" x:Name="MarginLineCount" Padding="8,0,8,0" Text="{Binding LinesContext, ElementName=DiffView, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,32,0" />
         </StackPanel>
     </Grid>
 </Window>

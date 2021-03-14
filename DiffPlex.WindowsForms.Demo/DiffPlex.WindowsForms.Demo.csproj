@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net5.0-windows;net46</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Authors>Kingcean Tuan</Authors>
+    <Company />
+    <RootNamespace>DiffPlex.WindowsForms</RootNamespace>
+    <AssemblyName>DiffPlex.WindowsForms.Demo</AssemblyName>
+    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
+    <PackageIcon>diffplex_icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\DiffPlex.Wpf.Demo\TestData.cs" Link="TestData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiffPlex.Wpf\DiffPlex.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
+    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
+  </ItemGroup>
+
+</Project>

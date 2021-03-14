@@ -24,7 +24,6 @@ namespace DiffPlex.Wpf.Controls
 {
     /// <summary>
     /// The diff control for text.
-    /// Interaction logic for DiffViewer.xaml
     /// </summary>
     public partial class DiffViewer : UserControl
     {
@@ -337,6 +336,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the old text.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public string OldText
         {
@@ -347,6 +347,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the new text.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public string NewText
         {
@@ -357,6 +358,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets a value indicating whether ignore the white space.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public bool IgnoreWhiteSpace
         {
@@ -367,6 +369,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets a value indicating whether ignore case.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public bool IgnoreCase
         {
@@ -573,6 +576,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets a value indicating whether it is in side-by-side (split) view mode to diff.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public bool IsSideBySide
         {
@@ -583,6 +587,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets a value indicating whether need collapse unchanged sections.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public bool IgnoreUnchanged
         {
@@ -594,6 +599,7 @@ namespace DiffPlex.Wpf.Controls
         /// Gets or sets the count of context line.
         /// The context line is the one unchanged arround others as their margin.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public int LinesContext
         {

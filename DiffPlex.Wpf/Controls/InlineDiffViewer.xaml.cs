@@ -160,6 +160,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets the side by side diff model.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public DiffPaneModel DiffModel
         {
@@ -313,6 +314,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets or sets a value indicating whether need collapse unchanged sections.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public bool IgnoreUnchanged
         {
@@ -324,6 +326,7 @@ namespace DiffPlex.Wpf.Controls
         /// Gets or sets the count of context line.
         /// The context line is the one unchanged arround others as their margin.
         /// </summary>
+        [Bindable(true)]
         [Category("Appearance")]
         public int LinesContext
         {

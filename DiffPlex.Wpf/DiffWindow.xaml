@@ -82,7 +82,7 @@
                     </Button.ContextMenu>
                 </Button>
                 <Button Width="120" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0" Style="{DynamicResource SolidButtonStyle}" />
-                <Button Width="20" Height="20" x:Name="FutherActionsButton" Content="…" Click="FutherActionsButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="1,0,15,0" Style="{DynamicResource SolidButtonStyle}" />
+                <Button Width="20" Height="20" x:Name="FurtherActionsButton" Content="…" Click="FurtherActionsButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="1,0,15,0" Style="{DynamicResource SolidButtonStyle}" />
                 <Label x:Name="GoToLabel" Height="20" Padding="0" Margin="16,0,8,0" VerticalContentAlignment="Center" Foreground="{Binding Foreground, ElementName=MainWindow}" >Go to</Label>
                 <TextBox Width="80" Height="20" VerticalContentAlignment="Center" x:Name="GoToText" Padding="8,0,8,0" Text="" Foreground="{Binding Foreground, ElementName=MainWindow}" CaretBrush="{Binding Foreground, ElementName=MainWindow}" Background="{x:Null}" Margin="0,0,8,0" TextChanged="GoToText_TextChanged" LostFocus="GoToText_LostFocus" />
                 <Button Width="20" Height="20" x:Name="NextButton" Click="NextButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0,0,1,0" Style="{DynamicResource SolidButtonStyle}" >

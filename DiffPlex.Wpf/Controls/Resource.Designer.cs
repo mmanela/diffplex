@@ -88,6 +88,15 @@ namespace DiffPlex.Wpf.Controls {
         }
         
         /// <summary>
+        ///   查找类似 Empty 的本地化字符串。
+        /// </summary>
+        internal static string Empty {
+            get {
+                return ResourceManager.GetString("Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Find 的本地化字符串。
         /// </summary>
         internal static string Find {
@@ -219,6 +228,15 @@ namespace DiffPlex.Wpf.Controls {
         internal static string SkipUnchangedLines {
             get {
                 return ResourceManager.GetString("SkipUnchangedLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Switch mode 的本地化字符串。
+        /// </summary>
+        internal static string SwitchViewMode {
+            get {
+                return ResourceManager.GetString("SwitchViewMode", resourceCulture);
             }
         }
     }

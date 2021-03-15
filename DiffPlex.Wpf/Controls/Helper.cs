@@ -191,7 +191,7 @@ namespace DiffPlex.Wpf.Controls
         /// Goes to the specific line.
         /// </summary>
         /// <param name="panel">The content panel.</param>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to go to.</param>
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         internal static bool GoTo(InternalLinesViewer panel, int lineIndex)
         {
@@ -199,6 +199,17 @@ namespace DiffPlex.Wpf.Controls
             {
                 var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
                 var point = new Point(0, currentScrollPosition);
+                if (lineIndex == 0)
+                {
+                    foreach (var item in panel.ValuePanel.Children)
+                    {
+                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
+                        var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
+                        panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                        return true;
+                    }
+                }
+
                 foreach (var item in panel.ValuePanel.Children)
                 {
                     if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
@@ -222,6 +233,7 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         internal static bool GoTo(InternalLinesViewer panel, DiffPiece line)
         {
+            if (line == null) return false;
             try
             {
                 var scrollView = panel.ValueScrollViewer;
@@ -249,7 +261,7 @@ namespace DiffPlex.Wpf.Controls
         /// Gets the line diff information.
         /// </summary>
         /// <param name="panel">The content panel.</param>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to get information.</param>
         /// <returns>The line diff information instance; or null, if non-exists.</returns>
         internal static DiffPiece GetLine(InternalLinesViewer panel, int lineIndex)
         {
@@ -270,29 +282,56 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>All lines.</returns>
         internal static IEnumerable<DiffPiece> GetLinesInViewport(InternalLinesViewer panel, VisibilityLevels level)
         {
-            var scrollView = panel.ValueScrollViewer;
-            var currentScrollPosition = scrollView.VerticalOffset;
-            var point = new Point(0, currentScrollPosition);
-            foreach (var item in panel.ValuePanel.Children)
+            var states = GetLineViewportStates(panel, level);
+            var needBreak = false;
+            foreach (var item in states)
             {
-                if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
-                var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                switch (level)
+                if (!item.Item2)
                 {
-                    case VisibilityLevels.All:
-                        if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight)
-                            yield return line;
-                        break;
-                    case VisibilityLevels.Half:
-                        var halfHeight = ele.ActualHeight / 2;
-                        if (pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight)
-                            yield return line;
-                        break;
-                    default:
-                        if (pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight)
-                            yield return line;
-                        break;
+                    if (needBreak) yield break;
+                    continue;
                 }
+
+                needBreak = true;
+                yield return item.Item1;
+            }
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="panel">The content panel.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        internal static IEnumerable<DiffPiece> GetLinesBeforeViewport(InternalLinesViewer panel, VisibilityLevels level)
+        {
+            var states = GetLineViewportStates(panel, level);
+            foreach (var item in states)
+            {
+                if (item.Item2) yield break;
+                yield return item.Item1;
+            }
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="panel">The content panel.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        internal static IEnumerable<DiffPiece> GetLinesAfterViewport(InternalLinesViewer panel, VisibilityLevels level)
+        {
+            var states = GetLineViewportStates(panel, level);
+            var needReturn = false;
+            foreach (var item in states)
+            {
+                if (item.Item2)
+                {
+                    needReturn = true;
+                    continue;
+                }
+
+                if (needReturn) yield return item.Item1;
             }
         }
 
@@ -347,6 +386,52 @@ namespace DiffPlex.Wpf.Controls
                 }
             };
             return menu;
+        }
+
+        /// <summary>
+        /// Gets all line information in viewport.
+        /// </summary>
+        /// <param name="panel">The content panel.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        private static IEnumerable<Tuple<DiffPiece, bool>> GetLineViewportStates(InternalLinesViewer panel, VisibilityLevels level)
+        {
+            var scrollView = panel.ValueScrollViewer;
+            var point = new Point(0, 0);
+            switch (level)
+            {
+                case VisibilityLevels.All:
+                    foreach (var item in panel.ValuePanel.Children)
+                    {
+                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
+                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
+                        var isIn = pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight;
+                        yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    }
+
+                    break;
+                case VisibilityLevels.Half:
+                    foreach (var item in panel.ValuePanel.Children)
+                    {
+                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
+                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
+                        var halfHeight = ele.ActualHeight / 2;
+                        var isIn = pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
+                        yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    }
+
+                    break;
+                default:
+                    foreach (var item in panel.ValuePanel.Children)
+                    {
+                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
+                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
+                        var isIn = pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight;
+                        yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    }
+
+                    break;
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:", Justification = "Not supported.")]

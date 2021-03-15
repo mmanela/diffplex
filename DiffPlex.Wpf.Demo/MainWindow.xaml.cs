@@ -42,7 +42,7 @@ namespace DiffPlex.Wpf.Demo
             DiffView.NewText = TestData.DuplicateText(TestData.NewText, 50);
             DiffView.SetHeaderAsOldToNew();
             Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
-            DiffButton.Background = FutherActionsButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
+            DiffButton.Background = FutherActionsButton.Background = WindowButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
             IgnoreUnchangedCheckBox.Content = TestData.RemoveHotkey(DiffView.CollapseUnchangedSectionsToggleTitle);
             MarginLineCountLabel.Content = TestData.RemoveHotkey(DiffView.ContextLinesMenuItemsTitle);
         }
@@ -61,6 +61,25 @@ namespace DiffPlex.Wpf.Demo
         private void FutherActionsButton_Click(object sender, RoutedEventArgs e)
         {
             DiffView.OpenViewModeContextMenu();
+        }
+
+        private void WindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            var has = false;
+            foreach (var w in Application.Current.Windows)
+            {
+                if (w is DiffWindow dw)
+                {
+                    dw.Activate();
+                    has = true;
+                    break;
+                }
+            }
+
+            if (has) return;
+            var win = new DiffWindow();
+            win.OpenFileOnBoth();
+            win.Show();
         }
     }
 }

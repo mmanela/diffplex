@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContextLines" xml:space="preserve">
     <value>Lines for context</value>
@@ -125,6 +125,9 @@
   </data>
   <data name="Diff" xml:space="preserve">
     <value>Diff</value>
+  </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Empty</value>
   </data>
   <data name="Find" xml:space="preserve">
     <value>Find</value>
@@ -170,5 +173,8 @@
   </data>
   <data name="SkipUnchangedLines" xml:space="preserve">
     <value>Collapse unchanged sections</value>
+  </data>
+  <data name="SwitchViewMode" xml:space="preserve">
+    <value>Switch mode</value>
   </data>
 </root>

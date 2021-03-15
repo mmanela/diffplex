@@ -6,16 +6,3 @@ It shows how to use both `InlineDiffBuilder` and `SideBySideDiffBuilder` with a 
 ![Screenshot of the application showing an inline and side-by-side example.](screenshot.png)
 
 See `Form1.cs` to get details.
-
-To run this sample, please update file `Program.cs` as following.
-
-```csharp
-[STAThread]
-static void Main()
-{
-	Application.EnableVisualStyles();
-	Application.SetCompatibleTextRenderingDefault(false);
-+	Application.Run(new Form1());
--	Application.Run(new Form2());
-}
-```

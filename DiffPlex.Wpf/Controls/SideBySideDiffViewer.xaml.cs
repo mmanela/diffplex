@@ -483,7 +483,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Goes to a specific line.
         /// </summary>
-        /// <param name="lineIndex">The index of line.</param>
+        /// <param name="lineIndex">The index of the line to go to.</param>
         /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         public bool GoTo(int lineIndex, bool isLeftLine = false)
@@ -505,7 +505,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets the line diff information.
         /// </summary>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to get information.</param>
         /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
         /// <returns>The line diff information instance; or null, if non-exists.</returns>
         public DiffPiece GetLine(int lineIndex, bool isLeftLine = false)
@@ -532,6 +532,48 @@ namespace DiffPlex.Wpf.Controls
         public IEnumerable<DiffPiece> GetLinesInViewport(VisibilityLevels level)
         {
             return Helper.GetLinesInViewport(RightContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesBeforeViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            return Helper.GetLinesBeforeViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesBeforeViewport(VisibilityLevels level)
+        {
+            return Helper.GetLinesBeforeViewport(RightContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel; otherwise, false.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesAfterViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            return Helper.GetLinesAfterViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesAfterViewport(VisibilityLevels level)
+        {
+            return Helper.GetLinesAfterViewport(RightContentPanel, level);
         }
 
         /// <summary>

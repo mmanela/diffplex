@@ -123,7 +123,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of header background brush.
         /// </summary>
-        public static readonly DependencyProperty HeaderForegroundProperty = RegisterDependencyProperty<Brush>(nameof(HeaderForeground));
+        public static readonly DependencyProperty HeaderForegroundProperty = RegisterDependencyProperty<Brush>(nameof(HeaderForeground), new SolidColorBrush(Color.FromArgb(255, 128, 128, 128)));
 
         /// <summary>
         /// The property of header background brush.
@@ -226,23 +226,7 @@ namespace DiffPlex.Wpf.Controls
                 Helper.CollapseUnchangedSections(c.InlineContentPanel, i);
             }
 
-            if (i > 9)
-            {
-                c.CustomizedContextLineMenuItem.Header = i.ToString("g");
-                c.CustomizedContextLineMenuItem.Visibility = Visibility.Visible;
-                i = 10;
-            }
-            else
-            {
-                c.CustomizedContextLineMenuItem.Visibility = Visibility.Collapsed;
-            }
-
-            var j = -1;
-            foreach (var menu in c.ContextLinesMenuItems.Items)
-            {
-                j++;
-                if (menu is MenuItem mi) mi.IsChecked = i == j;
-            }
+            c.RefreshContextLinesMenuItemState(i);
         });
 
         /// <summary>
@@ -296,6 +280,7 @@ namespace DiffPlex.Wpf.Controls
             SideBySideModeToggle.Header = Helper.GetButtonName(Resource.SideBySideMode ?? "Split view", "S");
             CollapseUnchangedSectionsToggle.Header = Helper.GetButtonName(Resource.SkipUnchangedLines ?? "Collapse unchanged sections", "C");
             ContextLinesMenuItems.Header = Helper.GetButtonName(Resource.ContextLines ?? "Lines for context", "L");
+            RefreshContextLinesMenuItemState(LinesContext);
         }
 
         /// <summary>
@@ -662,7 +647,7 @@ namespace DiffPlex.Wpf.Controls
         public double RightSideActualWidth => RightColumn.ActualWidth;
 
         /// <summary>
-        /// Gets a value indicating whether it is side-by-side view mode.
+        /// Gets a value indicating whether it is side-by-side (split) view mode.
         /// </summary>
         public bool IsSideBySideViewMode => InlineContentPanel.Visibility != Visibility.Visible;
 
@@ -761,7 +746,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Goes to a specific line.
         /// </summary>
-        /// <param name="lineIndex">The index of line.</param>
+        /// <param name="lineIndex">The index of the line to go to.</param>
         /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         public bool GoTo(int lineIndex, bool isLeftLine = false)
@@ -785,7 +770,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets the line diff information.
         /// </summary>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to get information.</param>
         /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
         /// <returns>The line diff information instance; or null, if non-exists.</returns>
         public DiffPiece GetLine(int lineIndex, bool isLeftLine = false)
@@ -815,6 +800,52 @@ namespace DiffPlex.Wpf.Controls
         {
             if (IsSideBySideViewMode) return Helper.GetLinesInViewport(RightContentPanel, level);
             else return Helper.GetLinesInViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesBeforeViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesBeforeViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+            else return Helper.GetLinesBeforeViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesBeforeViewport(VisibilityLevels level)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesBeforeViewport(RightContentPanel, level);
+            else return Helper.GetLinesBeforeViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="isLeftLine">true if goes to the line of the left panel for side-by-side (splitted) view; otherwise, false. This will be ignored when it is in inline view.</param>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesAfterViewport(bool isLeftLine = false, VisibilityLevels level = VisibilityLevels.Any)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesAfterViewport(isLeftLine ? LeftContentPanel : RightContentPanel, level);
+            else return Helper.GetLinesAfterViewport(InlineContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesAfterViewport(VisibilityLevels level)
+        {
+            if (IsSideBySideViewMode) return Helper.GetLinesAfterViewport(RightContentPanel, level);
+            else return Helper.GetLinesAfterViewport(InlineContentPanel, level);
         }
 
         /// <summary>
@@ -961,6 +992,27 @@ namespace DiffPlex.Wpf.Controls
         private void CollapseUnchangedSectionsToggle_Click(object sender, RoutedEventArgs e)
         {
             IgnoreUnchanged = !IgnoreUnchanged;
+        }
+
+        private void RefreshContextLinesMenuItemState(int i)
+        {
+            if (i > 9)
+            {
+                CustomizedContextLineMenuItem.Header = i.ToString("g");
+                CustomizedContextLineMenuItem.Visibility = Visibility.Visible;
+                i = 10;
+            }
+            else
+            {
+                CustomizedContextLineMenuItem.Visibility = Visibility.Collapsed;
+            }
+
+            var j = -1;
+            foreach (var menu in ContextLinesMenuItems.Items)
+            {
+                j++;
+                if (menu is MenuItem mi) mi.IsChecked = i == j;
+            }
         }
 
         private static DependencyProperty RegisterDependencyProperty<T>(string name)

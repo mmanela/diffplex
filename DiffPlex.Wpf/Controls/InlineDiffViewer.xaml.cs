@@ -435,7 +435,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Goes to a specific line.
         /// </summary>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to go to.</param>
         /// <returns>true if it has turned to the specific line; otherwise, false.</returns>
         public bool GoTo(int lineIndex)
         {
@@ -455,7 +455,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// Gets the line diff information.
         /// </summary>
-        /// <param name="lineIndex">The zero-based index of line to go to.</param>
+        /// <param name="lineIndex">The index of the line to get information.</param>
         /// <returns>The line diff information instance; or null, if non-exists.</returns>
         public DiffPiece GetLine(int lineIndex)
         {
@@ -470,6 +470,26 @@ namespace DiffPlex.Wpf.Controls
         public IEnumerable<DiffPiece> GetLinesInViewport(VisibilityLevels level = VisibilityLevels.Any)
         {
             return Helper.GetLinesInViewport(ContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information before viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesBeforeViewport(VisibilityLevels level)
+        {
+            return Helper.GetLinesBeforeViewport(ContentPanel, level);
+        }
+
+        /// <summary>
+        /// Gets all line information after viewport.
+        /// </summary>
+        /// <param name="level">The optional visibility level.</param>
+        /// <returns>All lines.</returns>
+        public IEnumerable<DiffPiece> GetLinesAfterViewport(VisibilityLevels level)
+        {
+            return Helper.GetLinesAfterViewport(ContentPanel, level);
         }
 
         /// <summary>

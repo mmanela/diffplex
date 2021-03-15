@@ -8,7 +8,7 @@
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
     <PackageTags>diff, wpf</PackageTags>
-    <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application.</Description>
+    <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application. It also provide a diff viewer control used in Windows Forms application.</Description>
     <LangVersion>8.0</LangVersion>
     <AssemblyVersion>1.3.0.0</AssemblyVersion>
     <FileVersion>1.3.0.0</FileVersion>
@@ -16,6 +16,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icon.png" />
   </ItemGroup>
 
   <ItemGroup>

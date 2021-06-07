@@ -33,7 +33,7 @@ namespace DiffPlex.Wpf.Controls
     internal static class Helper
     {
         private const int MaxCount = 3000;
-        public const string FontFamily = "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Segoe UI Emoji, Segoe UI Symbol";
+        public const string FontFamily = "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Microsoft Jhenghei, Meiryo, Segoe UI, Segoe UI Emoji, Segoe UI Symbol";
 
         /// <summary>
         /// Updates the inline diffs view.

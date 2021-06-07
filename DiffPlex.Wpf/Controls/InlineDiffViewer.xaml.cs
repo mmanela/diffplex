@@ -52,7 +52,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of line number.
         /// </summary>
-        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>(nameof(LineNumberWidth), 60, (d, e) =>
+        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty(nameof(LineNumberWidth), 60, (d, e) =>
         {
             if (!(d is InlineDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
             c.ContentPanel.LineNumberWidth = n;
@@ -167,6 +167,11 @@ namespace DiffPlex.Wpf.Controls
             get => (DiffPaneModel)GetValue(DiffModelProperty);
             set => SetValue(DiffModelProperty, value);
         }
+
+        /// <summary>
+        /// Gets the lines in the diff model.
+        /// </summary>
+        public IReadOnlyList<DiffPiece> Lines => DiffModel?.Lines?.AsReadOnly();
 
         /// <summary>
         /// Gets or sets the foreground brush of the line number.

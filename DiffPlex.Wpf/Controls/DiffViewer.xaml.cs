@@ -81,7 +81,7 @@ namespace DiffPlex.Wpf.Controls
         /// <summary>
         /// The property of line number width.
         /// </summary>
-        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty<double>(nameof(LineNumberWidth), 60, (d, e) =>
+        public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty(nameof(LineNumberWidth), 60, (d, e) =>
         {
             if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
             c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = c.InlineContentPanel.LineNumberWidth = n;

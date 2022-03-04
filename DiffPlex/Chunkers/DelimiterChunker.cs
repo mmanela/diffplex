@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DiffPlex.Chunkers
 {
-    public class DelimiterChunker:IChunker
+    public class DelimiterChunker : IChunker
     {
         private readonly char[] delimiters;
 
@@ -43,7 +43,12 @@ namespace DiffPlex.Chunkers
                     {
                         if (!processingDelim)
                         {
-                            list.Add(str.Substring(begin, (i - begin)));
+                            // Add everything up to this delimeter as the next chunk (if there is anything)
+                            if (i - begin > 0)
+                            {
+                                list.Add(str.Substring(begin, (i - begin)));
+                            }
+
                             processingDelim = true;
                             delimBegin = i;
                         }
@@ -63,6 +68,7 @@ namespace DiffPlex.Chunkers
                         processingDelim = false;
                     }
 
+                    // If we are at the end, add the remaining as the last chunk
                     if (i >= str.Length - 1)
                     {
                         list.Add(str.Substring(begin, (i + 1 - begin)));

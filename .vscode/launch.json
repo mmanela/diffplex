@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/DiffPlex.ConsoleRunner/bin/Debug/netcoreapp3.1/DiffPlex.ConsoleRunner.dll",
+            "program": "${workspaceFolder}/DiffPlex.ConsoleRunner/bin/Debug/net6.0/DiffPlex.ConsoleRunner.dll",
             "args": [],
             "cwd": "${workspaceFolder}/DiffPlex.ConsoleRunner",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

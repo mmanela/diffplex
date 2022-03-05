@@ -436,9 +436,8 @@ namespace Facts.DiffPlex
                         {
                             SubPieces =
                             {
-                                new DiffPiece("", ChangeType.Deleted, 1),
-                                new DiffPiece(" ", ChangeType.Deleted, 2),
-                                new DiffPiece("2", ChangeType.Unchanged, 3),
+                                new DiffPiece(" ", ChangeType.Deleted, 1),
+                                new DiffPiece("2", ChangeType.Unchanged, 2),
                             },
                         },
                         new DiffPiece("3 ", ChangeType.Modified, 3)
@@ -453,10 +452,9 @@ namespace Facts.DiffPlex
                         {
                             SubPieces =
                             {
-                                new DiffPiece("", ChangeType.Deleted, 1),
-                                new DiffPiece(" ", ChangeType.Deleted, 2),
-                                new DiffPiece("4", ChangeType.Unchanged, 3),
-                                new DiffPiece(" ", ChangeType.Deleted, 4),
+                                new DiffPiece(" ", ChangeType.Deleted, 1),
+                                new DiffPiece("4", ChangeType.Unchanged, 2),
+                                new DiffPiece(" ", ChangeType.Deleted, 3),
                             },
                         },
                         new DiffPiece("5", ChangeType.Unchanged, 5),
@@ -470,7 +468,6 @@ namespace Facts.DiffPlex
                         {
                             SubPieces =
                             {
-                                new DiffPiece(null, ChangeType.Imaginary),
                                 new DiffPiece(null, ChangeType.Imaginary),
                                 new DiffPiece("2", ChangeType.Unchanged, 1),
                             },
@@ -487,7 +484,6 @@ namespace Facts.DiffPlex
                         {
                             SubPieces =
                             {
-                                new DiffPiece(null, ChangeType.Imaginary),
                                 new DiffPiece(null, ChangeType.Imaginary),
                                 new DiffPiece("4", ChangeType.Unchanged, 1),
                                 new DiffPiece(null, ChangeType.Imaginary),

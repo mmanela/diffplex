@@ -2,13 +2,15 @@
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
     <TargetFrameworks>net35;net40;netstandard1.0;netstandard2.0;net6.0</TargetFrameworks>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <PackageTags>diff</PackageTags>
     <Description>DiffPlex is a diffing library that allows you to programatically create text diffs. DiffPlex is a fast and tested library.</Description>
     <PackageReleaseNotes>Fixed diffing of sub-components (like words). Ensures ignoreWhitespace and ignoreCase are honoroed in that case and that the parent reflects modification state of the child.</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net40'" Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Condition="'$(TargetFramework)' == 'net35'" Include="jnm2.ReferenceAssemblies.net35" Version="1.0.1" PrivateAssets="all" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

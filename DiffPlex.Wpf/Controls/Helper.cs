@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +33,7 @@ namespace DiffPlex.Wpf.Controls
 
     internal static class Helper
     {
-        private const int MaxCount = 3000;
+        private const int MaxCount = 3000000;
         public const string FontFamily = "Cascadia Code, Consolas, Courier New, monospace, Microsoft Yahei, Microsoft Jhenghei, Meiryo, Segoe UI, Segoe UI Emoji, Segoe UI Symbol";
 
         /// <summary>
@@ -48,39 +49,20 @@ namespace DiffPlex.Wpf.Controls
             {
                 if (line == null)
                 {
-                    var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
+                    viewer.Add(null, null as string, ChangeType.Unchanged, source);
                     continue;
                 }
 
                 var changeType = line.Type;
                 var text = line.Text;
-                var hasAdded = false;
+
                 switch (line.Type)
                 {
                     case ChangeType.Modified:
                         changeType = ChangeType.Inserted;
                         break;
                     case ChangeType.Inserted:
-                        if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
-                        {
-                            var details = GetSubPiecesInfo(line, true);
-                            var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
-                            c.Tag = line;
-                            hasAdded = true;
-                        }
-
-                        break;
                     case ChangeType.Deleted:
-                        if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
-                        {
-                            var details = GetSubPiecesInfo(line, false);
-                            var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
-                            c.Tag = line;
-                            hasAdded = true;
-                        }
-
-                        break;
                     case ChangeType.Unchanged:
                         break;
                     default:
@@ -89,15 +71,16 @@ namespace DiffPlex.Wpf.Controls
                         break;
                 }
 
-                if (!hasAdded)
+                if ((line.Type == ChangeType.Inserted || line.Type == ChangeType.Deleted) &&
+                    line.SubPieces?.Count > 1 && !disableSubPieces)
                 {
-                    var c = viewer.Add(line.Position, changeType switch
-                    {
-                        ChangeType.Inserted => "+",
-                        ChangeType.Deleted => "-",
-                        _ => " "
-                    }, text, changeType.ToString(), source);
-                    c.Tag = line;
+                    bool isOld = line.Type == ChangeType.Inserted ? true : false;
+                    var parts = GetSubPiecesInfo(line, isOld, source);
+                    viewer.Add(line, parts, changeType, source);
+                }
+                else
+                {
+                    viewer.Add(line, text, changeType, source);
                 }
             }
 
@@ -105,29 +88,12 @@ namespace DiffPlex.Wpf.Controls
             viewer.AdjustScrollView();
         }
 
-        internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+        internal static void InsertLines(InternalLinesViewer panel, IEnumerable<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
         {
             if (lines == null || panel == null) return;
-            var guid = panel.TrackingId = Guid.NewGuid();
-            if (lines.Count < 500)
-            {
-                InsertLinesInteral(panel, lines, isOld, source);
-                if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
-                return;
-            }
 
-            var disablePieces = lines.Count > MaxCount; // For performance.
-            InsertLinesInteral(panel, lines.Take(300).ToList(), isOld, source, disablePieces);
+            InsertLinesInteral(panel, lines, isOld, source);
             if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
-            Task.Delay(800).ContinueWith(t =>   // For performance.
-            {
-                panel.Dispatcher.Invoke(() =>
-                {
-                    if (panel.TrackingId != guid) return;
-                    InsertLinesInteral(panel, lines.Skip(300).ToList(), isOld, source, disablePieces);
-                    if (contextLineCount > -1) CollapseUnchangedSections(panel, contextLineCount);
-                });
-            });
         }
 
         internal static void CollapseUnchangedSections(InternalLinesViewer panel, int contextLineCount)
@@ -137,10 +103,10 @@ namespace DiffPlex.Wpf.Controls
             var last = 0;
             var max = -1;
             var removing = new List<int>();
-            foreach (var ele in panel.GetTagsOfEachLine())
+            foreach (var ele in panel.LineDetails)
             {
                 i++;
-                if (!(ele is DiffPiece e) || e.Type != ChangeType.Unchanged)
+                if (ele.Piece.Type != ChangeType.Unchanged)
                 {
                     if (!was)
                     {
@@ -197,25 +163,22 @@ namespace DiffPlex.Wpf.Controls
         {
             try
             {
-                var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
+                var currentScrollPosition = panel._ValueScrollViewer.VerticalOffset;
                 var point = new Point(0, currentScrollPosition);
-                if (lineIndex == 0)
+
+                foreach (var item in panel.LineDetails)
                 {
-                    foreach (var item in panel.ValuePanel.Children)
+                    if(item.Number == lineIndex || lineIndex == 0)
                     {
-                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
-                        var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
-                        panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                        var container = panel.ValuePanel.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
+
+                        if (container == null)
+                            continue;
+
+                        var pos = container.TransformToVisual(panel._ValueScrollViewer).Transform(point);
+                        panel._ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
                         return true;
                     }
-                }
-
-                foreach (var item in panel.ValuePanel.Children)
-                {
-                    if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
-                    var pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
-                    panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
-                    return true;
                 }
             }
             catch (InvalidOperationException)
@@ -236,19 +199,26 @@ namespace DiffPlex.Wpf.Controls
             if (line == null) return false;
             try
             {
-                var scrollView = panel.ValueScrollViewer;
+                var lineItem = panel.LineDetails.FirstOrDefault(l => l.Piece == line);
+
+                if (lineItem == null)
+                    return false;
+
+                var container = panel.ValuePanel.ItemContainerGenerator.ContainerFromItem(lineItem) as UIElement;
+
+                if (container == null)
+                    return false;
+
+                var scrollView = panel._ValueScrollViewer;
                 var point = new Point(0, 0);
-                foreach (var item in panel.ValuePanel.Children)
-                {
-                    if (!(item is FrameworkElement ele) || ele.Tag != line) continue;
-                    var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                    if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight) return true;
-                    var currentScrollPosition = panel.ValueScrollViewer.VerticalOffset;
-                    point = new Point(0, currentScrollPosition);
-                    pos = ele.TransformToVisual(panel.ValueScrollViewer).Transform(point);
-                    panel.ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
-                    return true;
-                }
+
+                var pos = container.TranslatePoint(point, panel._ValueScrollViewer);
+                if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - container.DesiredSize.Height) return true;
+                var currentScrollPosition = panel._ValueScrollViewer.VerticalOffset;
+                point = new Point(0, currentScrollPosition);
+                pos = container.TransformToVisual(panel._ValueScrollViewer).Transform(point);
+                panel._ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                return true;
             }
             catch (InvalidOperationException)
             {
@@ -265,13 +235,7 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>The line diff information instance; or null, if non-exists.</returns>
         internal static DiffPiece GetLine(InternalLinesViewer panel, int lineIndex)
         {
-            foreach (var item in panel.ValuePanel.Children)
-            {
-                if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line) || line?.Position != lineIndex) continue;
-                return line;
-            }
-
-            return null;
+            return panel.LineDetails.FirstOrDefault(ld => ld.Number == lineIndex)?.Piece;
         }
 
         /// <summary>
@@ -396,48 +360,40 @@ namespace DiffPlex.Wpf.Controls
         /// <returns>All lines.</returns>
         private static IEnumerable<Tuple<DiffPiece, bool>> GetLineViewportStates(InternalLinesViewer panel, VisibilityLevels level)
         {
-            var scrollView = panel.ValueScrollViewer;
+            var scrollView = panel._ValueScrollViewer;
             var point = new Point(0, 0);
-            switch (level)
+            foreach (var item in panel.LineDetails.Where(ld => ld != null))
             {
-                case VisibilityLevels.All:
-                    foreach (var item in panel.ValuePanel.Children)
-                    {
-                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
-                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                        var isIn = pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight;
-                        yield return new Tuple<DiffPiece, bool>(line, isIn);
-                    }
+                var container = panel.ValuePanel.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
 
-                    break;
-                case VisibilityLevels.Half:
-                    foreach (var item in panel.ValuePanel.Children)
-                    {
-                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
-                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                        var halfHeight = ele.ActualHeight / 2;
-                        var isIn = pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
-                        yield return new Tuple<DiffPiece, bool>(line, isIn);
-                    }
+                if (container == null)
+                    continue;
 
-                    break;
-                default:
-                    foreach (var item in panel.ValuePanel.Children)
-                    {
-                        if (!(item is FrameworkElement ele) || !(ele.Tag is DiffPiece line)) continue;
-                        var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                        var isIn = pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight;
-                        yield return new Tuple<DiffPiece, bool>(line, isIn);
-                    }
+                var pos = container.TranslatePoint(point, scrollView);
 
-                    break;
+                switch (level)
+                {
+                    case VisibilityLevels.All:
+                        var isAllIn = pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - container.DesiredSize.Height;
+                        yield return new Tuple<DiffPiece, bool>(item.Piece, isAllIn);
+                        break;
+                    case VisibilityLevels.Half:
+                        var halfHeight = container.DesiredSize.Height / 2;
+                        var isHalfIn = pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
+                        yield return new Tuple<DiffPiece, bool>(item.Piece, isHalfIn);
+                        break;
+                    default:
+                        var isAnyIn = pos.Y > -container.DesiredSize.Height && pos.Y < scrollView.ActualHeight;
+                        yield return new Tuple<DiffPiece, bool>(item.Piece, isAnyIn);
+                        break;
+                }
             }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:", Justification = "Not supported.")]
-        private static List<KeyValuePair<string, string>> GetSubPiecesInfo(DiffPiece line, bool isOld)
+        private static List<LineViewerSegment> GetSubPiecesInfo(DiffPiece line, bool isOld, UIElement source)
         {
-            var details = new List<KeyValuePair<string, string>>();
+            var details = new List<LineViewerSegment>();
             foreach (var ele in line.SubPieces)
             {
                 if (string.IsNullOrEmpty(ele?.Text)) continue;
@@ -449,31 +405,25 @@ namespace DiffPlex.Wpf.Controls
                     ChangeType.Unchanged => ChangeType.Unchanged,
                     _ => ChangeType.Imaginary
                 };
-                var subTypeStr = subType != ChangeType.Imaginary ? subType.ToString() : null;
-                if (details.Count > 0)
-                {
-                    var last = details[details.Count - 1];
-                    if (string.Equals(last.Value, subTypeStr, StringComparison.InvariantCulture))
-                    {
-                        details[details.Count - 1] = new KeyValuePair<string, string>(last.Key + ele.Text, subTypeStr);
-                        continue;
-                    }
-                }
 
-                details.Add(new KeyValuePair<string, string>(ele.Text, subTypeStr));
+                details.Add(new LineViewerSegment()
+                {
+                    TextChunk = ele.Text,
+                    ChunkChange = subType,
+                    Source = source
+                });
             }
 
             return details;
         }
 
-        private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
+        private static void InsertLinesInteral(InternalLinesViewer panel, IEnumerable<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
         {
             foreach (var line in lines)
             {
                 if (line == null)
                 {
-                    var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
+                    panel.Add(null, null as string, ChangeType.Unchanged, source);
                     continue;
                 }
 
@@ -486,9 +436,8 @@ namespace DiffPlex.Wpf.Controls
                         changeType = isOld ? ChangeType.Deleted : ChangeType.Inserted;
                         if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                         {
-                            var details = GetSubPiecesInfo(line, isOld);
-                            var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
-                            c.Tag = line;
+                            var details = GetSubPiecesInfo(line, isOld, source);
+                            panel.Add(line, details, changeType, source);
                             hasAdded = true;
                         }
 
@@ -505,13 +454,7 @@ namespace DiffPlex.Wpf.Controls
 
                 if (!hasAdded)
                 {
-                    var c = panel.Add(line.Position, changeType switch
-                    {
-                        ChangeType.Inserted => "+",
-                        ChangeType.Deleted => "-",
-                        _ => " "
-                    }, text, changeType.ToString(), source);
-                    c.Tag = line;
+                    panel.Add(line, text, changeType, source);
                 }
             }
 

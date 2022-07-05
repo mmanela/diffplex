@@ -170,13 +170,7 @@ namespace DiffPlex.Wpf.Controls
                 {
                     if(item.Number == lineIndex || lineIndex == 0)
                     {
-                        var container = panel.ValuePanel.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
-
-                        if (container == null)
-                            continue;
-
-                        var pos = container.TransformToVisual(panel._ValueScrollViewer).Transform(point);
-                        panel._ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                        panel.ValuePanel.ScrollIntoView(item);
                         return true;
                     }
                 }
@@ -204,20 +198,7 @@ namespace DiffPlex.Wpf.Controls
                 if (lineItem == null)
                     return false;
 
-                var container = panel.ValuePanel.ItemContainerGenerator.ContainerFromItem(lineItem) as UIElement;
-
-                if (container == null)
-                    return false;
-
-                var scrollView = panel._ValueScrollViewer;
-                var point = new Point(0, 0);
-
-                var pos = container.TranslatePoint(point, panel._ValueScrollViewer);
-                if (pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - container.DesiredSize.Height) return true;
-                var currentScrollPosition = panel._ValueScrollViewer.VerticalOffset;
-                point = new Point(0, currentScrollPosition);
-                pos = container.TransformToVisual(panel._ValueScrollViewer).Transform(point);
-                panel._ValueScrollViewer.ScrollToVerticalOffset(pos.Y);
+                panel.ValuePanel.ScrollIntoView(lineItem);
                 return true;
             }
             catch (InvalidOperationException)

@@ -288,7 +288,6 @@
                  ItemsSource="{Binding LineDetails,ElementName=lineViewer}" 
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                  VirtualizingStackPanel.ScrollUnit="Pixel"
-                 ScrollViewer.CanContentScroll="False"
                  HorizontalContentAlignment="Stretch"
                  ItemContainerStyle="{StaticResource ListBoxNoSelect}">
             <ListBox.ItemTemplate>
@@ -319,7 +318,6 @@
                  ItemsSource="{Binding LineDetails,ElementName=lineViewer}"
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                  VirtualizingStackPanel.ScrollUnit="Pixel"
-                 ScrollViewer.CanContentScroll="False"
                  HorizontalContentAlignment="Stretch"
                  ItemContainerStyle="{StaticResource ListBoxNoSelect}">
             <ListBox.ItemTemplate>
@@ -350,7 +348,6 @@
                  ItemsSource="{Binding LineDetails,ElementName=lineViewer}"
                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                  VirtualizingStackPanel.ScrollUnit="Pixel"
-                 ScrollViewer.CanContentScroll="False"
                  HorizontalContentAlignment="Stretch"
                  ItemContainerStyle="{StaticResource ListBoxNoSelect}">
             <ListBox.ItemTemplate>

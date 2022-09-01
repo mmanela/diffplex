@@ -55,14 +55,14 @@ public sealed partial class DiffTextView : UserControl
     public static readonly DependencyProperty TextStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(TextStyle));
 
     /// <summary>
-    /// The dependency property of prefix text style.
+    /// The dependency property of change type style.
     /// </summary>
-    public static readonly DependencyProperty PrefixStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(PrefixStyle));
+    public static readonly DependencyProperty ChangeTypeStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(ChangeTypeStyle));
 
     /// <summary>
-    /// The dependency property of prefix text width.
+    /// The dependency property of change type width.
     /// </summary>
-    public static readonly DependencyProperty PrefixWidthProperty = DependencyObjectProxy.RegisterProperty(nameof(PrefixWidth), new GridLength(20));
+    public static readonly DependencyProperty ChangeTypeWidthProperty = DependencyObjectProxy.RegisterProperty(nameof(ChangeTypeWidth), new GridLength(20));
 
     /// <summary>
     /// The dependency property of line number style.
@@ -186,21 +186,21 @@ public sealed partial class DiffTextView : UserControl
     }
 
     /// <summary>
-    /// Gets or sets the prefix text style.
+    /// Gets or sets the change type style.
     /// </summary>
-    public Style PrefixStyle
+    public Style ChangeTypeStyle
     {
-        get => (Style)GetValue(PrefixStyleProperty);
-        set => SetValue(PrefixStyleProperty, value);
+        get => (Style)GetValue(ChangeTypeStyleProperty);
+        set => SetValue(ChangeTypeStyleProperty, value);
     }
 
     /// <summary>
-    /// Gets or sets the width of prefix text.
+    /// Gets or sets the width of change type text.
     /// </summary>
-    public GridLength PrefixWidth
+    public GridLength ChangeTypeWidth
     {
-        get => (GridLength)GetValue(PrefixWidthProperty);
-        set => SetValue(PrefixWidthProperty, value);
+        get => (GridLength)GetValue(ChangeTypeWidthProperty);
+        set => SetValue(ChangeTypeWidthProperty, value);
     }
 
     /// <summary>
@@ -390,6 +390,35 @@ public sealed partial class DiffTextView : UserControl
     /// Scrolls to previous diff line.
     /// </summary>
     private static void ScrollPreviousDiffIntoView<T>(ListView list, Func<T, DiffPiece> resolver) where T : class
+    {
+        var elements = new List<(T, double)>();
+        foreach (var item in list.Items)
+        {
+            var container = list.ContainerFromItem(item) as ListViewItem;
+            if (container == null || item is not T model) continue;
+            var piece = resolver(model);
+            if (piece == null) continue;
+            var transform = container.TransformToVisual(list) as MatrixTransform;
+            if (transform == null) continue;
+            var pos = transform.Matrix.OffsetY;
+            var isUnchanged = piece.Type == ChangeType.Unchanged;
+            if (pos >= 0) break;
+            if (!isUnchanged) elements.Add((model, pos));
+        }
+
+        var height = -Math.Max(list.ActualHeight - 50, 10);
+        for (var i = 0; i < elements.Count; i++)
+        {
+            var (model, pos) = elements[i];
+            if (pos < height) continue;
+            list.ScrollIntoView(model);
+            return;
+        }
+
+        var first = list.Items.OfType<T>().FirstOrDefault();
+        if (first != null) list.ScrollIntoView(first);
+    }
+    private static void ScrollPreviousDiffIntoView2<T>(ListView list, Func<T, DiffPiece> resolver) where T : class
     {
         T target = null;
         foreach (var item in list.Items)

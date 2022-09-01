@@ -8,7 +8,6 @@ In `MainWindow.xaml` and its `MainWindow.xaml.cs` file, we initialize an instanc
 
 Please ensure it runs on Package mode since the project configuration file is applied for MSIX package.
 
-The CPU arch platform should be one of `x64`, `x86` and `arm64`. It will be fail to run on `Any CPU` because of Windows App SDK.
+The CPU architecture platform should be one of `x64`, `x86` and `arm64`.
 
-It will show a demo diff text on Debug mode, so please make sure to select Debug;
-and a file selector on Release mode because it is designed to be available to publish to Microsoft Store.
+It will output test data of texture diffs on `Debug` mode and empty on Release mode.

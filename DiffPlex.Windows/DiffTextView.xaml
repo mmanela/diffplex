@@ -39,7 +39,7 @@
                     </Style>
                 </Setter.Value>
             </Setter>
-            <Setter Property="PrefixStyle" >
+            <Setter Property="ChangeTypeStyle" >
                 <Setter.Value>
                     <Style TargetType="TextBlock" >
                         <Setter Property="Foreground" Value="#808080" />
@@ -108,7 +108,7 @@
                         </ToggleMenuFlyoutItem>
                         <MenuFlyoutSubItem x:Name="LinesContextMenuItem" x:Uid="\InternalResources\LineContextText" Text="Lines for context" Visibility="Collapsed" >
                             <MenuFlyoutSubItem.Icon>
-                                <FontIcon Glyph="&#xE170;" />
+                                <FontIcon Glyph="&#xE133;" />
                             </MenuFlyoutSubItem.Icon>
                             <ToggleMenuFlyoutItem Text="0" Click="OnLinesContextClick" />
                             <ToggleMenuFlyoutItem Text="1" Click="OnLinesContextClick" />
@@ -173,8 +173,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <controls:TextLineBlock TextHighlighters="{x:Bind GetLeftHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Left.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Left.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="0" />
-                        <controls:TextLineBlock TextHighlighters="{x:Bind GetRightHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Right.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Right.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="1" />
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetLeftHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Left.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Left.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="0" />
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetRightHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Right.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Right.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="1" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -182,7 +182,7 @@
         <ListView x:Name="UnifiedElement" Foreground="{x:Bind Foreground}" Margin="0" Visibility="Collapsed" ItemContainerStyle="{x:Bind ItemContainerStyle}" SelectionMode="{x:Bind SelectionMode}" SelectionChanged="OnSelectionChanged" Grid.Row="1" >
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:InlineDiffTextViewModel" >
-                    <controls:TextLineBlock TextHighlighters="{x:Bind GetTextHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" />
+                    <controls:TextLineBlock TextHighlighters="{x:Bind GetTextHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

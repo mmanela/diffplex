@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using DiffPlex.WindowsForms.Controls;
 
-using TestData = DiffPlex.Wpf.Demo.TestData;
+using TestData = DiffPlex.Model.TestData;
 
 namespace DiffPlex.WindowsForms
 {

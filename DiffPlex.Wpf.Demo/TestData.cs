@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiffPlex.Wpf.Demo
+namespace DiffPlex.Model
 {
     static class TestData
     {
@@ -37,6 +37,9 @@ ensure domestic tranquility
 provide for the common defence
 secure the blessing of liberty
 to ourselves and our posterity
+
+Original text but delete later
+Yes
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 

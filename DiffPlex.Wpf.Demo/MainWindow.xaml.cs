@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
+using DiffPlex.Model;
 using DiffPlex.Wpf.Controls;
 
 namespace DiffPlex.Wpf.Demo

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net5.0-windows;net46</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net46</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Authors>Kingcean Tuan</Authors>

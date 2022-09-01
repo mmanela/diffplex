@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>DiffPlex.UI</RootNamespace>
+    <AssemblyName>DiffPlex.Windows</AssemblyName>
+    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <Version>1.0.0</Version>
+    <PackageTags>diff</PackageTags>
+    <Description>DiffPlex.Windows is a Windows App SDK control library that allows you to programatically render visual text diffs in your application.</Description>
+    <LangVersion>10.0</LangVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Kingcean Tuan; Matthew Manela</Authors>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="DiffTextView.xaml" />
+    <None Remove="DiffTextWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\License.txt" Link="License.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
+    <PackageReference Include="Trivial.WindowsKit" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="DiffTextWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="DiffTextView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+</Project>

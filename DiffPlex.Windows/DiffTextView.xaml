@@ -1,0 +1,202 @@
+﻿<UserControl
+    x:Class="DiffPlex.UI.DiffTextView"
+    x:Name="CurrentControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DiffPlex.UI"
+    xmlns:model="using:DiffPlex.DiffBuilder.Model"
+    xmlns:controls="using:Trivial.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:OldDiffChangeTypeConverter x:Key="OldBrushConverter"/>
+        <local:NewDiffChangeTypeConverter x:Key="NewBrushConverter"/>
+        <local:VisibilityBooleanConverter x:Key="VisibilityBooleanConverter" />
+        <Style TargetType="local:DiffTextView" >
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ItemContainerStyle" >
+                <Setter.Value>
+                    <Style TargetType="ListViewItem" >
+                        <Setter Property="MinHeight" Value="10" />
+                        <Setter Property="Padding" Value="4,0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="LineNumberStyle" >
+                <Setter.Value>
+                    <Style TargetType="TextBlock" >
+                        <Setter Property="Foreground" Value="#2B91AF" />
+                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="TextTrimming" Value="Clip" />
+                        <Setter Property="TextAlignment" Value="Right" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="PrefixStyle" >
+                <Setter.Value>
+                    <Style TargetType="TextBlock" >
+                        <Setter Property="Foreground" Value="#808080" />
+                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Setter Property="TextTrimming" Value="Clip" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="TextStyle" >
+                <Setter.Value>
+                    <Style TargetType="TextBlock" >
+                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="TextWrapping" Value="WrapWholeWords" />
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:DefaultBindMode="OneWay" Background="{x:Bind Background}" BackgroundSizing="{x:Bind BackgroundSizing}" Padding="{x:Bind Padding}" BorderBrush="{x:Bind BorderBrush}" BorderThickness="{x:Bind BorderThickness}" CornerRadius="{x:Bind CornerRadius}" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{x:Bind CommandBarHeight}" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <CommandBar x:Name="TopCommandBar" DefaultLabelPosition="{x:Bind CommandLabelPosition}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" >
+            <AppBarButton x:Uid="\InternalResources\PreviousLabel" Label="Previous" Click="OnPreviousDiffClick" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE010;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Uid="\InternalResources\NextLabel" Label="Next" Click="OnNextDiffClick" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE011;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarToggleButton x:Uid="\InternalResources\GoToLabel" x:Name="GoToMenuButton" Label="Go to" Click="OnGoToClick" >
+                <AppBarToggleButton.Icon>
+                    <FontIcon Glyph="&#xE7FD;" />
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarButton x:Uid="\InternalResources\ViewLabel" Label="View" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE154;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem x:Name="SplitViewMenuItem" x:Uid="\InternalResources\SplitText" Text="Split" Click="OnSplitViewClick" IsChecked="True" >
+                            <ToggleMenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF58C;" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <ToggleMenuFlyoutItem x:Name="UnifiedViewMenuItem" x:Uid="\InternalResources\UnifiedText" Text="Unified" Click="OnUnifiedViewClick" >
+                            <ToggleMenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF58A;" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <ToggleMenuFlyoutItem x:Name="CollapseUnchangedMenuItem" x:Uid="\InternalResources\CollapseUnchangedText" Text="Collapse unchanged sections" Click="OnCollaspeUnchangedClick" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE169;" />
+                            </MenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <MenuFlyoutSubItem x:Name="LinesContextMenuItem" x:Uid="\InternalResources\LineContextText" Text="Lines for context" Visibility="Collapsed" >
+                            <MenuFlyoutSubItem.Icon>
+                                <FontIcon Glyph="&#xE170;" />
+                            </MenuFlyoutSubItem.Icon>
+                            <ToggleMenuFlyoutItem Text="0" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="1" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="2" Click="OnLinesContextClick" IsChecked="True" />
+                            <ToggleMenuFlyoutItem Text="3" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="4" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="5" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="6" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="7" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="8" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="9" Click="OnLinesContextClick" />
+                        </MenuFlyoutSubItem>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarButton x:Uid="\InternalResources\SelectFileLabel" Label="Select file" Visibility="{x:Bind IsFileMenuEnabled, Converter={StaticResource VisibilityBooleanConverter}}" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE838;" />
+                </AppBarButton.Icon>
+                <AppBarButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Uid="\InternalResources\LeftText" Text="Left" Click="OnLeftFileClick" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF26D;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="\InternalResources\RightText" Text="Right" Click="OnRightFileClick" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF26E;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutSubItem x:Uid="\InternalResources\EditTextText" Text="Edit text" Visibility="Collapsed" >
+                            <MenuFlyoutSubItem.Icon>
+                                <FontIcon Glyph="&#xE1C2;" />
+                            </MenuFlyoutSubItem.Icon>
+                            <MenuFlyoutItem x:Uid="\InternalResources\LeftText" Text="Left" Click="OnLeftTextClick" >
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xF26D;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem x:Uid="\InternalResources\RightText" Text="Right" Click="OnRightTextClick" >
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xF26E;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem x:Uid="\InternalResources\SwitchText" Text="Switch" Click="OnSwitchClick" >
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE13C;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+        <ListView x:Name="SplitElement" Foreground="{x:Bind Foreground}" Margin="0" ItemContainerStyle="{x:Bind ItemContainerStyle}" SelectionMode="{x:Bind SelectionMode}" SelectionChanged="OnSelectionChanged" Grid.Row="1" >
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:DiffTextViewModel" >
+                    <Grid x:Name="SplitDiffItemPanel">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetLeftHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Left.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Left.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="0" />
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetRightHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Right.Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Right.Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView x:Name="UnifiedElement" Foreground="{x:Bind Foreground}" Margin="0" Visibility="Collapsed" ItemContainerStyle="{x:Bind ItemContainerStyle}" SelectionMode="{x:Bind SelectionMode}" SelectionChanged="OnSelectionChanged" Grid.Row="1" >
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:InlineDiffTextViewModel" >
+                    <controls:TextLineBlock TextHighlighters="{x:Bind GetTextHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Position}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" PrefixWidth="{Binding Path=PrefixWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=PrefixStyle, ElementName=CurrentControl}" Text="{x:Bind Text}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Border x:Name="GoToNumberContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="8" Width="300" Padding="8" Margin="20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" Grid.Row="1" >
+            <NumberBox x:Name="GoToNumberBox" x:Uid="\InternalResources\GoToInput" PlaceholderText="Line" ValueChanged="OnGoToChange" Minimum="1" LostFocus="OnGoToBoxLostFocus" />
+        </Border>
+        <Grid x:Name="FilePathContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="8" Padding="8,8" Margin="20,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Collapsed" Grid.Row="1" >
+            <TextBox x:Name="FilePathTextBox" x:Uid="\InternalResources\FilePathInput" PlaceholderText="File path" Margin="0,0,90,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Button Background="Transparent" BorderBrush="Transparent" Width="40" Margin="40,0,40,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Click="OnFileSelectClick" >
+                <SymbolIcon Symbol="Accept" />
+            </Button>
+            <Button Background="Transparent" BorderBrush="Transparent" Width="40" Margin="80,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Click="OnFileCancelClick" >
+                <SymbolIcon Symbol="Cancel" />
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

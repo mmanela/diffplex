@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows;netcoreapp3.1;net46;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0-windows;net46;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <Version>1.3.2</Version>
@@ -9,10 +9,13 @@
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
     <PackageTags>diff, wpf</PackageTags>
     <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application. It also provide a diff viewer control used in Windows Forms application.</Description>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AssemblyVersion>1.3.2.0</AssemblyVersion>
     <FileVersion>1.3.2.0</FileVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\License.txt" Link="License.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />

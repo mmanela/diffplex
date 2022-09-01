@@ -158,7 +158,105 @@ DiffPlex also contains a sample website that shows how to create a basic side by
 
 ![Web page sample](./images/website.png)
 
-# WPF Controls
+# Windows app
+
+There are 2 libraries for Windows app development.
+One is for Windows App SDK, another is for WPF and WinForms.
+
+## WinUI 3 Elements
+
+[![NuGet](https://img.shields.io/nuget/v/DiffPlex.Windows.svg)](https://www.nuget.org/packages/DiffPlex.Windows/)
+
+DiffPlex WinUI library `DiffPlex.Windows` is used to render textual diffs in your app which targets to Windows App SDK.
+
+```csharp
+using DiffPlex.UI;
+```
+
+And insert following code into the root node of your xaml file, e.g. user control, page or window.
+
+```
+xmlns:diffplex="using:DiffPlex.UI"
+```
+
+- `DiffTextView` Textual diffs view element.
+
+For example.
+
+```xaml
+<diffplex:DiffTextView x:Name="DiffView" />
+```
+
+```csharp
+DiffView.OldText = OldText;
+DiffView.NewText = NewText;
+```
+
+![WinUI sample](./images/wasdk_split_dark.jpg)
+
+You can also customize the style.
+Following are some of the properties you can get or set.
+
+```csharp
+// true if it is in split view; otherwise, false, in unified view.
+public bool IsSplitView { get; set; }
+
+// true if it is in unified view; otherwise, false, in split view.
+public bool IsUnifiedView { get; set; }
+
+// The selection mode of list view. Default is None.
+public ListViewSelectionMode SelectionMode { get; set; }
+
+// true if ignore white spaces; otherwise, false. Default is true.
+public bool IgnoreWhiteSpace { get; set; }
+
+// true if the text is case sensitive; otherwise, false. Default is false.
+public bool IsCaseSensitive { get; set; }
+
+// The default text color (foreground brush).
+public Brush Foreground { get; set; }
+
+// The background.
+public Brush Background { get; set; }
+
+// The width of the line number. Default is 50.
+public GridLength LineNumberWidth { get; set; }
+
+// The style of the line number.
+public Style LineNumberStyle { get; set; }
+
+// The width of the change type symbol. Default is 20.
+public GridLength ChangeTypeWidth { get; set; }
+
+// The style of the change type symbol.
+public Style ChangeTypeStyle { get; set; }
+
+// The style of the text.
+public Style TextStyle { get; set; }
+
+// true if the text is selection enabled; otherwise, false. Default is true.
+public bool IsTextSelectionEnabled { get; set; }
+
+// true if collapse unchanged sections; otherwise, false. Default is false.
+public bool IsUnchangedSectionCollapsed { get; set; }
+
+// The lines for context. Default is 2.
+public int LineCountForContext { get; set; }
+
+// true if the file selector menu button is enabled; otherwise, false. Default is true.
+public bool IsFileMenuEnabled { get; set; }
+
+// The height of command bar. Default is 50.
+public GridLength CommandBarHeight { get; set; }
+
+// The default label position of command bar. Default is Right.
+public CommandBarDefaultLabelPosition CommandLabelPosition { get; set; }
+
+// The collection of secondary command elements for the command bar.
+public IObservableVector<ICommandBarElement> SecondaryCommands { get; }
+```
+
+## WPF Controls
 
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
@@ -174,8 +272,6 @@ To import the controls into your window/page/control, please insert following at
 ```
 xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
 ```
-
-Then you can add one of following controls in UI.
 
 - `DiffViewer` Textual diffs viewer control with view mode switching by setting an old text and a new text to diff.
 - `SideBySideDiffViewer` Side-by-side (splitted) textual diffs viewer control by setting a diff model `SideBySideDiffModel`.
@@ -200,9 +296,6 @@ Following are some of the properties you can get or set.
 ```csharp
 // The header of old text.
 public string OldTextHeader { get; set; }
-
-// The header of new text.
-public string NewTextHeader { get; set; }
 
 // The header of new text.
 public string NewTextHeader { get; set; }
@@ -286,7 +379,7 @@ public event DragStartedEventHandler SplitterDragStarted;
 public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 ```
 
-# WinForms Controls
+## WinForms Controls
 
 [![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
@@ -332,9 +425,6 @@ Following are some of the properties you can get or set.
 ```csharp
 // The header of old text.
 public string OldTextHeader { get; set; }
-
-// The header of new text.
-public string NewTextHeader { get; set; }
 
 // The header of new text.
 public string NewTextHeader { get; set; }

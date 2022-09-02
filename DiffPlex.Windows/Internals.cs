@@ -22,7 +22,7 @@ internal class InternalUtilities
 
     public static readonly SolidColorBrush DeleteBackground = new(Color.FromArgb(64, 216, 32, 32));
 
-    public static readonly SolidColorBrush GrayBackground = new(Color.FromArgb(64, 128, 128, 128));
+    public static readonly SolidColorBrush GrayBackground = new(Color.FromArgb(32, 128, 128, 128));
 
     public static List<TextHighlighter> GetTextHighlighter(List<DiffPiece> sub, ChangeType modify, Brush foreground)
     {

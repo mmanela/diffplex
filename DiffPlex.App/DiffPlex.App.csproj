@@ -18,6 +18,7 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <Authors>Kingcean Tuan; Matthew Manela</Authors>
+    <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="DiffTextView.xaml" />
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <Content Include="..\License.txt" Link="License.txt" />
+    <Content Include="..\DiffPlex.ico" Link="DiffPlex.ico" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />

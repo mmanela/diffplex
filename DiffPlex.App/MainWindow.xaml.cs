@@ -10,9 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security;
 using System.Threading.Tasks;
+using Trivial.UI;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -37,6 +40,49 @@ public sealed partial class MainWindow : Window
 #else
         MainElement.ShowNewFileSelectDialog();
 #endif
+        var appWindow = VisualUtility.TryGetAppWindow(this);
+        try
+        {
+            if (appWindow != null) appWindow.SetIcon("DiffPlex.ico");
+        }
+        catch (ArgumentException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (NullReferenceException)
+        {
+        }
+        catch (ApplicationException)
+        {
+        }
+        catch (ExternalException)
+        {
+        }
+
+        try
+        {
+            var v1 = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "Demo";
+            var v2 = typeof(DiffTextView).Assembly?.GetName()?.Version?.ToString() ?? "Demo";
+            var v3 = typeof(Differ).Assembly?.GetName()?.Version?.ToString() ?? "Demo";
+            VersionText.Text = $"App \t{v1}{Environment.NewLine}UI \t{v2}{Environment.NewLine}Core \t{v3}";
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
     }
 
     private void LoadData()
@@ -74,4 +120,10 @@ public sealed partial class MainWindow : Window
 
         return null;
     }
+
+    private void OnAboutClick(object sender, RoutedEventArgs e)
+        => AboutPanel.Visibility = Visibility.Visible;
+
+    private void OnExitAboutClick(object sender, RoutedEventArgs e)
+        => AboutPanel.Visibility = Visibility.Collapsed;
 }

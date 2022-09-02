@@ -13,9 +13,27 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel x:Name="HeaderBar" Orientation="Horizontal" Spacing="8" Background="#01808080" Padding="8,0" Grid.Row="0" >
-            <ImageIcon Source="Assets\StoreLogo.png" Width="16" Height="16" VerticalAlignment="Center" />
+            <Image Source="Assets\StoreLogo.png" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" />
             <TextBlock Text="DiffPlex" VerticalAlignment="Center" />
         </StackPanel>
-        <local:DiffTextView x:Name="MainElement" Background="#20808080" Grid.Row="1" />
+        <local:DiffTextView x:Name="MainElement" Background="#20808080" Grid.Row="1" >
+            <local:DiffTextView.SecondaryCommands>
+                <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/AboutLabel" Label="About" Click="OnAboutClick" >
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </local:DiffTextView.SecondaryCommands>
+        </local:DiffTextView>
+        <ScrollViewer x:Name="AboutPanel" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" Visibility="Collapsed" Grid.RowSpan="2">
+            <StackPanel Orientation="Vertical" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <Image Source="Assets\Square150x150Logo.png" Width="150" Height="150" Stretch="Uniform" Margin="0,60,0,0" HorizontalAlignment="Center" />
+                <TextBlock Text="DiffPlex" FontSize="24" HorizontalAlignment="Center" />
+                <TextBlock x:Name="VersionText" HorizontalAlignment="Center" Margin="0,0,0,20" />
+                <HyperlinkButton Content="Open source on GitHub (Apache-2.0 license)" Padding="8,0" NavigateUri="https://github.com/mmanela/diffplex" HorizontalAlignment="Center" />
+                <TextBlock Text="Copyright © 2022 Matthew Manela. All rights reserved." HorizontalAlignment="Center" />
+                <Button Content="OK" Style="{StaticResource AccentButtonStyle}" Width="100" Margin="0,20,0,60" HorizontalAlignment="Center" Click="OnExitAboutClick" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

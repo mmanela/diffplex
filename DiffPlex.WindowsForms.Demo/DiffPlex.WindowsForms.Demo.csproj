@@ -14,6 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
     <PackageIcon>diffplex_icon.png</PackageIcon>
+    <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\DiffPlex.ico" Link="DiffPlex.ico" />
     <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>

@@ -23,7 +23,11 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <!--<Resource Language="x-generate"/>-->
+    <Resource Language="en"/>
+    <Resource Language="zh-Hans"/>
+    <Resource Language="zh-Hant"/>
+    <Resource Language="fr"/>
   </Resources>
 
   <Applications>

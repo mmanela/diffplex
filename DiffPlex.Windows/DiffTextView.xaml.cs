@@ -55,6 +55,16 @@ public sealed partial class DiffTextView : UserControl
     public static readonly DependencyProperty TextStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(TextStyle));
 
     /// <summary>
+    /// The dependency property of old text width.
+    /// </summary>
+    public static readonly DependencyProperty OldTextWidthProperty = DependencyObjectProxy.RegisterProperty(nameof(OldTextWidth), new GridLength(1, GridUnitType.Star));
+
+    /// <summary>
+    /// The dependency property of new text width.
+    /// </summary>
+    public static readonly DependencyProperty NewTextWidthProperty = DependencyObjectProxy.RegisterProperty(nameof(NewTextWidth), new GridLength(1, GridUnitType.Star));
+
+    /// <summary>
     /// The dependency property of change type style.
     /// </summary>
     public static readonly DependencyProperty ChangeTypeStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(ChangeTypeStyle));
@@ -124,10 +134,10 @@ public sealed partial class DiffTextView : UserControl
     /// </summary>
     public static readonly DependencyProperty CommandLabelPositionProperty = DependencyObjectProxy.RegisterProperty(nameof(CommandLabelPosition), CommandBarDefaultLabelPosition.Right);
 
+    private readonly DiffTextViewReference reference;
     private List<DiffTextViewModel> sideBySide;
     private List<DiffPiece> inlines;
     private bool skipRefresh = true;
-    private DiffTextViewReference reference;
 
     /// <summary>
     /// Initializes a new instance of the DiffTextView class.
@@ -183,6 +193,24 @@ public sealed partial class DiffTextView : UserControl
     {
         get => (Style)GetValue(TextStyleProperty);
         set => SetValue(TextStyleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the width of old text in split view.
+    /// </summary>
+    public GridLength OldTextWidth
+    {
+        get => (GridLength)GetValue(OldTextWidthProperty);
+        set => SetValue(OldTextWidthProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the width of new text in split view.
+    /// </summary>
+    public GridLength NewTextWidth
+    {
+        get => (GridLength)GetValue(NewTextWidthProperty);
+        set => SetValue(NewTextWidthProperty, value);
     }
 
     /// <summary>
@@ -326,6 +354,15 @@ public sealed partial class DiffTextView : UserControl
     public IObservableVector<ICommandBarElement> SecondaryCommands => TopCommandBar.SecondaryCommands;
 
     /// <summary>
+    /// Gets or sets the child element in background.
+    /// </summary>
+    public UIElement BackgroundElement
+    {
+        get => BackgroundPanel.Child;
+        set => BackgroundPanel.Child = value;
+    }
+
+    /// <summary>
     /// Sets the text.
     /// </summary>
     /// <param name="left">The old text.</param>
@@ -417,30 +454,6 @@ public sealed partial class DiffTextView : UserControl
 
         var first = list.Items.OfType<T>().FirstOrDefault();
         if (first != null) list.ScrollIntoView(first);
-    }
-    private static void ScrollPreviousDiffIntoView2<T>(ListView list, Func<T, DiffPiece> resolver) where T : class
-    {
-        T target = null;
-        foreach (var item in list.Items)
-        {
-            var container = list.ContainerFromItem(item) as ListViewItem;
-            if (container == null || item is not T model) continue;
-            var piece = resolver(model);
-            if (piece == null) continue;
-            var transform = container.TransformToVisual(list) as MatrixTransform;
-            if (transform == null) continue;
-            var pos = transform.Matrix.OffsetY;
-            var isUnchanged = piece.Type == ChangeType.Unchanged;
-            if (pos < 0)
-            {
-                if (!isUnchanged) target = model;
-                continue;
-            }
-
-            if (target == null) target = list.Items.OfType<T>().FirstOrDefault();
-            if (target != null) list.ScrollIntoView(target);
-            break;
-        }
     }
 
     /// <summary>
@@ -803,10 +816,32 @@ public sealed partial class DiffTextView : UserControl
 
     private async Task OnFileSelectAsync(Func<Task<string>> task, bool isNew)
     {
-        var s = await task();
-        skipRefresh = false;
-        if (isNew) NewText = s;
-        else OldText = s;
+        try
+        {
+            var s = await task();
+            if (s == null) return;
+            skipRefresh = false;
+            if (isNew) NewText = s;
+            else OldText = s;
+        }
+        catch (ArgumentException)
+        {
+        }
+        catch (IOException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (SecurityException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
     }
 
     private void OnFileCancelClick(object sender, RoutedEventArgs e)

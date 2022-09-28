@@ -188,8 +188,7 @@ For example.
 ```
 
 ```csharp
-DiffView.OldText = OldText;
-DiffView.NewText = NewText;
+DiffView.SetText(OldText, NewText);
 ```
 
 ![WinUI sample](./images/wasdk_split_dark.jpg)

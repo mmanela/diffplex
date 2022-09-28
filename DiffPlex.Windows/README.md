@@ -25,8 +25,7 @@ Class `DiffTextView` is used to render textual diffs by setting new text and old
 ```
 
 ```csharp
-DiffView.OldText = OldText;
-DiffView.NewText = NewText;
+DiffView.SetText(OldText, NewText);
 ```
 
 ![WinUI sample](../images/wasdk_split_dark.jpg)
@@ -40,6 +39,5 @@ You can create a window with the above element to show.
 ```csharp
 var window = new DiffTextWindow();
 window.Activate();
-window.RootElement.OldText = OldText;
-window.RootElement.NewText = NewText;
+window.SetText(OldText, NewText);
 ```

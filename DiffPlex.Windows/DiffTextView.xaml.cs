@@ -120,6 +120,16 @@ public sealed partial class DiffTextView : UserControl
     public static readonly DependencyProperty IsFileMenuEnabledProperty = DependencyObjectProxy.RegisterProperty(nameof(IsFileMenuEnabled), Refresh, true);
 
     /// <summary>
+    /// The dependency property of summary information text style.
+    /// </summary>
+    public static readonly DependencyProperty SummaryInfoStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(SummaryInfoStyle));
+
+    /// <summary>
+    /// The dependency property of summary information text.
+    /// </summary>
+    public static readonly DependencyProperty SummaryInfoVisibilityProperty = DependencyObjectProxy.RegisterProperty(nameof(SummaryInfoVisibility), Visibility.Visible);
+
+    /// <summary>
     /// The dependency property of old text.
     /// </summary>
     public static readonly DependencyProperty OldTextProperty = DependencyObjectProxy.RegisterProperty<string>(nameof(OldText), Refresh);
@@ -349,6 +359,24 @@ public sealed partial class DiffTextView : UserControl
     }
 
     /// <summary>
+    /// Gets or sets the summary text block style of line additions and deletions.
+    /// </summary>
+    public Style SummaryInfoStyle
+    {
+        get => (Style)GetValue(SummaryInfoStyleProperty);
+        set => SetValue(SummaryInfoStyleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the summary text block visibility of line additions and deletions.
+    /// </summary>
+    public Visibility SummaryInfoVisibility
+    {
+        get => (Visibility)GetValue(SummaryInfoVisibilityProperty);
+        set => SetValue(SummaryInfoVisibilityProperty, value);
+    }
+
+    /// <summary>
     /// Gets the collection of secondary command elements for the command bar.
     /// </summary>
     public IObservableVector<ICommandBarElement> SecondaryCommands => TopCommandBar.SecondaryCommands;
@@ -387,6 +415,30 @@ public sealed partial class DiffTextView : UserControl
     }
 
     /// <summary>
+    /// Sets the text.
+    /// </summary>
+    /// <param name="left">The old text.</param>
+    /// <param name="right">The new text.</param>
+    public void SetText(JsonObjectNode oldText, JsonObjectNode newText)
+    {
+        skipRefresh = true;
+        OldText = oldText?.ToString(IndentStyles.Compact);
+        NewText = newText?.ToString(IndentStyles.Compact);
+    }
+
+    /// <summary>
+    /// Sets the text.
+    /// </summary>
+    /// <param name="left">The old text.</param>
+    /// <param name="right">The new text.</param>
+    public void SetText(FileInfo oldText, FileInfo newText)
+    {
+        skipRefresh = true;
+        OldText = oldText != null && oldText.Exists ? File.ReadAllText(oldText.FullName) : string.Empty;
+        NewText = newText != null && newText.Exists ? File.ReadAllText(newText.FullName) : string.Empty;
+    }
+
+    /// <summary>
     /// Refreshes.
     /// </summary>
     public void Refresh()
@@ -394,6 +446,7 @@ public sealed partial class DiffTextView : UserControl
         if (skipRefresh)
         {
             skipRefresh = false;
+            InfoElement.Text = string.Empty;
             return;
         }
 
@@ -412,6 +465,7 @@ public sealed partial class DiffTextView : UserControl
         inlines = null;
         SplitElement.ItemsSource = null;
         UnifiedElement.ItemsSource = null;
+        InfoElement.Text = string.Empty;
     }
 
     /// <summary>
@@ -610,15 +664,20 @@ public sealed partial class DiffTextView : UserControl
         var right = diff?.NewText?.Lines ?? new();
         var count = Math.Max(left.Count, right.Count);
         var col = new List<DiffTextViewModel>();
+        var add = 0;
+        var remove = 0;
         for (var i = 0; i < count; i++)
         {
             var r = i < right.Count ? right[i] : new(null, ChangeType.Imaginary);
             var l = i < left.Count ? left[i] : new(null, ChangeType.Imaginary);
             col.Add(new(i, l, r, reference));
+            if (r.Type == ChangeType.Inserted || r.Type == ChangeType.Modified) add++;
+            if (l.Type == ChangeType.Deleted || l.Type == ChangeType.Modified) remove++;
         }
 
         sideBySide = col;
         SplitElement.ItemsSource = Filter(col, GetDiffPiece);
+        InfoElement.Text = $"+{add}  -{remove}";
     }
 
     private void RefreshUnifiedView(bool forceToUpdate = false)
@@ -634,14 +693,26 @@ public sealed partial class DiffTextView : UserControl
         }
 
         var i = 0;
+        var add = 0;
+        var remove = 0;
         foreach (var item in lines)
         {
             if (item == null) continue;
             col.Add(new(i, item, reference));
             i++;
+            switch (item.Type)
+            {
+                case ChangeType.Inserted:
+                    add++;
+                    break;
+                case ChangeType.Deleted:
+                    remove++;
+                    break;
+            }
         }
 
         UnifiedElement.ItemsSource = Filter(col, GetDiffPiece);
+        InfoElement.Text = $"+{add}  -{remove}";
     }
 
     private void UpdateCollapseState()

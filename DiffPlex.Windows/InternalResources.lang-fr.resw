@@ -120,6 +120,9 @@
   <data name="AboutLabel.Label" xml:space="preserve">
     <value>Environ</value>
   </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
   <data name="CollapseUnchangedText.Text" xml:space="preserve">
     <value>Effondrement des sections inchangées</value>
   </data>
@@ -144,11 +147,20 @@
   <data name="NextLabel.Label" xml:space="preserve">
     <value>Prochain</value>
   </data>
+  <data name="OkButton.Content" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="PreviousLabel.Label" xml:space="preserve">
     <value>Précédente</value>
   </data>
   <data name="RightText.Text" xml:space="preserve">
     <value>Droite (Prochain)</value>
+  </data>
+  <data name="SameText.Text" xml:space="preserve">
+    <value>Même</value>
+  </data>
+  <data name="SaveAsButton.Content" xml:space="preserve">
+    <value>Enregistrer comme…</value>
   </data>
   <data name="SelectFileLabel.Label" xml:space="preserve">
     <value>Fichier ouvert</value>

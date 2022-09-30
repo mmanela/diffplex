@@ -130,6 +130,11 @@ public sealed partial class DiffTextView : UserControl
     public static readonly DependencyProperty SummaryInfoVisibilityProperty = DependencyObjectProxy.RegisterProperty(nameof(SummaryInfoVisibility), Visibility.Visible);
 
     /// <summary>
+    /// The dependency property of editor text style.
+    /// </summary>
+    public static readonly DependencyProperty EditorStyleProperty = DependencyObjectProxy.RegisterProperty<Style>(nameof(EditorStyle));
+
+    /// <summary>
     /// The dependency property of old text.
     /// </summary>
     public static readonly DependencyProperty OldTextProperty = DependencyObjectProxy.RegisterProperty<string>(nameof(OldText), Refresh);
@@ -377,6 +382,15 @@ public sealed partial class DiffTextView : UserControl
     }
 
     /// <summary>
+    /// Gets or sets the editor text box style.
+    /// </summary>
+    public Style EditorStyle
+    {
+        get => (Style)GetValue(EditorStyleProperty);
+        set => SetValue(EditorStyleProperty, value);
+    }
+
+    /// <summary>
     /// Gets the collection of secondary command elements for the command bar.
     /// </summary>
     public IObservableVector<ICommandBarElement> SecondaryCommands => TopCommandBar.SecondaryCommands;
@@ -591,6 +605,9 @@ public sealed partial class DiffTextView : UserControl
     public void SetNewText(CharsReader value)
         => NewText = value?.ReadToEnd();
 
+    /// <summary>
+    /// Shows file select dialog for old (left) text.
+    /// </summary>
     public void ShowOldFileSelectDialog()
     {
         var h = OpenFileToReadText;
@@ -605,6 +622,9 @@ public sealed partial class DiffTextView : UserControl
         _ = FocusFilePathTextBoxAsync();
     }
 
+    /// <summary>
+    /// Shows file select dialog for new (right) text.
+    /// </summary>
     public void ShowNewFileSelectDialog()
     {
         var h = OpenFileToReadText;
@@ -812,12 +832,39 @@ public sealed partial class DiffTextView : UserControl
         FilePathTextBox.Focus(FocusState.Keyboard);
     }
 
-    private void OnLeftTextClick(object sender, RoutedEventArgs e)
+    private void EditText(string text, bool isNew)
     {
+        FilePathContainer.Tag = null;
+        FilePathContainer.Visibility = Visibility.Collapsed;
+        GoToNumberContainer.Visibility = Visibility.Collapsed;
+        GoToMenuButton.IsChecked = false;
+        TextEditorElement.Text = text;
+        TextEditorElement.Tag = isNew;
+        TextEditorContainer.Visibility = Visibility.Visible;
+        TextEditorElement.Focus(FocusState.Programmatic);
     }
 
+    private void OnLeftTextClick(object sender, RoutedEventArgs e)
+        => EditText(OldText, false);
+
     private void OnRightTextClick(object sender, RoutedEventArgs e)
+        => EditText(NewText, true);
+
+    private void OnEditorOkClick(object sender, RoutedEventArgs e)
     {
+        TextEditorContainer.Visibility = Visibility.Collapsed;
+        var s = TextEditorElement.Text;
+        TextEditorElement.Text = null;
+        if (TextEditorElement.Tag is not bool b) return;
+        if (b) NewText = s;
+        else OldText = s;
+    }
+
+    private void OnEditorCancelClick(object sender, RoutedEventArgs e)
+    {
+        TextEditorElement.Tag = null;
+        TextEditorContainer.Visibility = Visibility.Collapsed;
+        TextEditorElement.Text = null;
     }
 
     private void OnSwitchClick(object sender, RoutedEventArgs e)

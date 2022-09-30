@@ -120,6 +120,9 @@
   <data name="AboutLabel.Label" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="CollapseUnchangedText.Text" xml:space="preserve">
     <value>Collapse unchanged sections</value>
   </data>
@@ -144,11 +147,20 @@
   <data name="NextLabel.Label" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="OkButton.Content" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="PreviousLabel.Label" xml:space="preserve">
     <value>Previous</value>
   </data>
   <data name="RightText.Text" xml:space="preserve">
     <value>Right (new)</value>
+  </data>
+  <data name="SameText.Text" xml:space="preserve">
+    <value>Same</value>
+  </data>
+  <data name="SaveAsButton.Content" xml:space="preserve">
+    <value>Save as…</value>
   </data>
   <data name="SelectFileLabel.Label" xml:space="preserve">
     <value>Select file</value>

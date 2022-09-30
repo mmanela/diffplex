@@ -120,6 +120,9 @@
   <data name="AboutLabel.Label" xml:space="preserve">
     <value>关于</value>
   </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
   <data name="CollapseUnchangedText.Text" xml:space="preserve">
     <value>收起相同内容</value>
   </data>
@@ -144,11 +147,20 @@
   <data name="NextLabel.Label" xml:space="preserve">
     <value>向后</value>
   </data>
+  <data name="OkButton.Content" xml:space="preserve">
+    <value>确定</value>
+  </data>
   <data name="PreviousLabel.Label" xml:space="preserve">
     <value>向前</value>
   </data>
   <data name="RightText.Text" xml:space="preserve">
     <value>右（新）</value>
+  </data>
+  <data name="SameText.Text" xml:space="preserve">
+    <value>相同</value>
+  </data>
+  <data name="SaveAsButton.Content" xml:space="preserve">
+    <value>另存为…</value>
   </data>
   <data name="SelectFileLabel.Label" xml:space="preserve">
     <value>选择文件</value>

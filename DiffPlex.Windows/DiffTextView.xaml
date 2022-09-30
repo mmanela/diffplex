@@ -13,6 +13,7 @@
         <local:OldDiffChangeTypeConverter x:Key="OldBrushConverter"/>
         <local:NewDiffChangeTypeConverter x:Key="NewBrushConverter"/>
         <local:VisibilityBooleanConverter x:Key="VisibilityBooleanConverter" />
+        <FontFamily x:Key="CodeFonts" >Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya</FontFamily>
         <Style TargetType="local:DiffTextView" >
             <Setter Property="Padding" Value="3" />
             <Setter Property="BorderBrush" Value="Transparent" />
@@ -32,7 +33,7 @@
                 <Setter.Value>
                     <Style TargetType="TextBlock" >
                         <Setter Property="Foreground" Value="#2B91AF" />
-                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="FontFamily" Value="{ThemeResource CodeFonts}" />
                         <Setter Property="TextTrimming" Value="Clip" />
                         <Setter Property="TextAlignment" Value="Right" />
                         <Setter Property="VerticalAlignment" Value="Top" />
@@ -43,7 +44,7 @@
                 <Setter.Value>
                     <Style TargetType="TextBlock" >
                         <Setter Property="Foreground" Value="#808080" />
-                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="FontFamily" Value="{ThemeResource CodeFonts}" />
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="TextTrimming" Value="Clip" />
                         <Setter Property="VerticalAlignment" Value="Top" />
@@ -53,7 +54,7 @@
             <Setter Property="TextStyle" >
                 <Setter.Value>
                     <Style TargetType="TextBlock" >
-                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya" />
+                        <Setter Property="FontFamily" Value="{ThemeResource CodeFonts}" />
                         <Setter Property="TextWrapping" Value="WrapWholeWords" />
                         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                         <Setter Property="VerticalAlignment" Value="Top" />
@@ -65,6 +66,14 @@
                     <Style TargetType="TextBlock" >
                         <Setter Property="Foreground" Value="#808080" />
                         <Setter Property="Margin" Value="10,0" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="EditorStyle" >
+                <Setter.Value>
+                    <Style TargetType="TextBox" >
+                        <Setter Property="FontFamily" Value="{ThemeResource CodeFonts}" />
+                        <Setter Property="CornerRadius" Value="4" />
                     </Style>
                 </Setter.Value>
             </Setter>
@@ -150,7 +159,7 @@
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator />
-                        <MenuFlyoutSubItem x:Uid="/DiffPlex.Windows/InternalResources/EditTextText" Text="Edit text" Visibility="Collapsed" >
+                        <MenuFlyoutSubItem x:Uid="/DiffPlex.Windows/InternalResources/EditTextText" Text="Edit text" >
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE1C2;" />
                             </MenuFlyoutSubItem.Icon>
@@ -196,6 +205,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid x:Name="TextEditorContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" Padding="16" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Grid.RowSpan="2" >
+            <TextBox x:Name="TextEditorElement" Margin="0,0,0,40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" TextWrapping="Wrap" Style="{x:Bind EditorStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" />
+            <Button x:Uid="/DiffPlex.Windows/InternalResources/OkButton" Content="OK" Width="110" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Click="OnEditorOkClick" />
+            <Button x:Uid="/DiffPlex.Windows/InternalResources/CancelButton" Content="Cancel" Width="110" Margin="120,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="OnEditorCancelClick" />
+        </Grid>
         <Border x:Name="GoToNumberContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="8" Width="300" Padding="8" Margin="20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" Grid.Row="1" >
             <NumberBox x:Name="GoToNumberBox" x:Uid="/DiffPlex.Windows/InternalResources/GoToInput" PlaceholderText="Line" ValueChanged="OnGoToChange" Minimum="1" LostFocus="OnGoToBoxLostFocus" />
         </Border>

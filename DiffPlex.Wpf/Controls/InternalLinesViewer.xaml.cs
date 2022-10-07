@@ -1,5 +1,9 @@
-﻿using System;
+﻿using DiffPlex.DiffBuilder.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,23 +30,23 @@ namespace DiffPlex.Wpf.Controls
             InitializeComponent();
         }
 
-        public event ScrollChangedEventHandler ScrollChanged
-        {
-            add => ValueScrollViewer.ScrollChanged += value;
-            remove => ValueScrollViewer.ScrollChanged -= value;
-        }
+        public event ScrollChangedEventHandler ScrollChanged;
 
+        //TODO: Switch to dependency property and feed forward into the specific templated scroll control
+        // We can't get the scroll viewer right after creation, so we need to bind it and let WPF handle it
+        private ScrollBarVisibility verticalScrollBarVisibility;
         public ScrollBarVisibility VerticalScrollBarVisibility
         {
-            get => ValueScrollViewer.VerticalScrollBarVisibility;
-            set => ValueScrollViewer.VerticalScrollBarVisibility = value;
+            get => verticalScrollBarVisibility;
+            set => verticalScrollBarVisibility = value;
         }
+
 
         public Guid TrackingId { get; set; }
 
         public ContextMenu LineContextMenu { get; set; }
 
-        public double VerticalOffset => ValueScrollViewer.VerticalOffset;
+        public double VerticalOffset => _ValueScrollViewer.VerticalOffset;
 
         public int LineNumberWidth
         {
@@ -59,110 +63,87 @@ namespace DiffPlex.Wpf.Controls
             }
         }
 
-        public int Count => ValuePanel.Children.Count;
+        private ScrollViewer numberScrollViewer;
+        internal ScrollViewer _NumberScrollViewer
+        {
+            get
+            {
+                if (numberScrollViewer == null)
+                    numberScrollViewer = NumberPanel.Template.FindName("NumberScrollViewer", NumberPanel) as ScrollViewer;
+
+                return numberScrollViewer;
+            }
+        }
+
+        private ScrollViewer operationScrollViewer;
+        internal ScrollViewer _OperationScrollViewer
+        {
+            get
+            {
+                if (operationScrollViewer == null)
+                    operationScrollViewer = OperationPanel.Template.FindName("OperationScrollViewer", OperationPanel) as ScrollViewer;
+
+                return operationScrollViewer;
+            }
+        }
+
+        private ScrollViewer valueScrollViewer;
+        internal ScrollViewer _ValueScrollViewer
+        {
+            get
+            {
+                if (valueScrollViewer == null)
+                    valueScrollViewer = ValuePanel.Template.FindName("ValueScrollViewer", ValuePanel) as ScrollViewer;
+
+                return valueScrollViewer;
+            }
+        }
+
+        public ObservableCollection<LineViewerLineData> LineDetails { get; set; }
+            = new ObservableCollection<LineViewerLineData>();
+
+        public int Count => LineDetails.Count;
 
         public void Clear()
         {
-            NumberPanel.Children.Clear();
-            OperationPanel.Children.Clear();
-            ValuePanel.Children.Clear();
+            LineDetails.Clear();
         }
 
-        public StackPanel Add(int? number, string operation, string value, string changeType, UIElement source)
+        public void Add(DiffPiece diffPiece, string value, ChangeType changeType, UIElement source)
         {
-            var index = new TextBlock
+            LineDetails.Add(new LineViewerLineData()
             {
-                Text = number.HasValue ? number.ToString() : string.Empty,
-                TextAlignment = TextAlignment.Right
-            };
-            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
-            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-            ApplyTextBlockProperties(index, source);
-            NumberPanel.Children.Add(index);
-
-            var op = new TextBlock
-            {
-                Text = operation,
-                TextAlignment = TextAlignment.Center
-            };
-            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
-            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-            ApplyTextBlockProperties(op, source);
-            OperationPanel.Children.Add(op);
-
-            var panel = new StackPanel { Orientation = Orientation.Horizontal };
-            panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
-            var text = new TextBlock
-            {
-                Text = value
-            };
-            if (!string.IsNullOrEmpty(value))
-            {
-                text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
-                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-                ApplyTextBlockProperties(text, source);
-                panel.ContextMenu = LineContextMenu;
-            }
-
-            panel.Children.Add(text);
-            ValuePanel.Children.Add(panel);
-            return panel;
+                Number = diffPiece.Position,
+                Piece = diffPiece,
+                Segments = new List<LineViewerSegment>() {
+                    new LineViewerSegment() {
+                        TextChunk=value,
+                        ChunkChange=changeType,
+                        Source=source,
+                        FallbackForeground = Foreground
+                    } },
+                ChangeType = changeType,
+                Source = source,
+                FallbackForeground = Foreground
+            });
         }
 
-        public StackPanel Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
+        public void Add(DiffPiece diffPiece, List<LineViewerSegment> value, ChangeType changeType, UIElement source)
         {
-            var index = new TextBlock
+            foreach (var item in value)
             {
-                Text = number.HasValue ? number.ToString() : string.Empty,
-                TextAlignment = TextAlignment.Right
-            };
-            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
-            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-            ApplyTextBlockProperties(index, source);
-            NumberPanel.Children.Add(index);
-
-            var op = new TextBlock
-            {
-                Text = operation,
-                TextAlignment = TextAlignment.Center
-            };
-            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
-            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
-            ApplyTextBlockProperties(op, source);
-            OperationPanel.Children.Add(op);
-
-            var panel = new StackPanel { Orientation = Orientation.Horizontal };
-            panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
-            if (value == null) value = new List<KeyValuePair<string, string>>();
-            foreach (var ele in value)
-            {
-                if (string.IsNullOrEmpty(ele.Key)) continue;
-                var text = new TextBlock
-                {
-                    Text = ele.Key
-                };
-                if (!string.IsNullOrEmpty(ele.Value))
-                {
-                    if (!string.IsNullOrEmpty(ele.Key))
-                        text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", source, Foreground));
-                    text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", source));
-                }
-
-                ApplyTextBlockProperties(text, source);
-                panel.Children.Add(text);
+                item.FallbackForeground = Foreground;
             }
 
-            if (panel.Children.Count == 0)
+            LineDetails.Add(new LineViewerLineData()
             {
-                panel.Children.Add(new TextBlock());
-            }
-            else
-            {
-                panel.ContextMenu = LineContextMenu;
-            }
-
-            ValuePanel.Children.Add(panel);
-            return panel;
+                Number = diffPiece?.Position,
+                Piece = diffPiece,
+                Segments = value,
+                ChangeType = changeType,
+                Source = source,
+                FallbackForeground = Foreground
+            });
         }
 
         public void SetLineVisible(int index, bool visible)
@@ -170,43 +151,23 @@ namespace DiffPlex.Wpf.Controls
             try
             {
                 var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-                if (NumberPanel.Children[index] is TextBlock number) number.Visibility = visibility;
-                if (OperationPanel.Children[index] is TextBlock operation) operation.Visibility = visibility;
-                if (ValuePanel.Children[index] is StackPanel value) value.Visibility = visibility;
+                LineDetails[index].Visible = visibility;
             }
             catch (ArgumentOutOfRangeException)
             {
             }
         }
 
-        public IEnumerable<object> GetTagsOfEachLine()
-        {
-            foreach (var item in ValuePanel.Children)
-            {
-                yield return item is StackPanel p ? p?.Tag : null;
-            }
-        }
-
-        private Binding GetBindings(string key, UIElement source)
-        {
-            if (bindings.TryGetValue(key, out var r) && r.Source == source) return r;
-            return bindings[key] = new Binding(key) { Source = source, Mode = BindingMode.OneWay };
-        }
-
-        private Binding GetBindings(string key, UIElement source, object defaultValue)
-        {
-            if (bindings.TryGetValue(key, out var r) && r.Source == source) return r;
-            return bindings[key] = new Binding(key) { Source = source, Mode = BindingMode.OneWay, TargetNullValue = defaultValue };
-        }
-
         public void ScrollToVerticalOffset(double offset)
         {
-            ValueScrollViewer.ScrollToVerticalOffset(offset);
+            _ValueScrollViewer.ScrollToVerticalOffset(offset);
         }
 
         internal void AdjustScrollView()
         {
-            var isV = ValueScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible;
+            if (_ValueScrollViewer == null) return;
+
+            var isV = _ValueScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible;
             var hasV = ValuePanel.Margin.Bottom > 10;
             if (isV)
             {
@@ -218,32 +179,30 @@ namespace DiffPlex.Wpf.Controls
             }
         }
 
-        private void ApplyTextBlockProperties(TextBlock text, UIElement source)
-        {
-            text.SetBinding(TextBlock.FontSizeProperty, GetBindings("FontSize", source));
-            text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, Helper.FontFamily ));
-            text.SetBinding(TextBlock.FontWeightProperty, GetBindings("FontWeight", source));
-            text.SetBinding(TextBlock.FontStretchProperty, GetBindings("FontStretch", source));
-            text.SetBinding(TextBlock.FontStyleProperty, GetBindings("FontStyle", source));
-        }
-
         private void NumberScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            var offset = NumberScrollViewer.VerticalOffset;
-            ScrollVertical(ValueScrollViewer, offset);
+            
+            var offset = _NumberScrollViewer.VerticalOffset;
+            ScrollVertical(_ValueScrollViewer, offset);
+            if (ScrollChanged != null)
+                ScrollChanged(this, e);
         }
 
         private void OperationScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            var offset = OperationScrollViewer.VerticalOffset;
-            ScrollVertical(ValueScrollViewer, offset);
+            var offset = _OperationScrollViewer.VerticalOffset;
+            ScrollVertical(_ValueScrollViewer, offset);
+            if (ScrollChanged != null)
+                ScrollChanged(this, e);
         }
 
         private void ValueScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            var offset = ValueScrollViewer.VerticalOffset;
-            ScrollVertical(NumberScrollViewer, offset);
-            ScrollVertical(OperationScrollViewer, offset);
+            var offset = _ValueScrollViewer.VerticalOffset;
+            ScrollVertical(_NumberScrollViewer, offset);
+            ScrollVertical(_OperationScrollViewer, offset);
+            if (ScrollChanged != null)
+                ScrollChanged(this, e);
         }
 
         private void ScrollVertical(ScrollViewer scrollViewer, double offset)

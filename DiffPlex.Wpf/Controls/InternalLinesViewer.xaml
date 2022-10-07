@@ -5,12 +5,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DiffPlex.Wpf.Controls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" x:Name="lineViewer"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ControlTemplate x:Key="LocalScrollViewerTemplate" TargetType="{x:Type ScrollViewer}">
             <Grid x:Name="Grid" Background="{TemplateBinding Background}">
-                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" 
+                                        VirtualizingPanel.IsVirtualizing="True"
+                                        VirtualizingPanel.ScrollUnit="Pixel"
+                                        VirtualizingPanel.VirtualizationMode="Recycling" 
+                                        CanHorizontallyScroll="False" CanVerticallyScroll="False" 
+                                        ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" 
+                                        Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
                 <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" HorizontalAlignment="Right" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{DynamicResource LocalScrollBarStyle}" Background="#99808080" BorderBrush="#99808080" Foreground="#FF808080"/>
                 <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" VerticalAlignment="Bottom" Margin="0,0,20,0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{DynamicResource LocalScrollBarStyle}" Background="#99808080" BorderBrush="#99808080" Foreground="#FF808080"/>
             </Grid>
@@ -256,6 +262,19 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="TextBlockFontStyle" TargetType="{x:Type TextBlock}">
+        </Style>
+        <Style x:Key="ListBoxNoSelect" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Visibility" Value="{Binding Visible}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     
     <Grid>
@@ -264,14 +283,110 @@
             <ColumnDefinition x:Name="OperationColumn" Width="20"/>
             <ColumnDefinition x:Name="ValueColumn" Width="1*"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer x:Name="NumberScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" ScrollChanged="NumberScrollViewer_ScrollChanged">
-            <StackPanel x:Name="NumberPanel"/>
-        </ScrollViewer>
-        <ScrollViewer x:Name="OperationScrollViewer" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" ScrollChanged="OperationScrollViewer_ScrollChanged">
-            <StackPanel x:Name="OperationPanel"/>
-        </ScrollViewer>
-        <ScrollViewer Template="{DynamicResource LocalScrollViewerTemplate}" x:Name="ValueScrollViewer" Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="ValueScrollViewer_ScrollChanged" SizeChanged="ValueScrollViewer_SizeChanged">
-            <StackPanel x:Name="ValuePanel"/>
-        </ScrollViewer>
+        
+        <ListBox x:Name="NumberPanel" 
+                 ItemsSource="{Binding LineDetails,ElementName=lineViewer}" 
+                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                 HorizontalContentAlignment="Stretch"
+                 ItemContainerStyle="{StaticResource ListBoxNoSelect}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Number}" TextAlignment="Right"
+                                Foreground="{Binding Path=NumberForeground, Mode=OneTime}"
+                                Background="{Binding Path=ChangeBackground, Mode=OneTime}"
+                                   
+                                FontSize="{Binding Path=FontSize,ElementName=lineViewer, Mode=OneTime}"
+                                FontFamily="{Binding Path=FontFamily,ElementName=lineViewer, Mode=OneTime}"
+                                FontWeight="{Binding Path=FontWeight,ElementName=lineViewer, Mode=OneTime}"
+                                FontStretch="{Binding Path=FontStretch,ElementName=lineViewer, Mode=OneTime}"
+                                FontStyle="{Binding Path=FontStyle,ElementName=lineViewer, Mode=OneTime}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Template>
+                <ControlTemplate>
+                    <ScrollViewer x:Name="NumberScrollViewer" 
+                                    HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" 
+                                    ScrollChanged="NumberScrollViewer_ScrollChanged">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListBox.Template>
+        </ListBox>
+
+        <ListBox x:Name="OperationPanel" Grid.Column="1"
+                 ItemsSource="{Binding LineDetails,ElementName=lineViewer}"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                 HorizontalContentAlignment="Stretch"
+                 ItemContainerStyle="{StaticResource ListBoxNoSelect}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Operation}" TextAlignment="Center"
+                                   Foreground="{Binding Path=ChangeForeground, Mode=OneTime}"
+                                   Background="{Binding Path=ChangeBackground, Mode=OneTime}"
+                                   
+                                   FontSize="{Binding Path=FontSize,ElementName=lineViewer,Mode=OneTime}"
+                                   FontFamily="{Binding Path=FontFamily,ElementName=lineViewer,Mode=OneTime}"
+                                   FontWeight="{Binding Path=FontWeight,ElementName=lineViewer,Mode=OneTime}"
+                                   FontStretch="{Binding Path=FontStretch,ElementName=lineViewer,Mode=OneTime}"
+                                   FontStyle="{Binding Path=FontStyle,ElementName=lineViewer,Mode=OneTime}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Template>
+                <ControlTemplate>
+                    <ScrollViewer x:Name="OperationScrollViewer" 
+                                    HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" 
+                                    ScrollChanged="OperationScrollViewer_ScrollChanged">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListBox.Template>
+        </ListBox>
+
+        <ListBox x:Name="ValuePanel" Grid.Column="2" 
+                 ItemsSource="{Binding LineDetails,ElementName=lineViewer}"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling"
+                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                 HorizontalContentAlignment="Stretch"
+                 ItemContainerStyle="{StaticResource ListBoxNoSelect}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ItemsControl ItemsSource="{Binding Segments}" BorderThickness="0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" 
+                                                Background="{Binding Path=ChangeBackground, Mode=OneTime}" 
+                                                ContextMenu="{Binding LineContextMenu,ElementName=lineViewer}"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=TextChunk}" 
+                                               Foreground="{Binding Path=SegmentForeground, Mode=OneTime}"
+                                               Background="{Binding Path=SegmentBackground, Mode=OneTime}"
+                                               
+                                               FontSize="{Binding Path=FontSize,ElementName=lineViewer,Mode=OneTime}"
+                                               FontFamily="{Binding Path=FontFamily,ElementName=lineViewer,Mode=OneTime}"
+                                               FontWeight="{Binding Path=FontWeight,ElementName=lineViewer,Mode=OneTime}"
+                                               FontStretch="{Binding Path=FontStretch,ElementName=lineViewer,Mode=OneTime}"
+                                               FontStyle="{Binding Path=FontStyle,ElementName=lineViewer,Mode=OneTime}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Template>
+                <ControlTemplate>
+                    <ScrollViewer x:Name="ValueScrollViewer" 
+                                      Template="{DynamicResource LocalScrollViewerTemplate}"
+                                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                                      ScrollChanged="ValueScrollViewer_ScrollChanged"
+                                      SizeChanged="ValueScrollViewer_SizeChanged">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListBox.Template>
+        </ListBox>
     </Grid>
 </UserControl>

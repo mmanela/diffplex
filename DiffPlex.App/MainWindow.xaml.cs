@@ -91,35 +91,8 @@ public sealed partial class MainWindow : Window
         MainElement.NewText = TestData.DuplicateText(TestData.NewText, 200);
     }
 
-    private async Task<string> GetFileTextAsync()
-    {
-        try
-        {
-            var file = await InternalUtilities.SelectFileAsync(this);
-            if (file == null || !file.Exists) return null;
-            return await File.ReadAllTextAsync(file.FullName);
-        }
-        catch (ArgumentException)
-        {
-        }
-        catch (IOException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
-        catch (SecurityException)
-        {
-        }
-        catch (InvalidOperationException)
-        {
-        }
-        catch (NotSupportedException)
-        {
-        }
-
-        return null;
-    }
+    private Task<string> GetFileTextAsync()
+        => InternalUtilities.TryGetFileTextAsync(this);
 
     private void OnAboutClick(object sender, RoutedEventArgs e)
         => AboutPanel.Visibility = Visibility.Visible;

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
@@ -103,7 +104,7 @@ internal class InternalUtilities
         catch (InvalidOperationException)
         {
         }
-        catch (System.Security.SecurityException)
+        catch (SecurityException)
         {
         }
         catch (NotSupportedException)
@@ -111,6 +112,55 @@ internal class InternalUtilities
         }
         catch (ExternalException)
         {
+        }
+
+        return null;
+    }
+
+    public static async Task<string> TryGetFileTextAsync(Window window, Action<Exception> errorHandler = null)
+    {
+        try
+        {
+            var file = await SelectFileAsync(window);
+            if (file == null || !file.Exists) return null;
+            return await File.ReadAllTextAsync(file.FullName);
+        }
+        catch (ArgumentException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (IOException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (SecurityException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (InvalidOperationException ex )
+        {
+            errorHandler(ex);
+        }
+        catch (NotSupportedException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (ExternalException ex)
+        {
+            errorHandler(ex);
+        }
+        catch (OutOfMemoryException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            errorHandler(ex);
+            throw;
         }
 
         return null;

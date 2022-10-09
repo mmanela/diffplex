@@ -13,7 +13,6 @@ namespace DiffPlex.Model
             if (s.StartsWith("_")) return s.Substring(1);
             var i = s.Length - 5;
             return s.IndexOf(" (_") == i ? s.Substring(0, i) : s;
-
         }
 
         internal static string DuplicateText(string text, int repeat = 2)
@@ -51,6 +50,12 @@ Excepteur sint occaecat cupidatat non proident,
 sunt in culpa qui officia deserunt mollit 
 anim id est laborum
 
+中文测试
+一二三四五六七八九十
+帝府普拉克斯
+還有繁體中文測試，と日本語、한국어、Français、Русский。
+
+And… 😊 (●'◡'●) ✈🚗 ★▲ [Left] End.
 =======
 ";
 
@@ -79,6 +84,10 @@ sunt in culpa qui officia deserunt mollit
 anim id est laborum
 
 中文测试
+《清平调·其一》　【唐】李白
+云想衣裳花想容，春风拂槛露华浓。若非群玉山头见，会向瑶台月下逢。
+
+And…  😊 (●'◡'●) ✈🚢 ★ [Right] End.
 =======
 ";
     }

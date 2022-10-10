@@ -19,6 +19,8 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <Authors>Kingcean Tuan; Matthew Manela</Authors>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>../opensource.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="DiffTextView.xaml" />

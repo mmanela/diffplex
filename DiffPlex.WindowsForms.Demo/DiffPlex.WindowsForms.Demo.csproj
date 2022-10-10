@@ -15,6 +15,7 @@
     <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

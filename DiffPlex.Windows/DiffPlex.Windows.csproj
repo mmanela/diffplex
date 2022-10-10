@@ -7,13 +7,13 @@
     <PackageId>DiffPlex.Windows</PackageId>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <PackageTags>diff</PackageTags>
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <Description>DiffPlex.Windows is a Windows App SDK control library that allows you to programatically render visual text diffs in your application.</Description>
     <LangVersion>10.0</LangVersion>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <Authors>Kingcean Tuan; Matthew Manela</Authors>
     <Copyright>Copyright (c) 2022 Matthew Manela. All rights reserved.</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

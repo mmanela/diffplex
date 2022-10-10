@@ -83,7 +83,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty LineNumberWidthProperty = RegisterDependencyProperty(nameof(LineNumberWidth), 60, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
+            if (d is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not int n) return;
             c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = c.InlineContentPanel.LineNumberWidth = n;
         });
 
@@ -97,7 +97,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty OldTextHeaderProperty = RegisterDependencyProperty<string>(nameof(OldTextHeader), null, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
+            if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
         });
 
@@ -106,7 +106,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty NewTextHeaderProperty = RegisterDependencyProperty<string>(nameof(NewTextHeader), null, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
+            if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
             c.UpdateHeaderText();
         });
 
@@ -115,7 +115,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>(nameof(HeaderHeight), 0, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is double n)) return;
+            if (d is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not double n) return;
             c.HeaderRow.Height = new GridLength(n);
             c.isHeaderEnabled = true;
         });
@@ -190,7 +190,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty IgnoreUnchangedProperty = RegisterDependencyProperty(nameof(IgnoreUnchanged), false, (o, e) =>
         {
-            if (!(o is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b))
+            if (o is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not bool b)
                 return;
             if (b)
             {
@@ -216,7 +216,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty LinesContextProperty = RegisterDependencyProperty(nameof(LinesContext), 1, (o, e) =>
         {
-            if (!(o is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int i))
+            if (o is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not int i)
                 return;
             if (i < 0) i = 0;
             if (c.IgnoreUnchanged)
@@ -234,7 +234,7 @@ namespace DiffPlex.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty IsSideBySideProperty = RegisterDependencyProperty(nameof(IsSideBySide), true, (d, e) =>
         {
-            if (!(d is DiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is bool b)) return;
+            if (d is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not bool b) return;
             c.SideBySideModeToggle.IsChecked = b;
             c.InlineModeToggle.IsChecked = !b;
             c.ChangeViewMode(b);
@@ -911,7 +911,7 @@ namespace DiffPlex.Wpf.Controls
 
         private void ContextLineMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuItem m) || !(m.Header is string s) || !int.TryParse(s.Replace("_", string.Empty), out var i) || i < 0) return;
+            if (sender is not MenuItem m || m.Header is not string s || !int.TryParse(s.Replace("_", string.Empty), out var i) || i < 0) return;
             LinesContext = i;
         }
 
@@ -1029,7 +1029,7 @@ namespace DiffPlex.Wpf.Controls
         {
             return DependencyProperty.Register(name, typeof(T), typeof(DiffViewer), new PropertyMetadata(defaultValue, (d, e) =>
             {
-                if (!(d is DiffViewer c) || e.OldValue == e.NewValue) return;
+                if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
                 c.Refresh();
             }));
         }

@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiffPlex.Model
+namespace DiffPlex.Model;
+
+static class TestData
 {
-    static class TestData
+    internal static object RemoveHotkey(object content)
     {
-        internal static object RemoveHotkey(object content)
+        if (!(content is string s)) return content;
+        s = s.Trim();
+        if (s.StartsWith("_")) return s.Substring(1);
+        var i = s.Length - 5;
+        return s.IndexOf(" (_") == i ? s.Substring(0, i) : s;
+    }
+
+    internal static string DuplicateText(string text, int repeat = 2)
+    {
+        var sb = new StringBuilder();
+        for (var i = 0; i < repeat; i++)
         {
-            if (!(content is string s)) return content;
-            s = s.Trim();
-            if (s.StartsWith("_")) return s.Substring(1);
-            var i = s.Length - 5;
-            return s.IndexOf(" (_") == i ? s.Substring(0, i) : s;
+            sb.Append(text);
         }
 
-        internal static string DuplicateText(string text, int repeat = 2)
-        {
-            var sb = new StringBuilder();
-            for (var i = 0; i < repeat; i++)
-            {
-                sb.Append(text);
-            }
+        return sb.ToString();
+    }
 
-            return sb.ToString();
-        }
-
-        internal const string OldText =
-            @"ABCDEFG hijklmn 01234567 _!# 98?
+    internal const string OldText =
+        @"ABCDEFG hijklmn 01234567 _!# 98?
 
 We the people
 of the united states of america
@@ -58,8 +58,8 @@ And… 😊 (●'◡'●) ✈🚗 ★★★★★ ▲ [Left] End.
 =======
 ";
 
-        internal const string NewText =
-            @"ABCDEFG opq rst uvw xyz 01234567 _&^ 98.
+    internal const string NewText =
+        @"ABCDEFG opq rst uvw xyz 01234567 _&^ 98.
 
 We the people
 in order to form a more perfect union
@@ -88,5 +88,4 @@ anim id est laborum
 And…  😊 (●'◡'●) ✈🚢 ★★★★★ [Right] End.
 =======
 ";
-    }
 }

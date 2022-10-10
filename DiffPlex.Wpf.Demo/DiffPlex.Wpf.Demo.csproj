@@ -16,6 +16,7 @@
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <StartupObject>DiffPlex.Wpf.Demo.App</StartupObject>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>

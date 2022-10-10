@@ -18,69 +18,68 @@ using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
 using DiffPlex.Wpf.Controls;
 
-namespace DiffPlex.Wpf.Demo
+namespace DiffPlex.Wpf.Demo;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Initializes a new instance of the MainWindow class.
     /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        /// <summary>
-        /// Initializes a new instance of the MainWindow class.
-        /// </summary>
-        public MainWindow()
+        InitializeComponent();
+        LoadData();
+    }
+
+    private void LoadData()
+    {
+        var now = DateTime.Now;
+        var isDark = now.Hour < 6 || now.Hour >= 18;
+        DiffView.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
+        DiffView.OldText = TestData.DuplicateText(TestData.OldText, 100);
+        DiffView.NewText = TestData.DuplicateText(TestData.NewText, 100);
+        DiffView.SetHeaderAsOldToNew();
+        Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
+        DiffButton.Background = FutherActionsButton.Background = WindowButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
+        IgnoreUnchangedCheckBox.Content = TestData.RemoveHotkey(DiffView.CollapseUnchangedSectionsToggleTitle);
+        MarginLineCountLabel.Content = TestData.RemoveHotkey(DiffView.ContextLinesMenuItemsTitle);
+    }
+
+    private void DiffButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DiffView.IsInlineViewMode)
         {
-            InitializeComponent();
-            LoadData();
+            DiffView.ShowSideBySide();
+            return;
         }
 
-        private void LoadData()
-        {
-            var now = DateTime.Now;
-            var isDark = now.Hour < 6 || now.Hour >= 18;
-            DiffView.Foreground = new SolidColorBrush(isDark ? Color.FromRgb(240, 240, 240) : Color.FromRgb(32, 32, 32));
-            DiffView.OldText = TestData.DuplicateText(TestData.OldText, 50);
-            DiffView.NewText = TestData.DuplicateText(TestData.NewText, 50);
-            DiffView.SetHeaderAsOldToNew();
-            Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
-            DiffButton.Background = FutherActionsButton.Background = WindowButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
-            IgnoreUnchangedCheckBox.Content = TestData.RemoveHotkey(DiffView.CollapseUnchangedSectionsToggleTitle);
-            MarginLineCountLabel.Content = TestData.RemoveHotkey(DiffView.ContextLinesMenuItemsTitle);
-        }
+        DiffView.ShowInline();
+    }
 
-        private void DiffButton_Click(object sender, RoutedEventArgs e)
+    private void FutherActionsButton_Click(object sender, RoutedEventArgs e)
+    {
+        DiffView.OpenViewModeContextMenu();
+    }
+
+    private void WindowButton_Click(object sender, RoutedEventArgs e)
+    {
+        var has = false;
+        foreach (var w in Application.Current.Windows)
         {
-            if (DiffView.IsInlineViewMode)
+            if (w is DiffWindow dw)
             {
-                DiffView.ShowSideBySide();
-                return;
+                dw.Activate();
+                has = true;
+                break;
             }
-
-            DiffView.ShowInline();
         }
 
-        private void FutherActionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            DiffView.OpenViewModeContextMenu();
-        }
-
-        private void WindowButton_Click(object sender, RoutedEventArgs e)
-        {
-            var has = false;
-            foreach (var w in Application.Current.Windows)
-            {
-                if (w is DiffWindow dw)
-                {
-                    dw.Activate();
-                    has = true;
-                    break;
-                }
-            }
-
-            if (has) return;
-            var win = new DiffWindow();
-            win.OpenFileOnBoth();
-            win.Show();
-        }
+        if (has) return;
+        var win = new DiffWindow();
+        win.OpenFileOnBoth();
+        win.Show();
     }
 }

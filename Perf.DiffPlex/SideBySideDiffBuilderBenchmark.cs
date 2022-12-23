@@ -34,6 +34,12 @@ namespace Perf.DiffPlex
         {
             return sideBySideDiffer.BuildDiffModel(oldText, newText);
         }
+
+        [Benchmark]
+        public SideBySideDiffModel BuildDiffModelIgnoreCase()
+        {
+            return sideBySideDiffer.BuildDiffModel(oldText, newText, true, true);
+        }
         
         private static string Implode<T>(IEnumerable<T> enumerable, string delim)
         {
@@ -87,7 +93,7 @@ namespace Perf.DiffPlex
             var builder = new StringBuilder();
             foreach (var i in Enumerable.Range(0, Random.Next(0, maxLength)))
             {
-                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 65)));
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 32 * Random.Next(2) + 65)));
                 builder.Append(ch);
             }
 

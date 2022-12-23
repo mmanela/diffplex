@@ -46,8 +46,8 @@ namespace DiffPlex.DiffBuilder
         /// </summary>
         /// <param name="oldText">The old text to diff.</param>
         /// <param name="newText">The new text.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="ignoreWhiteSpace"><see langword="true"/> if ignore the white space; otherwise, <see langword="false"/>.</param>
+        /// <param name="ignoreCase"><see langword="true"/> if case-insensitive; otherwise, <see langword="false"/>.</param>
         /// <param name="chunker">The chunker.</param>
         /// <returns>The diffs result.</returns>
         public static DiffPaneModel Diff(string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)
@@ -61,8 +61,8 @@ namespace DiffPlex.DiffBuilder
         /// <param name="differ">The differ instance.</param>
         /// <param name="oldText">The old text to diff.</param>
         /// <param name="newText">The new text.</param>
-        /// <param name="ignoreWhiteSpace">true if ignore the white space; othewise, false.</param>
-        /// <param name="ignoreCase">true if case-insensitive; otherwise, false.</param>
+        /// <param name="ignoreWhiteSpace"><see langword="true"/> if ignore the white space; otherwise, <see langword="false"/>.</param>
+        /// <param name="ignoreCase"><see langword="true"/> if case-insensitive; otherwise, <see langword="false"/>.</param>
         /// <param name="chunker">The chunker.</param>
         /// <returns>The diffs result.</returns>
         public static DiffPaneModel Diff(IDiffer differ, string oldText, string newText, bool ignoreWhiteSpace = true, bool ignoreCase = false, IChunker chunker = null)

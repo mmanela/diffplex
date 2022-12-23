@@ -8,7 +8,7 @@ namespace DiffPlex.DiffBuilder
     public interface ISideBySideDiffBuilder
     {
         /// <summary>
-        /// Builds a diff model for  displaying diffs in a side by side view
+        /// Builds a diff model for displaying diffs in a side by side view
         /// </summary>
         /// <param name="oldText">The old text.</param>
         /// <param name="newText">The new text.</param>

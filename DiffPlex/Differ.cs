@@ -61,14 +61,14 @@ namespace DiffPlex
             if (newText == null) throw new ArgumentNullException(nameof(newText));
             if (chunker == null) throw new ArgumentNullException(nameof(chunker));
 
-            var pieceHash = new Dictionary<string, int>();
+            var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             var lineDiffs = new List<DiffBlock>();
 
             var modOld = new ModificationData(oldText);
             var modNew = new ModificationData(newText);
 
-            BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, ignoreCase, chunker);
-            BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, ignoreCase, chunker);
+            BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, chunker);
+            BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, chunker);
 
             BuildModificationData(modOld, modNew);
 
@@ -326,7 +326,7 @@ namespace DiffPlex
             }
         }
 
-        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, bool ignoreCase, IChunker chunker)
+        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, IChunker chunker)
         {
             var pieces = string.IsNullOrEmpty(data.RawData)
                 ? emptyStringArray
@@ -340,7 +340,6 @@ namespace DiffPlex
             {
                 string piece = pieces[i];
                 if (ignoreWhitespace) piece = piece.Trim();
-                if (ignoreCase) piece = piece.ToUpperInvariant();
 
                 if (pieceHash.ContainsKey(piece))
                 {

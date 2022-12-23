@@ -4,7 +4,11 @@ namespace DiffPlex.Chunkers
 {
     public class LineEndingsPreservingChunker:IChunker
     {
-        private readonly string[] emptyArray = new string[0];
+#if NETSTANDARD1_3_OR_GREATER || NET46_OR_GREATER || NETCOREAPP
+        private static readonly string[] emptyStringArray = System.Array.Empty<string>();
+#else
+        private static readonly string[] emptyStringArray = new string[0];
+#endif
 
         /// <summary>
         /// Gets the default singleton instance of the chunker.
@@ -14,7 +18,7 @@ namespace DiffPlex.Chunkers
         public string[] Chunk(string text)
         {
             if (string.IsNullOrEmpty(text))
-                return emptyArray;
+                return emptyStringArray;
 
             var output = new List<string>();
             var lastCut = 0;

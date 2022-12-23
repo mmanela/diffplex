@@ -3,17 +3,17 @@
 namespace DiffPlex.Model
 {
     /// <summary>
-    /// The result of diffing two peices of text
+    /// The result of diffing two pieces of text
     /// </summary>
     public class DiffResult
     {
         /// <summary>
-        /// The chunked peices of the old text
+        /// The chunked pieces of the old text
         /// </summary>
         public string[] PiecesOld { get; }
 
         /// <summary>
-        /// The chunked peices of the new text
+        /// The chunked pieces of the new text
         /// </summary>
         public string[] PiecesNew { get; }
 

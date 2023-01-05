@@ -7,11 +7,8 @@ namespace DiffPlex
 {
     public class Differ : IDiffer
     {
-#if NETSTANDARD1_3_OR_GREATER || NET46_OR_GREATER || NETCOREAPP
-        private static readonly string[] emptyStringArray = Array.Empty<string>();
-#else
+
         private static readonly string[] emptyStringArray = new string[0];
-#endif
 
         /// <summary>
         /// Gets the default singleton instance of differ instance.

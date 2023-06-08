@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using System.Windows.Shapes;
 
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
+using DiffPlex.WindowsForms.Controls;
 
 namespace DiffPlex.Wpf.Controls;
 
@@ -115,9 +117,39 @@ public partial class DiffViewer : UserControl
     /// </summary>
     public static readonly DependencyProperty HeaderHeightProperty = RegisterDependencyProperty<double>(nameof(HeaderHeight), 0, (d, e) =>
     {
-        if (d is not DiffViewer c || e.OldValue == e.NewValue || e.NewValue is not double n) return;
+        if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
+        if (e.NewValue is not double n)
+        {
+            if (e.NewValue is not int i) return;
+            n = i;
+        }
+
         c.HeaderRow.Height = new GridLength(n);
         c.isHeaderEnabled = true;
+    });
+
+    public static readonly DependencyProperty IsCommandBarVisibleProperty = RegisterDependencyProperty(nameof(IsCommandBarVisible), false, (d, e) =>
+    {
+        if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
+        if (e.NewValue is not bool b)
+        {
+            if (e.NewValue is Visibility v) b = v == Visibility.Visible;
+            return;
+        }
+
+        c.CommandRow.Height = new GridLength(30);
+    });
+
+    public static readonly DependencyProperty IsOpenFileButtonVisibleProperty = RegisterDependencyProperty(nameof(IsOpenFileButtonVisible), true, (d, e) =>
+    {
+        if (d is not DiffViewer c || e.OldValue == e.NewValue) return;
+        if (e.NewValue is not bool b)
+        {
+            if (e.NewValue is Visibility v) b = v == Visibility.Visible;
+            return;
+        }
+
+        c.OpenFileButton.Visibility = b ? Visibility.Visible : Visibility.Collapsed;
     });
 
     /// <summary>
@@ -281,6 +313,13 @@ public partial class DiffViewer : UserControl
         CollapseUnchangedSectionsToggle.Header = Helper.GetButtonName(Resource.SkipUnchangedLines ?? "Collapse unchanged sections", "C");
         ContextLinesMenuItems.Header = Helper.GetButtonName(Resource.ContextLines ?? "Lines for context", "L");
         RefreshContextLinesMenuItemState(LinesContext);
+        OpenFileButton.Content = Resource.OpenFile;
+        OpenLeftFileMenuItem.Header = Resource.Left;
+        OpenRightFileMenuItem.Header = Resource.Right;
+        DiffButton.Content = Resource.SwitchViewMode;
+        GoToLabel.Content = Resource.GoTo;
+        PreviousButton.ToolTip = Resource.Previous;
+        NextButton.ToolTip = Resource.Next;
     }
 
     /// <summary>
@@ -424,6 +463,26 @@ public partial class DiffViewer : UserControl
     {
         get => (double)GetValue(HeaderHeightProperty);
         set => SetValue(HeaderHeightProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the foreground brush of the line added.
+    /// </summary>
+    [Bindable(true)]
+    [Category("Appearance")]
+    public bool IsCommandBarVisible
+    {
+        get => (bool)GetValue(IsCommandBarVisibleProperty);
+        set => SetValue(IsCommandBarVisibleProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether show open file button.
+    /// </summary>
+    public bool IsOpenFileButtonVisible
+    {
+        get => (bool)GetValue(IsOpenFileButtonVisibleProperty);
+        set => SetValue(IsOpenFileButtonVisibleProperty, value);
     }
 
     /// <summary>
@@ -632,6 +691,24 @@ public partial class DiffViewer : UserControl
     }
 
     /// <summary>
+    /// Gets or sets the margin of the customized menu.
+    /// </summary>
+    public Thickness MenuMargin
+    {
+        get => MenuPanel.Margin;
+        set => MenuPanel.Margin = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the margin of the customized additional menu.
+    /// </summary>
+    public Thickness AdditionalMenuMargin
+    {
+        get => AdditionalMenuPanel.Margin;
+        set => AdditionalMenuPanel.Margin = value;
+    }
+
+    /// <summary>
     /// Gets a value indicating whether the grid splitter has logical focus and mouse capture and the left mouse button is pressed.
     /// </summary>
     public bool IsSplitterDragging => Splitter.IsDragging;
@@ -655,6 +732,146 @@ public partial class DiffViewer : UserControl
     /// Gets a value indicating whether it is inline view mode.
     /// </summary>
     public bool IsInlineViewMode => InlineContentPanel.Visibility == Visibility.Visible;
+
+    /// <summary>
+    /// Gets the customized menu children.
+    /// </summary>
+    public UIElementCollection MenuChildren => MenuPanel.Children;
+
+    /// <summary>
+    /// Gets the customized additional menu children.
+    /// </summary>
+    public UIElementCollection AdditionalMenuChildren => AdditionalMenuPanel.Children;
+
+    /// <summary>
+    /// Gets or sets the filter of file.
+    /// </summary>
+    public string FileFilter { get; set; } = "All files|*.*|Plain text|*.txt;*.log;*.json;*.xml;*.csv;*.config;*.js;*.ts;*.jsx;*.tsx;*.py;*.cs;*.cpp;*.h;*.java;*.go;*.vb;*.vbs;*.xaml;*.md;*.svg;*.sql;*.csproj;*.cxproj;*.ini";
+
+    /// <summary>
+    /// Sets the text.
+    /// </summary>
+    /// <param name="left">The old text.</param>
+    /// <param name="right">The new text.</param>
+    public void SetText(string left, string right)
+    {
+        OldText = left;
+        NewText = right;
+    }
+
+    /// <summary>
+    /// Sets old text.
+    /// </summary>
+    /// <param name="value">The old text.</param>
+    /// <param name="header">An optional header for old text.</param>
+    public void SetOldText(string value, string header = null)
+    {
+        OldText = value ?? string.Empty;
+        if (header != null) OldTextHeader = header;
+    }
+
+    /// <summary>
+    /// Sets new text.
+    /// </summary>
+    /// <param name="value">The new text.</param>
+    /// <param name="header">An optional header for new text.</param>
+    public void SetNewText(string value, string header = null)
+    {
+        NewText = value ?? string.Empty;
+        if (header != null) NewTextHeader = header;
+    }
+
+    /// <summary>
+    /// Sets file contents as old and new text.
+    /// </summary>
+    /// <param name="oldFile">The old file information instance to read content.</param>
+    /// <param name="newFile">The new file information instance to read content.</param>
+    /// <returns>A token for the asynchronous operation.</returns>
+    public async Task SetFiles(FileInfo oldFile, FileInfo newFile)
+    {
+        string left = string.Empty;
+        OldTextHeader = GenerateHeader(oldFile);
+        NewTextHeader = GenerateHeader(newFile);
+        if (oldFile != null)
+        {
+            using var reader1 = oldFile.OpenText();
+            left = await reader1.ReadToEndAsync();
+            if (oldFile == newFile)
+            {
+                OldText = NewText = left;
+                return;
+            }
+        }
+
+        string right = string.Empty;
+        if (newFile != null)
+        {
+            using var reader2 = newFile.OpenText();
+            right = await reader2.ReadToEndAsync();
+        }
+
+        OldText = left;
+        NewText = right;
+    }
+
+    /// <summary>
+    /// Shows the context menu to open file.
+    /// </summary>
+    public void ShowOpenFileContextMenu()
+    {
+        OpenFileContextMenu.IsOpen = true;
+    }
+
+    /// <summary>
+    /// Pops up a file dialog to open file on both of left and right.
+    /// </summary>
+    public void OpenFileOnBoth()
+    {
+        var text = OpenFileOnLeft(null, out var file);
+        NewText = text;
+        if (text == null) return;
+        NewTextHeader = GenerateHeader(file);
+    }
+
+    /// <summary>
+    /// Pops up a file dialog to open file on left.
+    /// </summary>
+    public void OpenFileOnLeft()
+        => OpenFileOnLeft(null, out _);
+
+    /// <summary>
+    /// Pops up a file dialog to open file on left.
+    /// </summary>
+    /// <param name="header">The optional header.</param>
+    /// <param name="file">The file opened.</param>
+    public string OpenFileOnLeft(string header, out FileInfo file)
+    {
+        var text = OpenTextFile(out file);
+        if (text == null) return null;
+        OldText = text;
+        OldTextHeader = header ?? GenerateHeader(file);
+        return text;
+    }
+
+    /// <summary>
+    /// Pops up a file dialog to open file on right.
+    /// </summary>
+    public void OpenFileOnRight()
+        => OpenFileOnRight(null, out _);
+
+    /// <summary>
+    /// Pops up a file dialog to open file on right.
+    /// </summary>
+    /// <param name="header">The optional header.</param>
+    /// <param name="file">The file opened.</param>
+    public string OpenFileOnRight(string header, out FileInfo file)
+    {
+        var text = OpenTextFile(out file);
+        if (text == null) return null;
+        NewText = text;
+        NewTextHeader = header ?? GenerateHeader(file);
+        return text;
+    }
 
     /// <summary>
     /// Gets the side-by-side diffs result.
@@ -1013,6 +1230,244 @@ public partial class DiffViewer : UserControl
             j++;
             if (menu is MenuItem mi) mi.IsChecked = i == j;
         }
+    }
+
+    /// <summary>
+    /// Sets the style to the menu buttons.
+    /// The buttons in customized menu bar will not be impacted.
+    /// </summary>
+    /// <param name="style">The button style to set.</param>
+    public void SetMenuButtonStyle(Style style)
+    {
+        OpenFileButton.Style = DiffButton.Style = FurtherActionsButton.Style = NextButton.Style = PreviousButton.Style = style;
+    }
+
+    /// <summary>
+    /// Sets the control template to the menu buttons.
+    /// The buttons in customized menu bar will not be impacted.
+    /// </summary>
+    /// <param name="template">The control template to set.</param>
+    public void SetMenuButtonTemplate(ControlTemplate template)
+    {
+        OpenFileButton.Template = DiffButton.Template = FurtherActionsButton.Template = NextButton.Template = PreviousButton.Template = template;
+    }
+
+    /// <summary>
+    /// Sets the style to the menu text input boxes.
+    /// The text input boxes in customized menu bar will not be impacted.
+    /// </summary>
+    /// <param name="style">The button style to set.</param>
+    public void SetMenuTextBoxStyle(Style style)
+    {
+        GoToText.Style = style;
+    }
+
+    /// <summary>
+    /// Sets the control template to the menu text input boxes.
+    /// The text input boxes in customized menu bar will not be impacted.
+    /// </summary>
+    /// <param name="template">The control template to set.</param>
+    public void SetMenuTextBoxTemlate(ControlTemplate template)
+    {
+        GoToText.Template = template;
+    }
+
+    /// <summary>
+    /// Scrolls to the previous view of diff section.
+    /// </summary>
+    /// <remarks>The line.</remarks>
+    public DiffPiece PreviousDiff()
+    {
+        var isLeft = string.IsNullOrEmpty(NewText);
+        var pageSize = GetLinesInViewport(isLeft, VisibilityLevels.All).Count();
+        var lines = GetLinesBeforeViewport(isLeft, VisibilityLevels.All).Reverse().ToList();
+        if (lines.Count < pageSize)
+        {
+            var last = lines.LastOrDefault();
+            GoTo(last);
+            return last;
+        }
+
+        var line = lines.Take(pageSize).Reverse().FirstOrDefault(ele => ele.Type != ChangeType.Unchanged);
+        line ??= lines.FirstOrDefault(ele => ele.Type != ChangeType.Unchanged);
+        GoTo(line, isLeft);
+        return line;
+    }
+
+    /// <summary>
+    /// Scrolls to the next view of diff section.
+    /// </summary>
+    /// <remarks>The line.</remarks>
+    public DiffPiece NextDiff()
+    {
+        var isLeft = string.IsNullOrEmpty(NewText);
+        var line = GetLinesAfterViewport(isLeft, VisibilityLevels.All).FirstOrDefault(ele => ele.Type != ChangeType.Unchanged);
+        GoTo(line, isLeft);
+        return line;
+    }
+
+    private string GenerateHeader(FileInfo file)
+    {
+        if (file == null || !file.Exists) return Resource.Empty;
+        try
+        {
+            var dir = file.Directory;
+            if (!string.IsNullOrWhiteSpace(dir?.Name)) return string.Concat(dir.Name, '\\', file.Name);
+        }
+        catch (IOException)
+        {
+        }
+        catch (SecurityException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (ExternalException)
+        {
+        }
+
+        return file.Name;
+    }
+
+    private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (OldText == null)
+        {
+            var text = OpenFileOnLeft(null, out var file);
+            if (text == null || NewText != null) return;
+            NewText = text;
+            NewTextHeader = GenerateHeader(file);
+        }
+        else if (NewText == null)
+        {
+            OpenRightFileMenuItem_Click(sender, e);
+        }
+        else
+        {
+            OpenFileContextMenu.IsOpen = true;
+        }
+    }
+
+    private void OpenLeftFileMenuItem_Click(object sender, RoutedEventArgs e)
+        => OpenFileOnLeft(null, out _);
+
+    private void OpenRightFileMenuItem_Click(object sender, RoutedEventArgs e)
+        => OpenFileOnRight(null, out _);
+
+    private void DiffButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (IsInlineViewMode)
+        {
+            ShowSideBySide();
+            return;
+        }
+
+        ShowInline();
+    }
+
+    private void FurtherActionsButton_Click(object sender, RoutedEventArgs e)
+    {
+        OpenViewModeContextMenu();
+    }
+
+    private void GoToText_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var s = GoToText.Text?.Trim();
+        if (string.IsNullOrEmpty(s)) return;
+        if (!int.TryParse(s, out var i)) return;
+        GoTo(i, string.IsNullOrEmpty(NewText));
+    }
+
+    private void GoToText_LostFocus(object sender, RoutedEventArgs e)
+    {
+        GoToText.Text = null;
+    }
+
+    private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        => PreviousDiff();
+
+    private void NextButton_Click(object sender, RoutedEventArgs e)
+        => NextDiff();
+
+    private string OpenTextFile(out FileInfo file)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = FileFilter
+        };
+        if (dialog.ShowDialog() != true)
+        {
+            file = null;
+            return null;
+        }
+
+        var fileName = dialog.FileName;
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            file = null;
+            return null;
+        }
+
+        try
+        {
+            file = new FileInfo(fileName);
+        }
+        catch (ArgumentException)
+        {
+            file = null;
+        }
+        catch (IOException)
+        {
+            file = null;
+        }
+        catch (InvalidOperationException)
+        {
+            file = null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            file = null;
+        }
+        catch (NotSupportedException)
+        {
+            file = null;
+        }
+        catch (SecurityException)
+        {
+            file = null;
+        }
+
+        try
+        {
+            return File.ReadAllText(fileName);
+        }
+        catch (ArgumentException)
+        {
+        }
+        catch (IOException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (SecurityException)
+        {
+        }
+
+        return null;
     }
 
     private static DependencyProperty RegisterDependencyProperty<T>(string name)

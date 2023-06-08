@@ -65,35 +65,5 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel x:Name="ActionBar" Background="#20808080" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-            <StackPanel x:Name="MenuPanel" Orientation="Horizontal" Margin="0" ></StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="16,0,16,0" >
-                <Button Style="{DynamicResource SolidButtonStyle}" Width="100" Height="20" x:Name="OpenFileButton" Content="Open File" Click="OpenFileButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0,0,16,0">
-                    <Button.ContextMenu>
-                        <ContextMenu x:Name="OpenFileContextMenu">
-                            <MenuItem x:Name="OpenLeftFileMenuItem" Header="Left" Click="OpenLeftFileMenuItem_Click" />
-                            <MenuItem x:Name="OpenRightFileMenuItem" Header="Right" Click="OpenRightFileMenuItem_Click" />
-                        </ContextMenu>
-                    </Button.ContextMenu>
-                </Button>
-                <Button Width="120" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0" Style="{DynamicResource SolidButtonStyle}" />
-                <Button Width="20" Height="20" x:Name="FurtherActionsButton" Content="…" Click="FurtherActionsButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="1,0,15,0" Style="{DynamicResource SolidButtonStyle}" />
-                <Label x:Name="GoToLabel" Height="20" Padding="0" Margin="16,0,8,0" VerticalContentAlignment="Center" Foreground="{Binding Foreground, ElementName=MainWindow}" >Go to</Label>
-                <TextBox Width="80" Height="20" VerticalContentAlignment="Center" x:Name="GoToText" Padding="8,0,8,0" Text="" Foreground="{Binding Foreground, ElementName=MainWindow}" CaretBrush="{Binding Foreground, ElementName=MainWindow}" Background="{x:Null}" Margin="0,0,8,0" TextChanged="GoToText_TextChanged" LostFocus="GoToText_LostFocus" />
-                <Button Width="20" Height="20" x:Name="NextButton" Click="NextButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0,0,1,0" Style="{DynamicResource SolidButtonStyle}" >
-                    <Path Width="10" Height="10" Stretch="Fill" Stroke="{Binding Foreground, ElementName=MainWindow}" Data="M0,1 L4,8 5,8 9,1" />
-                </Button>
-                <Button Width="20" Height="20" x:Name="PreviousButton" Click="PreviousButton_Click" Foreground="{Binding Foreground, ElementName=MainWindow}" Margin="0" Style="{DynamicResource SolidButtonStyle}" >
-                    <Path Width="10" Height="10" Stretch="Fill" Stroke="{Binding Foreground, ElementName=MainWindow}" Data="M0,8 L4,1 5,1 9,8" />
-                </Button>
-            </StackPanel>
-            <StackPanel x:Name="AdditionalMenuPanel" Orientation="Horizontal" Margin="0" ></StackPanel>
-        </StackPanel>
-        <diffplex:DiffViewer x:Name="DiffView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Foreground="{Binding Foreground, ElementName=MainWindow}" Grid.Row="1"/>
-    </Grid>
+    <diffplex:DiffViewer x:Name="DiffView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Foreground="{Binding Foreground, ElementName=MainWindow}" IsCommandBarVisible="True" Grid.Row="1" />
 </Window>

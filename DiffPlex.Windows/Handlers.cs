@@ -43,6 +43,11 @@ public class DiffTextLocalWebAppCommandHandler : ILocalWebAppCommandHandler
     }
 
     /// <summary>
+    /// Gets the identifier.
+    /// </summary>
+    public string Id => "diffplex";
+
+    /// <summary>
     /// Gets or sets the description of the command handler.
     /// </summary>
     public string Description { get; set; } = "The diff text.";
@@ -56,9 +61,9 @@ public class DiffTextLocalWebAppCommandHandler : ILocalWebAppCommandHandler
     /// Processes.
     /// </summary>
     /// <param name="request">The request message.</param>
-    /// <param name="manifest">The manifest of the local web app.</param>
+    /// <param name="args">The arguments of the local web app.</param>
     /// <returns>The response message.</returns>
-    public async Task<LocalWebAppResponseMessage> Process(LocalWebAppRequestMessage request, LocalWebAppManifest manifest)
+    public async Task<LocalWebAppResponseMessage> Process(LocalWebAppRequestMessage request, LocalWebAppCommandHandlerContext args)
     {
         var oldText = request?.Data?.TryGetStringValue("old") ?? request?.Data?.TryGetStringValue("o") ?? string.Empty;
         var newText = request?.Data?.TryGetStringValue("new") ?? request?.Data?.TryGetStringValue("n") ?? string.Empty;

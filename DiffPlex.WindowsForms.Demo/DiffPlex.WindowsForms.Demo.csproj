@@ -16,6 +16,7 @@
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
     <LangVersion>10.0</LangVersion>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>

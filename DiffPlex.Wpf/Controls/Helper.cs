@@ -231,7 +231,7 @@ internal static class Helper
         catch (InvalidOperationException)
         {
         }
-        
+
         return false;
     }
 
@@ -293,16 +293,9 @@ internal static class Helper
     internal static IEnumerable<DiffPiece> GetLinesInViewport(InternalLinesViewer panel, VisibilityLevels level)
     {
         var states = GetLineViewportStates(panel, level);
-        var needBreak = false;
         foreach (var item in states)
         {
-            if (!item.Item2)
-            {
-                if (needBreak) yield break;
-                continue;
-            }
-
-            needBreak = true;
+            if (!item.Item2) continue;
             yield return item.Item1;
         }
     }
@@ -332,16 +325,10 @@ internal static class Helper
     internal static IEnumerable<DiffPiece> GetLinesAfterViewport(InternalLinesViewer panel, VisibilityLevels level)
     {
         var states = GetLineViewportStates(panel, level);
-        var needReturn = false;
-        foreach (var item in states)
+        foreach (var item in states.Reverse())
         {
-            if (item.Item2)
-            {
-                needReturn = true;
-                continue;
-            }
-
-            if (needReturn) yield return item.Item1;
+            if (item.Item2) yield break;
+            yield return item.Item1;
         }
     }
 

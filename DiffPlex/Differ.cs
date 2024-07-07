@@ -341,9 +341,9 @@ namespace DiffPlex
                 string piece = pieces[i];
                 if (ignoreWhitespace) piece = piece.Trim();
 
-                if (pieceHash.ContainsKey(piece))
+                if (pieceHash.TryGetValue(piece, out var value))
                 {
-                    data.HashedPieces[i] = pieceHash[piece];
+                    data.HashedPieces[i] = value;
                 }
                 else
                 {

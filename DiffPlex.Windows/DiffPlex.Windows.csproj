@@ -29,7 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="README.md" />
-    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>
 

@@ -15,7 +15,6 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\License.txt" Link="License.txt" />
     <Content Include="..\DiffPlex.ico" Link="DiffPlex.ico" />
   </ItemGroup>
 

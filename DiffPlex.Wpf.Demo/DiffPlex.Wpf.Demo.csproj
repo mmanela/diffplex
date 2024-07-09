@@ -5,15 +5,6 @@
     <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Authors>Kingcean Tuan</Authors>
-    <Company />
-    <RootNamespace>DiffPlex.Wpf</RootNamespace>
-    <AssemblyName>DiffPlex.Wpf.Demo</AssemblyName>
-    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
-    <PackageIcon>diffplex_icon.png</PackageIcon>
     <StartupObject>DiffPlex.Wpf.Demo.App</StartupObject>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
@@ -25,11 +16,6 @@
   
   <ItemGroup>
     <Content Include="..\DiffPlex.ico" Link="DiffPlex.ico" />
-    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
-    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="..\DiffPlex.Wpf\Icon.png" Link="Icon.png" />
   </ItemGroup>
 

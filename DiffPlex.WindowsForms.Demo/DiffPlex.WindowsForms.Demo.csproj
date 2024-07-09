@@ -5,31 +5,17 @@
     <TargetFrameworks>net6.0-windows;net46</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Authors>Kingcean Tuan</Authors>
-    <Company />
-    <RootNamespace>DiffPlex.WindowsForms</RootNamespace>
-    <AssemblyName>DiffPlex.WindowsForms.Demo</AssemblyName>
-    <PackageLicenseUrl>https://github.com/mmanela/diffplex/blob/master/License.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/mmanela/diffplex/</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/mmanela/diffplex.git</RepositoryUrl>
-    <PackageIcon>diffplex_icon.png</PackageIcon>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\DiffPlex.Wpf.Demo\TestData.cs" Link="TestData.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex.Wpf\DiffPlex.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\DiffPlex.Wpf.Demo\TestData.cs" Link="TestData.cs" />
     <Content Include="..\DiffPlex.ico" Link="DiffPlex.ico" />
-    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
-    <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>
 
 </Project>

@@ -10,12 +10,12 @@ namespace DiffPlex.Model
         /// <summary>
         /// The chunked pieces of the old text
         /// </summary>
-        public string[] PiecesOld { get; }
+        public IReadOnlyList<string> PiecesOld { get; }
 
         /// <summary>
         /// The chunked pieces of the new text
         /// </summary>
-        public string[] PiecesNew { get; }
+        public IReadOnlyList<string> PiecesNew { get; }
 
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace DiffPlex.Model
         /// </summary>
         public IList<DiffBlock> DiffBlocks { get; }
 
-        public DiffResult(string[] piecesOld, string[] piecesNew, IList<DiffBlock> blocks)
+        public DiffResult(IReadOnlyList<string> piecesOld, IReadOnlyList<string> piecesNew, IList<DiffBlock> blocks)
         {
             PiecesOld = piecesOld;
             PiecesNew = piecesNew;

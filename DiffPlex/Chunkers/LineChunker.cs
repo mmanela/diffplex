@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DiffPlex.Chunkers
 {
@@ -11,7 +12,7 @@ namespace DiffPlex.Chunkers
         /// </summary>
         public static LineChunker Instance { get; } = new LineChunker();
 
-        public string[] Chunk(string text)
+        public IReadOnlyList<string> Chunk(string text)
         {
             return text.Split(lineSeparators, StringSplitOptions.None);
         }

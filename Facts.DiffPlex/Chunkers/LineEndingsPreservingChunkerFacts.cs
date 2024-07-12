@@ -16,7 +16,7 @@ namespace Facts.DiffPlex.Chunkers
             var chunks = chunker.Chunk(sampleText);
 
             //ASSERT
-            Assert.Equal(4, chunks.Length);
+            Assert.Equal(4, chunks.Count);
             Assert.Equal("\r\n", chunks[0]);
             Assert.Equal("First\r\n", chunks[1]);
             Assert.Equal("Second\r\n", chunks[2]);
@@ -34,7 +34,7 @@ namespace Facts.DiffPlex.Chunkers
             var chunks = chunker.Chunk(sampleText);
 
             //ASSERT
-            Assert.Equal(3, chunks.Length);
+            Assert.Equal(3, chunks.Count);
             Assert.Equal("First\r\n", chunks[0]);
             Assert.Equal("Second\r\n", chunks[1]);
             Assert.Equal("Last", chunks[2]);
@@ -51,7 +51,7 @@ namespace Facts.DiffPlex.Chunkers
             var chunks = chunker.Chunk(sampleText);
 
             //ASSERT
-            Assert.Equal(3, chunks.Length);
+            Assert.Equal(3, chunks.Count);
             Assert.Equal("\r\n", chunks[0]);
             Assert.Equal("\r\n", chunks[1]);
             Assert.Equal("\r\n", chunks[2]);
@@ -68,7 +68,7 @@ namespace Facts.DiffPlex.Chunkers
             var chunks = chunker.Chunk(sampleText);
 
             //ASSERT
-            Assert.Equal(4, chunks.Length);
+            Assert.Equal(4, chunks.Count);
             Assert.Equal("\r\n", chunks[0]);
             Assert.Equal("First\n", chunks[1]);
             Assert.Equal("Second\r", chunks[2]);

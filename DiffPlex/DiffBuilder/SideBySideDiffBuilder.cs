@@ -180,7 +180,7 @@ namespace DiffPlex.DiffBuilder
                 }
             }
 
-            while (bPos < diffResult.PiecesNew.Length && aPos < diffResult.PiecesOld.Length)
+            while (bPos < diffResult.PiecesNew.Count && aPos < diffResult.PiecesOld.Count)
             {
                 oldPieces.Add(new DiffPiece(diffResult.PiecesOld[aPos], ChangeType.Unchanged, aPos + 1));
                 newPieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));

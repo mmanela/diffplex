@@ -1,4 +1,6 @@
-﻿namespace DiffPlex
+﻿using System.Collections.Generic;
+
+namespace DiffPlex
 {
     /// <summary>
     /// Responsible for how to turn the document into pieces
@@ -8,6 +10,6 @@
         /// <summary>
         /// Divide text into sub-parts
         /// </summary>
-        string[] Chunk(string text);
+        IReadOnlyList<string> Chunk(string text);
     }
 }

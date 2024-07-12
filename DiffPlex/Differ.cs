@@ -333,10 +333,10 @@ namespace DiffPlex
                 : chunker.Chunk(data.RawData);
 
             data.Pieces = pieces;
-            data.HashedPieces = new int[pieces.Length];
-            data.Modifications = new bool[pieces.Length];
+            data.HashedPieces = new int[pieces.Count];
+            data.Modifications = new bool[pieces.Count];
 
-            for (int i = 0; i < pieces.Length; i++)
+            for (int i = 0; i < pieces.Count; i++)
             {
                 string piece = pieces[i];
                 if (ignoreWhitespace) piece = piece.Trim();

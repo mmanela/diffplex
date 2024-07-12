@@ -1,4 +1,6 @@
-﻿namespace DiffPlex.Model
+﻿using System.Collections.Generic;
+
+namespace DiffPlex.Model
 {
     public class ModificationData
     {
@@ -8,7 +10,7 @@
 
         public bool[] Modifications { get; set; }
 
-        public string[] Pieces { get; set; }
+        public IReadOnlyList<string> Pieces { get; set; }
 
         public ModificationData(string str)
         {

@@ -7,9 +7,6 @@ namespace DiffPlex
 {
     public class Differ : IDiffer
     {
-
-        private static readonly string[] emptyStringArray = new string[0];
-
         /// <summary>
         /// Gets the default singleton instance of differ instance.
         /// </summary>
@@ -328,10 +325,15 @@ namespace DiffPlex
 
         private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationData data, bool ignoreWhitespace, IChunker chunker)
         {
-            var pieces = string.IsNullOrEmpty(data.RawData)
-                ? emptyStringArray
-                : chunker.Chunk(data.RawData);
+            if (string.IsNullOrEmpty(data.RawData))
+            {
+                data.Pieces = [];
+                data.HashedPieces = [];
+                data.Modifications = [];
+                return;
+            }
 
+            var pieces = chunker.Chunk(data.RawData);
             data.Pieces = pieces;
             data.HashedPieces = new int[pieces.Count];
             data.Modifications = new bool[pieces.Count];
@@ -351,6 +353,7 @@ namespace DiffPlex
                     pieceHash[piece] = pieceHash.Count;
                 }
             }
+
         }
     }
 }

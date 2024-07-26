@@ -292,8 +292,8 @@ public partial class DiffViewer : UserControl
     /// </summary>
     public Color InsertedBackColor
     {
-        get => GetColor(Core.InsertedForeground);
-        set => Core.InsertedForeground = ToBrush(value);
+        get => GetColor(Core.InsertedBackground);
+        set => Core.InsertedBackground = ToBrush(value);
     }
 
     /// <summary>

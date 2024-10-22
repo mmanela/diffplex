@@ -42,6 +42,8 @@ internal partial class InternalLinesViewer : UserControl
 
     public ContextMenu LineContextMenu { get; set; }
 
+    public bool IsTextWrapEnabled { get; set; }
+
     public double VerticalOffset => ValueScrollViewer.VerticalOffset;
 
     public int LineNumberWidth
@@ -68,7 +70,151 @@ internal partial class InternalLinesViewer : UserControl
         ValuePanel.Children.Clear();
     }
 
-    public StackPanel Add(int? number, string operation, string value, string changeType, UIElement source)
+    public WrapPanel Add(int? number, string operation, string value, string changeType, UIElement source)
+    {
+        if (source is DiffViewer diffViewer)
+        {
+            IsTextWrapEnabled = diffViewer.IsTextWrapEnabled;
+
+            var panel = new WrapPanel { Orientation = Orientation.Horizontal };
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var index = new TextBlock
+            {
+                Text = number.HasValue ? number.ToString() : string.Empty,
+                TextAlignment = TextAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(2)
+            };
+            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", diffViewer, Foreground));
+            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            ApplyTextBlockProperties(index, diffViewer);
+
+            var op = new TextBlock
+            {
+                Text = operation,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(2)
+            };
+            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", diffViewer, Foreground));
+            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            ApplyTextBlockProperties(op, diffViewer);
+
+            Grid.SetColumn(index, 0);
+            Grid.SetColumn(op, 1);
+            grid.Children.Add(index);
+            grid.Children.Add(op);
+
+            var text = new TextBlock
+            {
+                Text = value,
+                TextWrapping = IsTextWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            if (!string.IsNullOrEmpty(value))
+            {
+                text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", diffViewer, Foreground));
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+                ApplyTextBlockProperties(text, diffViewer);
+                grid.ContextMenu = LineContextMenu;
+            }
+
+            Grid.SetColumn(text, 2);
+            grid.Children.Add(text);
+
+            panel.Children.Add(grid);
+
+            ValuePanel.Children.Add(panel);
+            ValuePanel.CanHorizontallyScroll = false;
+            ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
+            return panel;
+        }
+        else
+        {
+            throw new Exception("Source is not a DiffViewer");
+        }
+    }
+
+    public WrapPanel Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
+    {
+        if (source is DiffViewer diffViewer)
+        {
+            IsTextWrapEnabled = diffViewer.IsTextWrapEnabled;
+
+            var index = new TextBlock
+            {
+                Text = number.HasValue ? number.ToString() : string.Empty,
+                TextAlignment = TextAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", diffViewer, Foreground));
+            index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            ApplyTextBlockProperties(index, diffViewer);
+            NumberPanel.Children.Add(index);
+
+            var op = new TextBlock
+            {
+                Text = operation,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", diffViewer, Foreground));
+            op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            ApplyTextBlockProperties(op, diffViewer);
+            OperationPanel.Children.Add(op);
+
+            var panel = new WrapPanel { Orientation = Orientation.Horizontal };
+            panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            value ??= new List<KeyValuePair<string, string>>();
+            foreach (var ele in value)
+            {
+                if (string.IsNullOrEmpty(ele.Key)) continue;
+                var text = new TextBlock
+                {
+                    Text = ele.Key,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    TextWrapping = IsTextWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap
+                };
+                if (!string.IsNullOrEmpty(ele.Value))
+                {
+                    if (!string.IsNullOrEmpty(ele.Key))
+                        text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", diffViewer, Foreground));
+                    text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", diffViewer));
+                }
+
+                ApplyTextBlockProperties(text, diffViewer);
+                panel.Children.Add(text);
+            }
+
+            if (panel.Children.Count == 0)
+            {
+                panel.Children.Add(new TextBlock());
+            }
+            else
+            {
+                panel.ContextMenu = LineContextMenu;
+            }
+
+            ValuePanel.Children.Add(panel);
+            ValuePanel.CanHorizontallyScroll = false;
+            ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
+            return panel;
+        }
+        else
+        {
+            throw new Exception("Source is not a DiffViewer");
+        }
+    }
+
+    public StackPanel AddNoWrap(int? number, string operation, string value, string changeType, UIElement source)
     {
         var index = new TextBlock
         {
@@ -106,10 +252,13 @@ internal partial class InternalLinesViewer : UserControl
 
         panel.Children.Add(text);
         ValuePanel.Children.Add(panel);
+        ValuePanel.CanHorizontallyScroll = true;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+
         return panel;
     }
 
-    public StackPanel Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
+    public StackPanel AddNoWrap(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, UIElement source)
     {
         var index = new TextBlock
         {
@@ -162,6 +311,9 @@ internal partial class InternalLinesViewer : UserControl
         }
 
         ValuePanel.Children.Add(panel);
+        ValuePanel.CanHorizontallyScroll = true;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+
         return panel;
     }
 
@@ -221,7 +373,7 @@ internal partial class InternalLinesViewer : UserControl
     private void ApplyTextBlockProperties(TextBlock text, UIElement source)
     {
         text.SetBinding(TextBlock.FontSizeProperty, GetBindings("FontSize", source));
-        text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, Helper.FontFamily ));
+        text.SetBinding(TextBlock.FontFamilyProperty, GetBindings("FontFamily", source, Helper.FontFamily));
         text.SetBinding(TextBlock.FontWeightProperty, GetBindings("FontWeight", source));
         text.SetBinding(TextBlock.FontStretchProperty, GetBindings("FontStretch", source));
         text.SetBinding(TextBlock.FontStyleProperty, GetBindings("FontStyle", source));

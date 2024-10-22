@@ -296,5 +296,11 @@ namespace DiffPlex.Wpf
         /// <param name="template">The control template to set.</param>
         public void SetMenuTextBoxTemlate(ControlTemplate template)
             => DiffView.SetMenuTextBoxTemlate(template);
+
+        /// <summary>
+        /// Enables text wrapping for the text blocks in the diff viewer.
+        /// </summary>
+        public void EnableTextWrapping()
+            => DiffView.EnableTextWrapping();
     }
 }

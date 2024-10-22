@@ -41,6 +41,8 @@ internal static class Helper
     internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source, int contextLineCount)
     {
         viewer.Clear();
+        var diffViewer = source as DiffViewer;
+
         if (lines == null) return;
         if (lines.Any() == false) return;
         var disableSubPieces = lines.Count > MaxCount;    // For performance.
@@ -48,8 +50,17 @@ internal static class Helper
         {
             if (line == null)
             {
-                var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                c.Tag = line;
+                if (diffViewer.IsTextWrapEnabled)
+                {
+                    var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
+                }
+                else
+                {
+                    var c = viewer.AddNoWrap(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
+                }
+
                 continue;
             }
 
@@ -65,8 +76,17 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, true);
-                        var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
-                        c.Tag = line;
+                        if (diffViewer.IsTextWrapEnabled)
+                        {
+                            var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+                        else
+                        {
+                            var c = viewer.AddNoWrap(line.Position, "+", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+
                         hasAdded = true;
                     }
 
@@ -75,8 +95,17 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, false);
-                        var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
-                        c.Tag = line;
+                        if (diffViewer.IsTextWrapEnabled)
+                        {
+                            var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+                        else
+                        {
+                            var c = viewer.AddNoWrap(line.Position, "-", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+
                         hasAdded = true;
                     }
 
@@ -231,7 +260,7 @@ internal static class Helper
         catch (InvalidOperationException)
         {
         }
-        
+
         return false;
     }
 
@@ -478,12 +507,23 @@ internal static class Helper
 
     private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
     {
+        var diffViewer = source as DiffViewer;
+
         foreach (var line in lines)
         {
             if (line == null)
             {
-                var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                c.Tag = line;
+                if (diffViewer.IsTextWrapEnabled)
+                {
+                    var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
+                }
+                else
+                {
+                    var c = panel.AddNoWrap(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                    c.Tag = line;
+                }
+
                 continue;
             }
 
@@ -497,8 +537,17 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, isOld);
-                        var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
-                        c.Tag = line;
+                        if (diffViewer.IsTextWrapEnabled)
+                        {
+                            var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+                        else
+                        {
+                            var c = panel.AddNoWrap(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
+                            c.Tag = line;
+                        }
+
                         hasAdded = true;
                     }
 
@@ -515,13 +564,26 @@ internal static class Helper
 
             if (!hasAdded)
             {
-                var c = panel.Add(line.Position, changeType switch
+                if (diffViewer.IsTextWrapEnabled)
                 {
-                    ChangeType.Inserted => "+",
-                    ChangeType.Deleted => "-",
-                    _ => " "
-                }, text, changeType.ToString(), source);
-                c.Tag = line;
+                    var c = panel.Add(line.Position, changeType switch
+                    {
+                        ChangeType.Inserted => "+",
+                        ChangeType.Deleted => "-",
+                        _ => " "
+                    }, text, changeType.ToString(), source);
+                    c.Tag = line;
+                }
+                else
+                {
+                    var c = panel.AddNoWrap(line.Position, changeType switch
+                    {
+                        ChangeType.Inserted => "+",
+                        ChangeType.Deleted => "-",
+                        _ => " "
+                    }, text, changeType.ToString(), source);
+                    c.Tag = line;
+                }
             }
         }
 

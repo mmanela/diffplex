@@ -1,62 +1,81 @@
-﻿<UserControl x:Class="DiffPlex.Wpf.Controls.DiffViewer"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DiffPlex.Wpf.Controls"
-             x:Name="SelfControl"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="DiffPlex.Wpf.Controls.DiffViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:DiffPlex.Wpf.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="SelfControl"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Rectangle Margin="2" StrokeDashArray="1 2" SnapsToDevicePixels="true" StrokeThickness="1" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                        <Rectangle
+                            Margin="2"
+                            SnapsToDevicePixels="true"
+                            Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                            StrokeDashArray="1 2"
+                            StrokeThickness="1" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <SolidColorBrush x:Key="Button.Static.Background" Color="#33808080"/>
-        <SolidColorBrush x:Key="Button.Static.Border" Color="#44808080"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#990099FF"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#CC0099FF"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#EE0099FF"/>
-        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF0099FF"/>
-        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#99808080"/>
-        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#CC808080"/>
-        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF808080"/>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#33808080" />
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#44808080" />
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#990099FF" />
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#CC0099FF" />
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#EE0099FF" />
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF0099FF" />
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#99808080" />
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#CC808080" />
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF808080" />
         <Style x:Key="SolidButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
-            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="true">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="true">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsDefaulted" Value="true">
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Button.MouseOver.Background}" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Button.MouseOver.Border}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Button.Pressed.Background}" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Button.Pressed.Border}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Button.Disabled.Background}" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Button.Disabled.Border}" />
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource Button.Disabled.Foreground}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -67,66 +86,204 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="CommandRow" Height="0" />
-            <RowDefinition x:Name="HeaderRow" Height="0"/>
-            <RowDefinition x:Name="ContentRow" Height="*"/>
+            <RowDefinition x:Name="HeaderRow" Height="0" />
+            <RowDefinition x:Name="ContentRow" Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="LeftColumn"/>
-            <ColumnDefinition x:Name="RightColumn"/>
+            <ColumnDefinition x:Name="LeftColumn" />
+            <ColumnDefinition x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="ActionBar" Background="#20808080" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" >
-            <StackPanel x:Name="MenuPanel" Orientation="Horizontal" Margin="0" ></StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="16,0,16,0" >
-                <Button Style="{DynamicResource SolidButtonStyle}" Width="100" Height="20" x:Name="OpenFileButton" Content="Open File" Click="OpenFileButton_Click" Foreground="{Binding Foreground, ElementName=SelfControl}" Margin="0,0,16,0">
+        <StackPanel
+            x:Name="ActionBar"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="#20808080"
+            Orientation="Horizontal">
+            <StackPanel
+                x:Name="MenuPanel"
+                Margin="0"
+                Orientation="Horizontal" />
+            <StackPanel Margin="16,0,16,0" Orientation="Horizontal">
+                <Button
+                    x:Name="OpenFileButton"
+                    Width="100"
+                    Height="20"
+                    Margin="0,0,16,0"
+                    Click="OpenFileButton_Click"
+                    Content="Open File"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    Style="{DynamicResource SolidButtonStyle}">
                     <Button.ContextMenu>
                         <ContextMenu x:Name="OpenFileContextMenu">
-                            <MenuItem x:Name="OpenLeftFileMenuItem" Header="Left" Click="OpenLeftFileMenuItem_Click" />
-                            <MenuItem x:Name="OpenRightFileMenuItem" Header="Right" Click="OpenRightFileMenuItem_Click" />
+                            <MenuItem
+                                x:Name="OpenLeftFileMenuItem"
+                                Click="OpenLeftFileMenuItem_Click"
+                                Header="Left" />
+                            <MenuItem
+                                x:Name="OpenRightFileMenuItem"
+                                Click="OpenRightFileMenuItem_Click"
+                                Header="Right" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-                <Button Width="120" Height="20" x:Name="DiffButton" Content="Switch Mode" Click="DiffButton_Click" Foreground="{Binding Foreground, ElementName=SelfControl}" Margin="0" Style="{DynamicResource SolidButtonStyle}" />
-                <Button Width="20" Height="20" x:Name="FurtherActionsButton" Content="…" Click="FurtherActionsButton_Click" Foreground="{Binding Foreground, ElementName=SelfControl}" Margin="1,0,15,0" Style="{DynamicResource SolidButtonStyle}" />
-                <Label x:Name="GoToLabel" Height="20" Padding="0" Margin="16,0,8,0" VerticalContentAlignment="Center" Foreground="{Binding Foreground, ElementName=SelfControl}" >Go to</Label>
-                <TextBox Width="80" Height="20" VerticalContentAlignment="Center" x:Name="GoToText" Padding="8,0,8,0" Text="" Foreground="{Binding Foreground, ElementName=SelfControl}" CaretBrush="{Binding Foreground, ElementName=SelfControl}" Background="{x:Null}" Margin="0,0,8,0" TextChanged="GoToText_TextChanged" LostFocus="GoToText_LostFocus" />
-                <Button Width="20" Height="20" x:Name="NextButton" Click="NextButton_Click" Foreground="{Binding Foreground, ElementName=SelfControl}" Margin="0,0,1,0" Style="{DynamicResource SolidButtonStyle}" >
-                    <Path Width="10" Height="10" Stretch="Fill" Stroke="{Binding Foreground, ElementName=SelfControl}" Data="M0,1 L4,8 5,8 9,1" />
+                <Button
+                    x:Name="DiffButton"
+                    Width="120"
+                    Height="20"
+                    Margin="0"
+                    Click="DiffButton_Click"
+                    Content="Switch Mode"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    Style="{DynamicResource SolidButtonStyle}" />
+                <Button
+                    x:Name="FurtherActionsButton"
+                    Width="20"
+                    Height="20"
+                    Margin="1,0,15,0"
+                    Click="FurtherActionsButton_Click"
+                    Content="…"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    Style="{DynamicResource SolidButtonStyle}" />
+                <Label
+                    x:Name="GoToLabel"
+                    Height="20"
+                    Margin="16,0,8,0"
+                    Padding="0"
+                    VerticalContentAlignment="Center"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}">
+                    Go to
+                </Label>
+                <TextBox
+                    x:Name="GoToText"
+                    Width="80"
+                    Height="20"
+                    Margin="0,0,8,0"
+                    Padding="8,0,8,0"
+                    VerticalContentAlignment="Center"
+                    Background="{x:Null}"
+                    CaretBrush="{Binding Foreground, ElementName=SelfControl}"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    LostFocus="GoToText_LostFocus"
+                    Text=""
+                    TextChanged="GoToText_TextChanged" />
+                <Button
+                    x:Name="NextButton"
+                    Width="20"
+                    Height="20"
+                    Margin="0,0,1,0"
+                    Click="NextButton_Click"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    Style="{DynamicResource SolidButtonStyle}">
+                    <Path
+                        Width="10"
+                        Height="10"
+                        Data="M0,1 L4,8 5,8 9,1"
+                        Stretch="Fill"
+                        Stroke="{Binding Foreground, ElementName=SelfControl}" />
                 </Button>
-                <Button Width="20" Height="20" x:Name="PreviousButton" Click="PreviousButton_Click" Foreground="{Binding Foreground, ElementName=SelfControl}" Margin="0" Style="{DynamicResource SolidButtonStyle}" >
-                    <Path Width="10" Height="10" Stretch="Fill" Stroke="{Binding Foreground, ElementName=SelfControl}" Data="M0,8 L4,1 5,1 9,8" />
+                <Button
+                    x:Name="PreviousButton"
+                    Width="20"
+                    Height="20"
+                    Margin="0"
+                    Click="PreviousButton_Click"
+                    Foreground="{Binding Foreground, ElementName=SelfControl}"
+                    Style="{DynamicResource SolidButtonStyle}">
+                    <Path
+                        Width="10"
+                        Height="10"
+                        Data="M0,8 L4,1 5,1 9,8"
+                        Stretch="Fill"
+                        Stroke="{Binding Foreground, ElementName=SelfControl}" />
                 </Button>
             </StackPanel>
-            <StackPanel x:Name="AdditionalMenuPanel" Orientation="Horizontal" Margin="0" ></StackPanel>
+            <StackPanel
+                x:Name="AdditionalMenuPanel"
+                Margin="0"
+                Orientation="Horizontal" />
         </StackPanel>
-        <Border x:Name="HeaderBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="2" >
+        <Border
+            x:Name="HeaderBorder"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
             <Border.ContextMenu>
                 <ContextMenu x:Name="HeaderContextMenu">
-                    <MenuItem x:Name="InlineModeToggle" Header="_Unified view" Click="InlineModeToggle_Click" />
-                    <MenuItem x:Name="SideBySideModeToggle" Header="_Split view" Click="SideBySideModeToggle_Click" IsChecked="True" />
+                    <MenuItem
+                        x:Name="InlineModeToggle"
+                        Click="InlineModeToggle_Click"
+                        Header="_Unified view" />
+                    <MenuItem
+                        x:Name="SideBySideModeToggle"
+                        Click="SideBySideModeToggle_Click"
+                        Header="_Split view"
+                        IsChecked="True" />
                     <Separator />
-                    <MenuItem x:Name="CollapseUnchangedSectionsToggle" Header="_Collapse unchanged sections" Click="CollapseUnchangedSectionsToggle_Click" />
-                    <MenuItem x:Name="ContextLinesMenuItems" Header="_Lines for context" Visibility="Collapsed">
-                        <MenuItem Header="_0" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_1" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_2" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_3" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_4" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_5" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_6" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_7" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_8" Click="ContextLineMenuItem_Click" />
-                        <MenuItem Header="_9" Click="ContextLineMenuItem_Click" />
-                        <MenuItem x:Name="CustomizedContextLineMenuItem" Header="_X" Click="ContextLineMenuItem_Click" Visibility="Collapsed" />
+                    <MenuItem
+                        x:Name="CollapseUnchangedSectionsToggle"
+                        Click="CollapseUnchangedSectionsToggle_Click"
+                        Header="_Collapse unchanged sections" />
+                    <MenuItem
+                        x:Name="ContextLinesMenuItems"
+                        Header="_Lines for context"
+                        Visibility="Collapsed">
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_0" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_1" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_2" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_3" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_4" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_5" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_6" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_7" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_8" />
+                        <MenuItem Click="ContextLineMenuItem_Click" Header="_9" />
+                        <MenuItem
+                            x:Name="CustomizedContextLineMenuItem"
+                            Click="ContextLineMenuItem_Click"
+                            Header="_X"
+                            Visibility="Collapsed" />
                     </MenuItem>
                 </ContextMenu>
             </Border.ContextMenu>
         </Border>
-        <TextBlock x:Name="InlineHeaderText" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed" />
-        <local:InternalLinesViewer x:Name="InlineContentPanel" Grid.ColumnSpan="2" Grid.Row="2" Visibility="Collapsed" />
-        <TextBlock x:Name="LeftHeaderText" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
-        <local:InternalLinesViewer x:Name="LeftContentPanel" ScrollChanged="LeftContentPanel_ScrollChanged" Grid.Row="2" />
-        <GridSplitter x:Name="Splitter" Width="5" Grid.Row="1" Grid.RowSpan="2" />
-        <TextBlock x:Name="RightHeaderText" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" />
-        <local:InternalLinesViewer x:Name="RightContentPanel" ScrollChanged="RightContentPanel_ScrollChanged" Grid.Row="2" Grid.Column="1" />
+        <TextBlock
+            x:Name="InlineHeaderText"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="Collapsed" />
+        <local:InternalLinesViewer
+            x:Name="InlineContentPanel"
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Visibility="Collapsed" />
+        <TextBlock
+            x:Name="LeftHeaderText"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" />
+        <local:InternalLinesViewer
+            x:Name="LeftContentPanel"
+            Grid.Row="2"
+            ScrollChanged="LeftContentPanel_ScrollChanged" />
+        <GridSplitter
+            x:Name="Splitter"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Width="5" />
+        <TextBlock
+            x:Name="RightHeaderText"
+            Grid.Row="1"
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" />
+        <local:InternalLinesViewer
+            x:Name="RightContentPanel"
+            Grid.Row="2"
+            Grid.Column="1"
+            ScrollChanged="RightContentPanel_ScrollChanged" />
     </Grid>
 </UserControl>

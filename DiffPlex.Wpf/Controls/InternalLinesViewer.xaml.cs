@@ -71,43 +71,117 @@ internal partial class InternalLinesViewer : UserControl
     }
 
     public WrapPanel Add(int? number, string operation, string value, string changeType, IDiffViewer diffViewer)
-    {
-        return (WrapPanel)AddInternal(number, operation, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(value, changeType) }, changeType, diffViewer, true);
+    {       
+        IsTextWrapEnabled = diffViewer.IsTextWrapEnabled;
+
+        var panel = new WrapPanel { Orientation = Orientation.Horizontal };
+
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var index = new TextBlock
+        {
+            Text = number.HasValue ? number.ToString() : string.Empty,
+            TextAlignment = TextAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(2)
+        };
+        index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", diffViewer, Foreground));
+        index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+        ApplyTextBlockProperties(index, diffViewer);
+
+        var op = new TextBlock
+        {
+            Text = operation,
+            TextAlignment = TextAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(2)
+        };
+        op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", diffViewer, Foreground));
+        op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+        ApplyTextBlockProperties(op, diffViewer);
+
+        Grid.SetColumn(index, 0);
+        Grid.SetColumn(op, 1);
+        grid.Children.Add(index);
+        grid.Children.Add(op);
+
+        var text = new TextBlock
+        {
+            Text = value,
+            TextWrapping = IsTextWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(5, 0, 5, 0)
+        };
+        if (!string.IsNullOrEmpty(value))
+        {
+            text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", diffViewer, Foreground));
+            text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+            ApplyTextBlockProperties(text, diffViewer);
+            grid.ContextMenu = LineContextMenu;
+        }
+
+        Grid.SetColumn(text, 2);
+        grid.Children.Add(text);
+
+        panel.Children.Add(grid);
+
+        ValuePanel.Children.Add(panel);
+        ValuePanel.CanHorizontallyScroll = false;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+
+        return panel;
     }
 
     public WrapPanel Add(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, IDiffViewer source)
     {
-        return (WrapPanel)AddInternal(number, operation, value, changeType, source, true);
-    }
+        var diffViewer = source as DiffViewer;
+        IsTextWrapEnabled = diffViewer.IsTextWrapEnabled;
 
-    public StackPanel AddNoWrap(int? number, string operation, string value, string changeType, IDiffViewer source)
-    {
-        return (StackPanel)AddInternal(number, operation, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(value, changeType) }, changeType, source, false);
-    }
-
-    public StackPanel AddNoWrap(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, IDiffViewer source)
-    {
-        return (StackPanel)AddInternal(number, operation, value, changeType, source, false);
-    }
-
-    //The Panel type is a common base class for both WrapPanel and StackPanel.
-    private Panel AddInternal(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, IDiffViewer source, bool isWrap)
-    {
-        IsTextWrapEnabled = source.IsTextWrapEnabled;
-
-        var index = CreateTextBlock(number.HasValue ? number.ToString() : string.Empty, "LineNumberForeground", changeType + "Background", source, TextAlignment.Right);
+        var index = new TextBlock
+        {
+            Text = number.HasValue ? number.ToString() : string.Empty,
+            TextAlignment = TextAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", diffViewer, Foreground));
+        index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+        ApplyTextBlockProperties(index, diffViewer);
         NumberPanel.Children.Add(index);
 
-        var op = CreateTextBlock(operation, "ChangeTypeForeground", changeType + "Background", source, TextAlignment.Center);
+        var op = new TextBlock
+        {
+            Text = operation,
+            TextAlignment = TextAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", diffViewer, Foreground));
+        op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+        ApplyTextBlockProperties(op, diffViewer);
         OperationPanel.Children.Add(op);
 
-        Panel panel = isWrap ? new WrapPanel { Orientation = Orientation.Horizontal } : new StackPanel { Orientation = Orientation.Horizontal };
-        panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
-
+        var panel = new WrapPanel { Orientation = Orientation.Horizontal };
+        panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", diffViewer));
+        value ??= new List<KeyValuePair<string, string>>();
         foreach (var ele in value)
         {
             if (string.IsNullOrEmpty(ele.Key)) continue;
-            var text = CreateTextBlock(ele.Key, ele.Value + "Foreground", ele.Value + "Background", source, TextAlignment.Left, IsTextWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap);
+            var text = new TextBlock
+            {
+                Text = ele.Key,
+                VerticalAlignment = VerticalAlignment.Top,
+                TextWrapping = IsTextWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap
+            };
+            if (!string.IsNullOrEmpty(ele.Value))
+            {
+                if (!string.IsNullOrEmpty(ele.Key))
+                    text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", diffViewer, Foreground));
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", diffViewer));
+            }
+
+            ApplyTextBlockProperties(text, diffViewer);
             panel.Children.Add(text);
         }
 
@@ -121,26 +195,113 @@ internal partial class InternalLinesViewer : UserControl
         }
 
         ValuePanel.Children.Add(panel);
-        ValuePanel.CanHorizontallyScroll = !isWrap;
-        ValueScrollViewer.HorizontalScrollBarVisibility = isWrap ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Visible;
+        ValuePanel.CanHorizontallyScroll = false;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
 
         return panel;
     }
 
-    private TextBlock CreateTextBlock(string text, string foregroundKey, string backgroundKey, IDiffViewer source, TextAlignment alignment, TextWrapping wrapping = TextWrapping.NoWrap)
+    public StackPanel AddNoWrap(int? number, string operation, string value, string changeType, IDiffViewer source)
     {
-        var textBlock = new TextBlock
+        var index = new TextBlock
         {
-            Text = text,
-            TextAlignment = alignment,
-            VerticalAlignment = VerticalAlignment.Top,
-            TextWrapping = wrapping,
-            Margin = new Thickness(2)
+            Text = number.HasValue ? number.ToString() : string.Empty,
+            TextAlignment = TextAlignment.Right
         };
-        textBlock.SetBinding(TextBlock.ForegroundProperty, GetBindings(foregroundKey, source, Foreground));
-        textBlock.SetBinding(TextBlock.BackgroundProperty, GetBindings(backgroundKey, source));
-        ApplyTextBlockProperties(textBlock, source);
-        return textBlock;
+        index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
+        index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+        ApplyTextBlockProperties(index, source);
+        NumberPanel.Children.Add(index);
+
+        var op = new TextBlock
+        {
+            Text = operation,
+            TextAlignment = TextAlignment.Center
+        };
+        op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
+        op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+        ApplyTextBlockProperties(op, source);
+        OperationPanel.Children.Add(op);
+
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
+        var text = new TextBlock
+        {
+            Text = value
+        };
+        if (!string.IsNullOrEmpty(value))
+        {
+            text.SetBinding(TextBlock.ForegroundProperty, GetBindings(changeType + "Foreground", source, Foreground));
+            text.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+            ApplyTextBlockProperties(text, source);
+            panel.ContextMenu = LineContextMenu;
+        }
+
+        panel.Children.Add(text);
+        ValuePanel.Children.Add(panel);
+        ValuePanel.CanHorizontallyScroll = true;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+
+        return panel;
+    }
+
+    public StackPanel AddNoWrap(int? number, string operation, List<KeyValuePair<string, string>> value, string changeType, IDiffViewer source)
+    {
+        var index = new TextBlock
+        {
+            Text = number.HasValue ? number.ToString() : string.Empty,
+            TextAlignment = TextAlignment.Right
+        };
+        index.SetBinding(TextBlock.ForegroundProperty, GetBindings("LineNumberForeground", source, Foreground));
+        index.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+        ApplyTextBlockProperties(index, source);
+        NumberPanel.Children.Add(index);
+
+        var op = new TextBlock
+        {
+            Text = operation,
+            TextAlignment = TextAlignment.Center
+        };
+        op.SetBinding(TextBlock.ForegroundProperty, GetBindings("ChangeTypeForeground", source, Foreground));
+        op.SetBinding(TextBlock.BackgroundProperty, GetBindings(changeType + "Background", source));
+        ApplyTextBlockProperties(op, source);
+        OperationPanel.Children.Add(op);
+
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        panel.SetBinding(BackgroundProperty, GetBindings(changeType + "Background", source));
+        value ??= new List<KeyValuePair<string, string>>();
+        foreach (var ele in value)
+        {
+            if (string.IsNullOrEmpty(ele.Key)) continue;
+            var text = new TextBlock
+            {
+                Text = ele.Key
+            };
+            if (!string.IsNullOrEmpty(ele.Value))
+            {
+                if (!string.IsNullOrEmpty(ele.Key))
+                    text.SetBinding(TextBlock.ForegroundProperty, GetBindings(ele.Value + "Foreground", source, Foreground));
+                text.SetBinding(TextBlock.BackgroundProperty, GetBindings(ele.Value + "Background", source));
+            }
+
+            ApplyTextBlockProperties(text, source);
+            panel.Children.Add(text);
+        }
+
+        if (panel.Children.Count == 0)
+        {
+            panel.Children.Add(new TextBlock());
+        }
+        else
+        {
+            panel.ContextMenu = LineContextMenu;
+        }
+
+        ValuePanel.Children.Add(panel);
+        ValuePanel.CanHorizontallyScroll = true;
+        ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+
+        return panel;
     }
 
     public void SetLineVisible(int index, bool visible)

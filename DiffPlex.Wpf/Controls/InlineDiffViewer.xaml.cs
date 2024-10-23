@@ -24,7 +24,7 @@ namespace DiffPlex.Wpf.Controls;
 /// The inline diff control for text.
 /// Interaction logic for InlineDiffViewer.xaml
 /// </summary>
-public partial class InlineDiffViewer : UserControl
+public partial class InlineDiffViewer : UserControl, IDiffViewer
 {
     /// <summary>
     /// The property of diff model.
@@ -57,6 +57,11 @@ public partial class InlineDiffViewer : UserControl
         if (!(d is InlineDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
         c.ContentPanel.LineNumberWidth = n;
     });
+
+    /// <summary>
+    /// The property of text wrapping state.
+    /// </summary>
+    public static readonly DependencyProperty IsTextWrapEnabledProperty = RegisterDependencyProperty(nameof(IsTextWrapEnabled), false);
 
     /// <summary>
     /// The property of change type symbol foreground brush.
@@ -337,6 +342,14 @@ public partial class InlineDiffViewer : UserControl
     {
         get => (int)GetValue(LinesContextProperty);
         set => SetValue(LinesContextProperty, value);
+    }
+
+    [Bindable(true)]
+    [Category("Appearance")]
+    public bool IsTextWrapEnabled
+    {
+        get => (bool)GetValue(IsTextWrapEnabledProperty);
+        set => SetValue(IsTextWrapEnabledProperty, value);
     }
 
     /// <summary>

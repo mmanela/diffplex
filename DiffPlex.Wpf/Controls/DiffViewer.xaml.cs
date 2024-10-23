@@ -27,7 +27,7 @@ namespace DiffPlex.Wpf.Controls;
 /// <summary>
 /// The diff control for text.
 /// </summary>
-public partial class DiffViewer : UserControl
+public partial class DiffViewer : UserControl, IDiffViewer
 {
     /// <summary>
     /// The event arguments of view mode changed.

@@ -38,7 +38,7 @@ internal static class Helper
     /// <summary>
     /// Updates the inline diffs view.
     /// </summary>
-    internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source, int contextLineCount)
+    internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, IDiffViewer source, int contextLineCount)
     {
         viewer.Clear();
         var diffViewer = source as DiffViewer;
@@ -134,7 +134,7 @@ internal static class Helper
         viewer.AdjustScrollView();
     }
 
-    internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, int contextLineCount)
     {
         if (lines == null || panel == null) return;
         var guid = panel.TrackingId = Guid.NewGuid();
@@ -148,7 +148,7 @@ internal static class Helper
         _ = InsertLinesAsync(guid, panel, lines, isOld, source, contextLineCount);
     }
 
-    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, int contextLineCount)
     {   // For performance.
         if (lines == null || panel == null) return;
         var disablePieces = lines.Count > MaxCount;
@@ -505,7 +505,7 @@ internal static class Helper
         return details;
     }
 
-    private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
+    private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, bool disableSubPieces = false)
     {
         var diffViewer = source as DiffViewer;
 
@@ -589,4 +589,18 @@ internal static class Helper
 
         panel.AdjustScrollView();
     }
+
+    private static void AddLine(InternalLinesViewer viewer, DiffPiece line, string operation, string value, string changeType, IDiffViewer source)
+{
+    if (source.IsTextWrapEnabled)
+    {
+        var c = viewer.Add(line?.Position, operation, value, changeType, source);
+        c.Tag = line;
+    }
+    else
+    {
+        var c = viewer.AddNoWrap(line?.Position, operation, value, changeType, source);
+        c.Tag = line;
+    }
+}
 }

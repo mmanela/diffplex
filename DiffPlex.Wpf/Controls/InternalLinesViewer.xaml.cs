@@ -298,7 +298,6 @@ internal partial class InternalLinesViewer : UserControl
         }
 
         ValuePanel.Children.Add(panel);
-        ValuePanel.CanHorizontallyScroll = true;
         ValueScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
 
         return panel;

@@ -50,16 +50,8 @@ internal static class Helper
         {
             if (line == null)
             {
-                if (diffViewer.IsTextWrapEnabled)
-                {
-                    var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
-                }
-                else
-                {
-                    var c = viewer.AddNoWrap(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
-                }
+                var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                c.Tag = line;
 
                 continue;
             }
@@ -76,16 +68,9 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, true);
-                        if (diffViewer.IsTextWrapEnabled)
-                        {
-                            var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
-                        else
-                        {
-                            var c = viewer.AddNoWrap(line.Position, "+", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
+
+                        var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
+                        c.Tag = line;
 
                         hasAdded = true;
                     }
@@ -95,16 +80,9 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, false);
-                        if (diffViewer.IsTextWrapEnabled)
-                        {
-                            var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
-                        else
-                        {
-                            var c = viewer.AddNoWrap(line.Position, "-", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
+
+                        var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
+                        c.Tag = line;
 
                         hasAdded = true;
                     }
@@ -513,16 +491,8 @@ internal static class Helper
         {
             if (line == null)
             {
-                if (diffViewer.IsTextWrapEnabled)
-                {
-                    var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
-                }
-                else
-                {
-                    var c = panel.AddNoWrap(null, null, null as string, ChangeType.Unchanged.ToString(), source);
-                    c.Tag = line;
-                }
+                var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                c.Tag = line;
 
                 continue;
             }
@@ -537,16 +507,9 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, isOld);
-                        if (diffViewer.IsTextWrapEnabled)
-                        {
-                            var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
-                        else
-                        {
-                            var c = panel.AddNoWrap(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
-                            c.Tag = line;
-                        }
+
+                        var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
+                        c.Tag = line;
 
                         hasAdded = true;
                     }
@@ -564,43 +527,16 @@ internal static class Helper
 
             if (!hasAdded)
             {
-                if (diffViewer.IsTextWrapEnabled)
+                var c = panel.Add(line.Position, changeType switch
                 {
-                    var c = panel.Add(line.Position, changeType switch
-                    {
-                        ChangeType.Inserted => "+",
-                        ChangeType.Deleted => "-",
-                        _ => " "
-                    }, text, changeType.ToString(), source);
-                    c.Tag = line;
-                }
-                else
-                {
-                    var c = panel.AddNoWrap(line.Position, changeType switch
-                    {
-                        ChangeType.Inserted => "+",
-                        ChangeType.Deleted => "-",
-                        _ => " "
-                    }, text, changeType.ToString(), source);
-                    c.Tag = line;
-                }
+                    ChangeType.Inserted => "+",
+                    ChangeType.Deleted => "-",
+                    _ => " "
+                }, text, changeType.ToString(), source);
+                c.Tag = line;
             }
         }
 
         panel.AdjustScrollView();
     }
-
-    private static void AddLine(InternalLinesViewer viewer, DiffPiece line, string operation, string value, string changeType, IDiffViewer source)
-{
-    if (source.IsTextWrapEnabled)
-    {
-        var c = viewer.Add(line?.Position, operation, value, changeType, source);
-        c.Tag = line;
-    }
-    else
-    {
-        var c = viewer.AddNoWrap(line?.Position, operation, value, changeType, source);
-        c.Tag = line;
-    }
-}
 }

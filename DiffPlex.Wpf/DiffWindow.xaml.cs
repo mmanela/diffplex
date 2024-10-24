@@ -300,7 +300,7 @@ namespace DiffPlex.Wpf
         /// <summary>
         /// Enables text wrapping for the text blocks in the diff viewer.
         /// </summary>
-        public void EnableTextWrapping()
-            => DiffView.EnableTextWrapping();
+        public void ToggleTextWrapping()
+            => DiffView.ToggleTextWrapping();
     }
 }

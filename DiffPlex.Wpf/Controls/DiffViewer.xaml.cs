@@ -1322,9 +1322,10 @@ public partial class DiffViewer : UserControl, IDiffViewer
         return line;
     }
 
-    public void EnableTextWrapping()
+    public void ToggleTextWrapping()
     {
-        IsTextWrapEnabled = true;
+       IsTextWrapEnabled = !IsTextWrapEnabled; 
+
         this.Refresh();
     }
 

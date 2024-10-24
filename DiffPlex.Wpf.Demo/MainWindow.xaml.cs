@@ -59,11 +59,6 @@ public partial class MainWindow : Window
         DiffView.ShowInline();
     }
 
-    private void TextWrapButton_Click(object sender, RoutedEventArgs e)
-    {
-        DiffView.EnableTextWrapping();
-    }
-
     private void FutherActionsButton_Click(object sender, RoutedEventArgs e)
     {
         DiffView.OpenViewModeContextMenu();

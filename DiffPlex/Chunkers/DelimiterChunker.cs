@@ -17,7 +17,7 @@ namespace DiffPlex.Chunkers
             this.delimiters = delimiters;
         }
 
-        public string[] Chunk(string str)
+        public IReadOnlyList<string> Chunk(string str)
         {
             var list = new List<string>();
             int begin = 0;
@@ -76,7 +76,7 @@ namespace DiffPlex.Chunkers
                 }
             }
 
-            return list.ToArray();
+            return list;
         }
     }
 }

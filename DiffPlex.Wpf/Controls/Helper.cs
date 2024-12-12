@@ -415,7 +415,7 @@ internal static class Helper
                 {
                     if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line) continue;
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                    var isIn = pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight;
+                    var isIn = ele.ActualHeight > 0 && pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight;
                     yield return new Tuple<DiffPiece, bool>(line, isIn);
                 }
 
@@ -426,7 +426,7 @@ internal static class Helper
                     if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line) continue;
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
                     var halfHeight = ele.ActualHeight / 2;
-                    var isIn = pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
+                    var isIn = halfHeight > 0 && pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
                     yield return new Tuple<DiffPiece, bool>(line, isIn);
                 }
 
@@ -436,7 +436,7 @@ internal static class Helper
                 {
                     if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line) continue;
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
-                    var isIn = pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight;
+                    var isIn = ele.ActualHeight > 0 && pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight;
                     yield return new Tuple<DiffPiece, bool>(line, isIn);
                 }
 

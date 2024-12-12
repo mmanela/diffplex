@@ -11,7 +11,7 @@
     <PackageTags>diff</PackageTags>
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <Description>DiffPlex.Windows is a Windows App SDK control library that allows you to programatically render visual text diffs in your application.</Description>
-    <LangVersion>12.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
     <Authors>Kingcean Tuan; Matthew Manela</Authors>
@@ -31,7 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="README.md" />
-    <None Include="..\License.txt" Pack="true" PackagePath="License.txt" />
     <None Include="..\images\diffplex_icon.png" Pack="true" PackagePath="diffplex_icon.png" />
   </ItemGroup>
 

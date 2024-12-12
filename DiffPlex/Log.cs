@@ -2,7 +2,7 @@
 
 namespace DiffPlex
 {
-    public static class Log
+    static class Log
     {
         [Conditional("LOG")]
         public static void WriteLine(string format, params object[] args)

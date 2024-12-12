@@ -130,8 +130,6 @@ namespace DiffPlex.DiffBuilder
             int aPos = 0;
             int bPos = 0;
 
-            ChangeType changeSummary = ChangeType.Unchanged;
-
             foreach (var diffBlock in diffResult.DiffBlocks)
             {
                 while (bPos < diffBlock.InsertStartB && aPos < diffBlock.DeleteStartA)
@@ -180,7 +178,7 @@ namespace DiffPlex.DiffBuilder
                 }
             }
 
-            while (bPos < diffResult.PiecesNew.Length && aPos < diffResult.PiecesOld.Length)
+            while (bPos < diffResult.PiecesNew.Count && aPos < diffResult.PiecesOld.Count)
             {
                 oldPieces.Add(new DiffPiece(diffResult.PiecesOld[aPos], ChangeType.Unchanged, aPos + 1));
                 newPieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
@@ -189,16 +187,17 @@ namespace DiffPlex.DiffBuilder
             }
 
             // Consider the whole diff as "modified" if we found any change, otherwise we consider it unchanged
-            if(oldPieces.Any(x=> x.Type == ChangeType.Modified || x.Type == ChangeType.Inserted || x.Type == ChangeType.Deleted))
+            if(oldPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
             {
-                changeSummary = ChangeType.Modified;
-            }
-            else if (newPieces.Any(x => x.Type == ChangeType.Modified || x.Type == ChangeType.Inserted || x.Type == ChangeType.Deleted))
-            {
-                changeSummary = ChangeType.Modified;
+                return ChangeType.Modified;
             }
 
-            return changeSummary;
+            if (newPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
+            {
+                return ChangeType.Modified;
+            }
+
+            return ChangeType.Unchanged;
         }
     }
 }

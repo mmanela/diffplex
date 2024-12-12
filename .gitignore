@@ -190,3 +190,6 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 .DS_Store
+
+#Rider
+.idea

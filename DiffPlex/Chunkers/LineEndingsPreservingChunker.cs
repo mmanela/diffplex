@@ -11,7 +11,7 @@ namespace DiffPlex.Chunkers
         /// </summary>
         public static LineEndingsPreservingChunker Instance { get; } = new LineEndingsPreservingChunker();
 
-        public string[] Chunk(string text)
+        public IReadOnlyList<string> Chunk(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return emptyArray;
@@ -45,7 +45,7 @@ namespace DiffPlex.Chunkers
                 output.Add(str);
             }
 
-            return output.ToArray();
+            return output;
         }
     }
 }

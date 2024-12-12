@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net46;net48</TargetFrameworks>
+    <TargetFrameworks>net9.0-windows;net8.0-windows;net6.0-windows;net46;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <Version>1.4.0</Version>

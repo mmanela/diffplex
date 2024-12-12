@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <local:OldDiffChangeTypeConverter x:Key="OldBrushConverter"/>
         <local:NewDiffChangeTypeConverter x:Key="NewBrushConverter"/>
-        <local:VisibilityBooleanConverter x:Key="VisibilityBooleanConverter" />
+        <controls:BooleanVisibilityConverter x:Key="VisibilityBooleanConverter" />
         <FontFamily x:Key="CodeFonts" >Cascadia Code, Consolas, Courier New, monospace, Segoe UI, Microsoft Yahei, Microsoft Jhenghei, MS Gothic, Malgun Gothic, Microsoft Himalaya</FontFamily>
         <Style TargetType="local:DiffTextView" >
             <Setter Property="Padding" Value="3" />
@@ -87,94 +87,94 @@
         </Grid.RowDefinitions>
         <Border x:Name="BackgroundPanel" Grid.RowSpan="2" />
         <CommandBar x:Name="TopCommandBar" DefaultLabelPosition="{x:Bind CommandLabelPosition}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" >
-            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/PreviousLabel" Label="Previous" Click="OnPreviousDiffClick" >
+            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/PreviousLabel" Label="Previous" Click="OnPreviousDiffClick" AccessKey="P" >
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE010;" />
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/NextLabel" Label="Next" Click="OnNextDiffClick" >
+            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/NextLabel" Label="Next" Click="OnNextDiffClick" AccessKey="N" >
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE011;" />
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarToggleButton x:Uid="/DiffPlex.Windows/InternalResources/GoToLabel" x:Name="GoToMenuButton" Label="Go to" Click="OnGoToClick" >
+            <AppBarToggleButton x:Uid="/DiffPlex.Windows/InternalResources/GoToLabel" x:Name="GoToMenuButton" Label="Go to" Click="OnGoToClick" AccessKey="G" >
                 <AppBarToggleButton.Icon>
                     <FontIcon Glyph="&#xE7FD;" />
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
-            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/ViewLabel" Label="View" >
+            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/ViewLabel" Label="View" AccessKey="V" >
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE154;" />
                 </AppBarButton.Icon>
                 <AppBarButton.Flyout>
                     <MenuFlyout>
-                        <ToggleMenuFlyoutItem x:Name="SplitViewMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/SplitText" Text="Split" Click="OnSplitViewClick" IsChecked="True" >
+                        <ToggleMenuFlyoutItem x:Name="SplitViewMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/SplitText" Text="Split" Click="OnSplitViewClick" IsChecked="True" AccessKey="S" >
                             <ToggleMenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF58C;" />
                             </ToggleMenuFlyoutItem.Icon>
                         </ToggleMenuFlyoutItem>
-                        <ToggleMenuFlyoutItem x:Name="UnifiedViewMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/UnifiedText" Text="Unified" Click="OnUnifiedViewClick" >
+                        <ToggleMenuFlyoutItem x:Name="UnifiedViewMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/UnifiedText" Text="Unified" Click="OnUnifiedViewClick" AccessKey="U" >
                             <ToggleMenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF58A;" />
                             </ToggleMenuFlyoutItem.Icon>
                         </ToggleMenuFlyoutItem>
                         <MenuFlyoutSeparator />
-                        <ToggleMenuFlyoutItem x:Name="CollapseUnchangedMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/CollapseUnchangedText" Text="Collapse unchanged sections" Click="OnCollaspeUnchangedClick" >
+                        <ToggleMenuFlyoutItem x:Name="CollapseUnchangedMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/CollapseUnchangedText" Text="Collapse unchanged sections" Click="OnCollaspeUnchangedClick" AccessKey="C" >
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE169;" />
                             </MenuFlyoutItem.Icon>
                         </ToggleMenuFlyoutItem>
-                        <MenuFlyoutSubItem x:Name="LinesContextMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/LineContextText" Text="Lines for context" Visibility="Collapsed" >
+                        <MenuFlyoutSubItem x:Name="LinesContextMenuItem" x:Uid="/DiffPlex.Windows/InternalResources/LineContextText" Text="Lines for context" Visibility="Collapsed" AccessKey="L" >
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE133;" />
                             </MenuFlyoutSubItem.Icon>
-                            <ToggleMenuFlyoutItem Text="0" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="1" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="2" Click="OnLinesContextClick" IsChecked="True" />
-                            <ToggleMenuFlyoutItem Text="3" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="4" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="5" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="6" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="7" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="8" Click="OnLinesContextClick" />
-                            <ToggleMenuFlyoutItem Text="9" Click="OnLinesContextClick" />
+                            <ToggleMenuFlyoutItem Text="0" Click="OnLinesContextClick" AccessKey="0" />
+                            <ToggleMenuFlyoutItem Text="1" Click="OnLinesContextClick" AccessKey="1" />
+                            <ToggleMenuFlyoutItem Text="2" Click="OnLinesContextClick" AccessKey="2" IsChecked="True" />
+                            <ToggleMenuFlyoutItem Text="3" Click="OnLinesContextClick" AccessKey="3" />
+                            <ToggleMenuFlyoutItem Text="4" Click="OnLinesContextClick" AccessKey="4" />
+                            <ToggleMenuFlyoutItem Text="5" Click="OnLinesContextClick" AccessKey="5" />
+                            <ToggleMenuFlyoutItem Text="6" Click="OnLinesContextClick" AccessKey="6" />
+                            <ToggleMenuFlyoutItem Text="7" Click="OnLinesContextClick" AccessKey="7" />
+                            <ToggleMenuFlyoutItem Text="8" Click="OnLinesContextClick" AccessKey="8" />
+                            <ToggleMenuFlyoutItem Text="9" Click="OnLinesContextClick" AccessKey="9" />
                         </MenuFlyoutSubItem>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
-            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/SelectFileLabel" Label="Select file" Visibility="{x:Bind IsFileMenuEnabled, Converter={StaticResource VisibilityBooleanConverter}}" >
+            <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/SelectFileLabel" Label="Select file" Visibility="{x:Bind IsFileMenuEnabled, Converter={StaticResource VisibilityBooleanConverter}}" AccessKey="O" >
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE838;" />
                 </AppBarButton.Icon>
                 <AppBarButton.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/LeftText" Text="Left (old)" Click="OnLeftFileClick" >
+                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/LeftText" Text="Left (old)" Click="OnLeftFileClick" AccessKey="L" >
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF26D;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/RightText" Text="Right (new)" Click="OnRightFileClick" >
+                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/RightText" Text="Right (new)" Click="OnRightFileClick" AccessKey="R" >
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF26E;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator />
-                        <MenuFlyoutSubItem x:Uid="/DiffPlex.Windows/InternalResources/EditTextText" Text="Edit text" >
+                        <MenuFlyoutSubItem x:Uid="/DiffPlex.Windows/InternalResources/EditTextText" Text="Edit text" AccessKey="E" >
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon Glyph="&#xE1C2;" />
                             </MenuFlyoutSubItem.Icon>
-                            <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/LeftText" Text="Left (old)" Click="OnLeftTextClick" >
+                            <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/LeftText" Text="Left (old)" Click="OnLeftTextClick" AccessKey="L" >
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xF26D;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/RightText" Text="Right (new)" Click="OnRightTextClick" >
+                            <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/RightText" Text="Right (new)" Click="OnRightTextClick" AccessKey="R" >
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xF26E;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/SwitchText" Text="Switch" Click="OnSwitchClick" >
+                        <MenuFlyoutItem x:Uid="/DiffPlex.Windows/InternalResources/SwitchText" Text="Switch" Click="OnSwitchClick" AccessKey="X" >
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE13C;" />
                             </MenuFlyoutItem.Icon>
@@ -192,8 +192,8 @@
                             <ColumnDefinition Width="{Binding Path=OldTextWidth, ElementName=CurrentControl}" />
                             <ColumnDefinition Width="{Binding Path=NewTextWidth, ElementName=CurrentControl}" />
                         </Grid.ColumnDefinitions>
-                        <controls:TextLineBlock TextHighlighters="{x:Bind GetLeftHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Left.Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Left.Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="0" />
-                        <controls:TextLineBlock TextHighlighters="{x:Bind GetRightHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Right.Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Right.Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="1" />
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetLeftHighlighter(), Mode=OneTime}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}, Mode=OneTime}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Left.Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Left.Type, Converter={StaticResource OldBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Left.Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="0" />
+                        <controls:TextLineBlock TextHighlighters="{x:Bind GetRightHighlighter(), Mode=OneTime}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Right.Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Right.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Right.Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" Grid.Column="1" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -201,7 +201,7 @@
         <ListView x:Name="UnifiedElement" Foreground="{x:Bind Foreground}" Margin="0" Visibility="Collapsed" ItemContainerStyle="{x:Bind ItemContainerStyle}" SelectionMode="{x:Bind SelectionMode}" SelectionChanged="OnSelectionChanged" Grid.Row="1" >
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:InlineDiffTextViewModel" >
-                    <controls:TextLineBlock TextHighlighters="{x:Bind GetTextHighlighter()}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" />
+                    <controls:TextLineBlock TextHighlighters="{x:Bind GetTextHighlighter(), Mode=OneTime}" Foreground="{Binding Path=Foreground, ElementName=CurrentControl}" TextBackground="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" LineNumberWidth="{Binding Path=LineNumberWidth, ElementName=CurrentControl}" LineNumber="{x:Bind Position, Mode=OneTime}" LineNumberStyle="{Binding Path=LineNumberStyle, ElementName=CurrentControl}" Prefix="{x:Bind Line.Type, Converter={StaticResource NewBrushConverter}, Mode=OneTime}" PrefixWidth="{Binding Path=ChangeTypeWidth, ElementName=CurrentControl}" PrefixStyle="{Binding Path=ChangeTypeStyle, ElementName=CurrentControl}" Text="{x:Bind Text, Mode=OneTime}" TextStyle="{Binding Path=TextStyle, ElementName=CurrentControl}" IsTextSelectionEnabled="{Binding Path=IsTextSelectionEnabled, ElementName=CurrentControl}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
@@ -211,7 +211,7 @@
             <Button x:Uid="/DiffPlex.Windows/InternalResources/CancelButton" Content="Cancel" Width="110" Margin="120,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="OnEditorCancelClick" />
         </Grid>
         <Border x:Name="GoToNumberContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="8" Width="300" Padding="8" Margin="20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" Grid.Row="1" >
-            <NumberBox x:Name="GoToNumberBox" x:Uid="/DiffPlex.Windows/InternalResources/GoToInput" PlaceholderText="Line" ValueChanged="OnGoToChange" Minimum="1" LostFocus="OnGoToBoxLostFocus" />
+            <NumberBox x:Name="GoToNumberBox" x:Uid="/DiffPlex.Windows/InternalResources/GoToInput" PlaceholderText="Line" ValueChanged="OnGoToChange" Minimum="1" LostFocus="OnGoToBoxLostFocus" KeyDown="OnGoToBoxKeyDown" />
         </Border>
         <Grid x:Name="FilePathContainer" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" CornerRadius="8" Padding="8,8" Margin="20,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Collapsed" Grid.Row="1" >
             <TextBox x:Name="FilePathTextBox" x:Uid="/DiffPlex.Windows/InternalResources/FilePathInput" PlaceholderText="File path" Margin="0,0,90,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

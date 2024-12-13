@@ -28,8 +28,6 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 
 namespace DiffPlex.UI;
-
-using static Trivial.Reflection.ExceptionHandler;
 using DependencyObjectProxy = DependencyObjectProxy<DiffTextView>;
 
 public sealed partial class DiffTextView : UserControl

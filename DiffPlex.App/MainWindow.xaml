@@ -18,7 +18,7 @@
         </StackPanel>
         <local:DiffTextView x:Name="MainElement" Background="#20808080" Grid.Row="1" >
             <local:DiffTextView.SecondaryCommands>
-                <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/AboutLabel" Label="About" Click="OnAboutClick" >
+                <AppBarButton x:Uid="/DiffPlex.Windows/InternalResources/AboutLabel" Label="About" Click="OnAboutClick" AccessKey="A" >
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </AppBarButton.Icon>
@@ -32,7 +32,7 @@
                 <TextBlock x:Name="VersionText" HorizontalAlignment="Center" Margin="0,0,0,20" />
                 <HyperlinkButton Content="Open source on GitHub (Apache-2.0 license)" Padding="8,0" NavigateUri="https://github.com/mmanela/diffplex" HorizontalAlignment="Center" />
                 <TextBlock Text="Copyright © 2022 Matthew Manela. All rights reserved." HorizontalAlignment="Center" />
-                <Button Content="OK" Style="{StaticResource AccentButtonStyle}" Width="100" Margin="0,20,0,60" HorizontalAlignment="Center" Click="OnExitAboutClick" />
+                <Button x:Name="OkButton" Content="OK" Style="{StaticResource AccentButtonStyle}" Width="100" Margin="0,20,0,60" HorizontalAlignment="Center" Click="OnExitAboutClick" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

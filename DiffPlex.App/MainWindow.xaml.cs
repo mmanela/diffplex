@@ -32,8 +32,6 @@ public sealed partial class MainWindow : Window
         Title = "DiffPlex";
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(HeaderBar);
-        var osVer = Environment.OSVersion.Version;
-        if (osVer.Major < 10 || (osVer.Major == 10 && osVer.Minor == 0 && osVer.Build < 22000)) return;
         MainElement.OpenFileToReadText = GetFileTextAsync;
 #if DEBUG
         LoadData();
@@ -43,7 +41,7 @@ public sealed partial class MainWindow : Window
         var appWindow = VisualUtility.TryGetAppWindow(this);
         try
         {
-            if (appWindow != null) appWindow.SetIcon("DiffPlex.ico");
+            appWindow?.SetIcon("DiffPlex.ico");
         }
         catch (ArgumentException)
         {
@@ -95,7 +93,16 @@ public sealed partial class MainWindow : Window
         => InternalUtilities.TryGetFileTextAsync(this);
 
     private void OnAboutClick(object sender, RoutedEventArgs e)
-        => AboutPanel.Visibility = Visibility.Visible;
+    {
+        AboutPanel.Visibility = Visibility.Visible;
+        _ = FocusOkButtonAsync();
+    }
+
+    private async Task FocusOkButtonAsync()
+    {
+        await Task.Delay(200);
+        if (AboutPanel.Visibility == Visibility.Visible) OkButton.Focus(FocusState.Programmatic);
+    }
 
     private void OnExitAboutClick(object sender, RoutedEventArgs e)
         => AboutPanel.Visibility = Visibility.Collapsed;

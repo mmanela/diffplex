@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows10.0.17763.0;net6.0-windows10.0.19041.0;net6.0-windows10.0.22000.0;net7.0-windows10.0.17763.0;net7.0-windows10.0.19041.0;net7.0-windows10.0.22000.0</TargetFrameworks>
+    <TargetFrameworks>net9.0-windows10.0.17763.0;net9.0-windows10.0.19041.0;net9.0-windows10.0.22000.0;net9.0-windows10.0.22621.0;net8.0-windows10.0.17763.0;net8.0-windows10.0.19041.0;net8.0-windows10.0.22000.0;net8.0-windows10.0.22621.0</TargetFrameworks>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>DiffPlex.UI</RootNamespace>
     <AssemblyName>DiffPlex.Windows</AssemblyName>
     <PackageId>DiffPlex.Windows</PackageId>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageTags>diff</PackageTags>
     <PackageIcon>diffplex_icon.png</PackageIcon>
     <Description>DiffPlex.Windows is a Windows App SDK control library that allows you to programatically render visual text diffs in your application.</Description>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <LangVersion>13.0</LangVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <Authors>Kingcean Tuan; Matthew Manela</Authors>
     <Copyright>Copyright (c) 2022 Matthew Manela. All rights reserved.</Copyright>
+    <ApplicationIcon>../DiffPlex.ico</ApplicationIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/mmanela/diffplex</PackageProjectUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -33,9 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
-    <PackageReference Include="Trivial.WindowsKit" Version="7.1.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <PackageReference Include="Trivial.WindowsKit" Version="9.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 

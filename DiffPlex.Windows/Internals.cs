@@ -167,7 +167,38 @@ internal class InternalUtilities
     }
 }
 
-internal class DiffTextViewModel
+/// <summary>
+/// The base view model for diff text.
+/// </summary>
+internal abstract class BaseDiffTextViewModel
+{
+    /// <summary>
+    /// Get or set the line number.
+    /// </summary>
+    public int LineNumber { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the line is unchanged.
+    /// </summary>
+    public abstract bool IsUnchanged { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the current line is null.
+    /// </summary>
+    public abstract bool IsNullLine { get; }
+
+    /// <summary>
+    /// Returns a value indicating whether a specified substring occurs within the text in this view model.
+    /// </summary>
+    /// <param name="q">The string to seek.</param>
+    /// <returns>true if the value parameter occurs within the text in this view model; otherwise, false.</returns>
+    public abstract bool Contains(string q);
+}
+
+/// <summary>
+/// The diff text view model of split mode.
+/// </summary>
+internal class DiffTextViewModel : BaseDiffTextViewModel
 {
     public DiffTextViewModel()
     {
@@ -186,26 +217,44 @@ internal class DiffTextViewModel
         Reference = reference;
     }
 
-    public int LineNumber { get; set; }
+    public DiffPiece Left { get; private set; }
 
-    public DiffPiece Left { get; set; }
+    public DiffPiece Right { get; private set; }
 
-    public DiffPiece Right { get; set; }
+    public DiffTextViewReference Reference { get; private set; }
 
-    public DiffTextViewReference Reference { get; set; }
+    public string LeftText => Left?.Text;
 
-    public string LeftText => Left.Text;
+    public string RightText => Right?.Text;
 
-    public string RightText => Right.Text;
+    /// <inheritdoc />
+    public override bool IsUnchanged => Right?.Type == ChangeType.Unchanged;
+
+    /// <inheritdoc />
+    public override bool IsNullLine => Right is null;
 
     public IEnumerable<TextHighlighter> GetLeftHighlighter()
         => InternalUtilities.GetTextHighlighter(Left?.SubPieces, ChangeType.Deleted, Reference?.Element?.Foreground);
 
     public IEnumerable<TextHighlighter> GetRightHighlighter()
         => InternalUtilities.GetTextHighlighter(Right?.SubPieces, ChangeType.Inserted, Reference?.Element?.Foreground);
+
+    /// <inheritdoc />
+    public override bool Contains(string q)
+    {
+        if (string.IsNullOrEmpty(q)) return false;
+        var v = Right?.Text;
+        if (v != null && v.Contains(q)) return true;
+        v = Left?.Text;
+        if (v != null && v.Contains(q)) return true;
+        return false;
+    }
 }
 
-internal class InlineDiffTextViewModel
+/// <summary>
+/// The diff text view model of unified mode.
+/// </summary>
+internal class InlineDiffTextViewModel : BaseDiffTextViewModel
 {
     public InlineDiffTextViewModel()
     {
@@ -223,26 +272,33 @@ internal class InlineDiffTextViewModel
         Reference = reference;
     }
 
-    public int LineNumber { get; set; }
-
-    public DiffPiece Line { get; set; }
+    public DiffPiece Line { get; private set; }
 
     public string Text => Line?.Text;
 
     public int? Position => Line?.Position;
 
-    public DiffTextViewReference Reference { get; set; }
+    public DiffTextViewReference Reference { get; private set; }
+
+    /// <inheritdoc />
+    public override bool IsUnchanged => Line?.Type == ChangeType.Unchanged;
+
+    /// <inheritdoc />
+    public override bool IsNullLine => Line is null;
 
     public IEnumerable<TextHighlighter> GetTextHighlighter()
         => InternalUtilities.GetTextHighlighter(Line?.SubPieces, ChangeType.Deleted, Reference?.Element?.Foreground);
+
+    /// <inheritdoc />
+    public override bool Contains(string q)
+    {
+        if (string.IsNullOrEmpty(q)) return false;
+        var v = Line?.Text;
+        return v != null && v.Contains(q);
+    }
 }
 
-internal class DiffTextViewReference
+internal class DiffTextViewReference(DiffTextView element)
 {
-    public DiffTextViewReference(DiffTextView element)
-    {
-        Element = element;
-    }
-
-    public DiffTextView Element { get; set; }
+    public DiffTextView Element { get; set; } = element;
 }

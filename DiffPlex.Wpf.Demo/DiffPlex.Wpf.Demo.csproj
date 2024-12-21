@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net9.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>net9.0-windows;net8.0-windows;net48;net46</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <StartupObject>DiffPlex.Wpf.Demo.App</StartupObject>

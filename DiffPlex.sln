@@ -18,11 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		azure-pipelines.yml = azure-pipelines.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		global.json = global.json
 		License.txt = License.txt
 		NuGet.props = NuGet.props
 		README.md = README.md
 		images\website.png = images\website.png
-		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffPlex.Wpf", "DiffPlex.Wpf\DiffPlex.Wpf.csproj", "{CB18D73D-7E84-4B28-B44D-93CB34794A6A}"

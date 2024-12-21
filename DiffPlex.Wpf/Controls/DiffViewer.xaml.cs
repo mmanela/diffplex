@@ -20,7 +20,6 @@ using System.Windows.Shapes;
 
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
-using DiffPlex.WindowsForms.Controls;
 
 namespace DiffPlex.Wpf.Controls;
 

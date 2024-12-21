@@ -14,7 +14,7 @@ namespace DiffPlex.WindowsForms
         [STAThread]
         static void Main()
         {
-#if !NET46
+#if NET6_0_OR_GREATER
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
 #endif
             Application.EnableVisualStyles();

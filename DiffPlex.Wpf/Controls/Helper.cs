@@ -9,27 +9,6 @@ using DiffPlex.DiffBuilder.Model;
 
 namespace DiffPlex.Wpf.Controls;
 
-/// <summary>
-/// Visibility levels.
-/// </summary>
-public enum VisibilityLevels
-{
-    /// <summary>
-    /// Any part of visual in viewport.
-    /// </summary>
-    Any = 0,
-
-    /// <summary>
-    /// Half at least in viewport.
-    /// </summary>
-    Half = 1,
-
-    /// <summary>
-    /// All visual in viewport.
-    /// </summary>
-    All = 2
-}
-
 internal static class Helper
 {
     private const int MaxCount = 3000;
@@ -296,14 +275,15 @@ internal static class Helper
         var needBreak = false;
         foreach (var item in states)
         {
-            if (!item.Item2)
+            if (item.IsCollapsed) continue;
+            if (!item.IsInViewport)
             {
                 if (needBreak) yield break;
                 continue;
             }
 
             needBreak = true;
-            yield return item.Item1;
+            yield return item.Model;
         }
     }
 
@@ -318,8 +298,9 @@ internal static class Helper
         var states = GetLineViewportStates(panel, level);
         foreach (var item in states)
         {
-            if (item.Item2) yield break;
-            yield return item.Item1;
+            if (item.IsCollapsed) continue;
+            if (item.IsInViewport) yield break;
+            yield return item.Model;
         }
     }
 
@@ -335,13 +316,14 @@ internal static class Helper
         var needReturn = false;
         foreach (var item in states)
         {
-            if (item.Item2)
+            if (item.IsCollapsed) continue;
+            if (item.IsInViewport)
             {
                 needReturn = true;
                 continue;
             }
 
-            if (needReturn) yield return item.Item1;
+            if (needReturn) yield return item.Model;
         }
     }
 
@@ -399,12 +381,28 @@ internal static class Helper
     }
 
     /// <summary>
+    /// Finds all line numbers that the text contains the given string.
+    /// </summary>
+    /// <param name="panel">The content panel.</param>
+    /// <param name="q">The string to seek.</param>
+    /// <returns>All lines with the given string.</returns>
+    internal static IEnumerable<DiffPiece> Find(InternalLinesViewer panel, string q)
+    {
+        if (string.IsNullOrEmpty(q)) yield break;
+        foreach (var item in panel.ValuePanel.Children)
+        {
+            if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line || line.Text == null) continue;
+            if (line.Text.Contains(q)) yield return line;
+        }
+    }
+
+    /// <summary>
     /// Gets all line information in viewport.
     /// </summary>
     /// <param name="panel">The content panel.</param>
     /// <param name="level">The optional visibility level.</param>
     /// <returns>All lines.</returns>
-    private static IEnumerable<Tuple<DiffPiece, bool>> GetLineViewportStates(InternalLinesViewer panel, VisibilityLevels level)
+    private static IEnumerable<LineViewportStateInfo> GetLineViewportStates(InternalLinesViewer panel, VisibilityLevels level)
     {
         var scrollView = panel.ValueScrollViewer;
         var point = new Point(0, 0);
@@ -416,7 +414,7 @@ internal static class Helper
                     if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line) continue;
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
                     var isIn = ele.ActualHeight > 0 && pos.Y >= 0 && pos.Y <= scrollView.ActualHeight - ele.ActualHeight;
-                    yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    yield return new(line, isIn, ele.Visibility != Visibility.Visible);
                 }
 
                 break;
@@ -427,7 +425,7 @@ internal static class Helper
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
                     var halfHeight = ele.ActualHeight / 2;
                     var isIn = halfHeight > 0 && pos.Y >= -halfHeight && pos.Y <= scrollView.ActualHeight - halfHeight;
-                    yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    yield return new(line, isIn, ele.Visibility != Visibility.Visible);
                 }
 
                 break;
@@ -437,7 +435,7 @@ internal static class Helper
                     if (item is not FrameworkElement ele || ele.Tag is not DiffPiece line) continue;
                     var pos = ele.TranslatePoint(point, panel.ValueScrollViewer);
                     var isIn = ele.ActualHeight > 0 && pos.Y > -ele.ActualHeight && pos.Y < scrollView.ActualHeight;
-                    yield return new Tuple<DiffPiece, bool>(line, isIn);
+                    yield return new(line, isIn, ele.Visibility != Visibility.Visible);
                 }
 
                 break;

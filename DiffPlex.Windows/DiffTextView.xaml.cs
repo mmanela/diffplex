@@ -545,13 +545,13 @@ public sealed partial class DiffTextView : UserControl
     /// </summary>
     /// <param name="q">The string to seek.</param>
     /// <returns>All line numbers with the given string.</returns>
-    public IEnumerable<int> Find(string q)
+    public IEnumerable<DiffTextViewInfo> Find(string q)
     {
         var list = GetActiveListView();
         foreach (var item in list.Items)
         {
-            if (!GetItemFromList(list, item, out var container, out var model)) continue;
-            if (model.Contains(q)) yield return model.LineNumber;
+            if (item is not BaseDiffTextViewModel m) continue;
+            if (m.Contains(q)) yield return m.ToInfo();
         }
     }
 
@@ -575,6 +575,28 @@ public sealed partial class DiffTextView : UserControl
             if (line is null || UnifiedElement.ContainerFromItem(line) is not ListViewItem container) return false;
             return container.Focus(focusState);
         }
+    }
+
+    /// <summary>
+    /// Attempts to set focus to a specific line.
+    /// </summary>
+    /// <param name="info">The line.</param>
+    /// <param name="focusState">How this element obtains focus.</param>
+    /// <returns>true if keyboard focus and logical focus were set to the specific line; otherwise, false, if only logical focus was set to the specific line, or if the call to this method did not force the focus to change.</returns>
+    public bool Focus(DiffTextViewInfo info, FocusState focusState)
+    {
+        if (!info.Position.HasValue) return false;
+        switch (info.ViewType)
+        {
+            case DiffTextViewType.Inline:
+                return FocusInUnifiedView(info.Position.Value, focusState);
+            case DiffTextViewType.Left:
+                return FocusInSplitView(info.Position.Value, true, focusState);
+            case DiffTextViewType.Right:
+                return FocusInSplitView(info.Position.Value, false, focusState);
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -633,6 +655,41 @@ public sealed partial class DiffTextView : UserControl
             var line = inlines.FirstOrDefault(ele => ele?.Position == lineNumber);
             if (line is null) return;
             UnifiedElement.ScrollIntoView(line, alignment);
+        }
+    }
+
+    /// <summary>
+    /// Scrolls the list to bring the specified line number into view with the specified alignment.
+    /// </summary>
+    /// <param name="info">The line info.</param>
+    /// <param name="alignment">An enumeration value that specifies whether the item uses default or leading alignment.</param>
+    public void ScrollIntoView(DiffTextViewInfo info, ScrollIntoViewAlignment alignment = ScrollIntoViewAlignment.Default)
+    {
+        if (info.Position == null) return;
+        var lineNumber = info.Position.Value;
+        switch (info.ViewType)
+        {
+            case DiffTextViewType.Inline:
+                {
+                    var line = inlines.FirstOrDefault(ele => ele?.Position == lineNumber);
+                    if (line is null) return;
+                    UnifiedElement.ScrollIntoView(line, alignment);
+                    break;
+                }
+            case DiffTextViewType.Left:
+                {
+                    var line = sideBySide.FirstOrDefault(ele => ele?.Left?.Position == lineNumber);
+                    if (line is null) return;
+                    SplitElement.ScrollIntoView(line, alignment);
+                    break;
+                }
+            case DiffTextViewType.Right:
+                {
+                    var line = sideBySide.FirstOrDefault(ele => ele?.Right?.Position == lineNumber);
+                    if (line is null) return;
+                    SplitElement.ScrollIntoView(line, alignment);
+                    break;
+                }
         }
     }
 

@@ -587,6 +587,26 @@ public partial class SideBySideDiffViewer : UserControl
     }
 
     /// <summary>
+    /// Finds all line numbers that the text contains the given string.
+    /// </summary>
+    /// <param name="q">The string to seek.</param>
+    /// <returns>All lines with the given string.</returns>
+    public IEnumerable<DiffPiece> Find(string q)
+    {
+        return Helper.Find(RightContentPanel, q);
+    }
+
+    /// <summary>
+    /// Finds all line numbers that the text contains the given string.
+    /// </summary>
+    /// <param name="q">The string to seek.</param>
+    /// <returns>All line numbers with the given string.</returns>
+    public IEnumerable<DiffPiece> FindInOld(string q)
+    {
+        return Helper.Find(LeftContentPanel, q);
+    }
+
+    /// <summary>
     /// Collapses unchanged sections.
     /// </summary>
     /// <param name="contextLineCount">The optional context line count to set.</param>

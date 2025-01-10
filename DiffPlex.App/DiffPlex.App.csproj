@@ -27,7 +27,7 @@
     <None Remove="DiffTextView.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DiffPlex.Windows\Internals.cs" Link="Internals.cs" />
+    <Compile Include="..\DiffPlex.Windows\Helper.cs" Link="Helper.cs" />
     <Compile Include="..\DiffPlex.Wpf.Demo\TestData.cs" Link="TestData.cs" />
   </ItemGroup>
 

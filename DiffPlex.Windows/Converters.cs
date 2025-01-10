@@ -16,21 +16,13 @@ namespace DiffPlex.UI;
 /// <summary>
 /// The base converter for change type.
 /// </summary>
-public class DiffChangeTypeConverter : IValueConverter
+/// <param name="defaultChangeType">The default chagne type.</param>
+public class DiffChangeTypeConverter(ChangeType defaultChangeType) : IValueConverter
 {
-    /// <summary>
-    /// Initializes a new instance of the DiffChangeTypeConverter class.
-    /// </summary>
-    /// <param name="defaultChangeType">The default chagne type.</param>
-    public DiffChangeTypeConverter(ChangeType defaultChangeType)
-    {
-        ModifyChangeType = defaultChangeType;
-    }
-
     /// <summary>
     /// Gets or sets the default change type for modify.
     /// </summary>
-    public ChangeType ModifyChangeType { get; set; }
+    public ChangeType ModifyChangeType { get; set; } = defaultChangeType;
 
     /// <summary>
     /// Gets or sets the default change type for modify.
@@ -125,6 +117,74 @@ public class NewDiffChangeTypeConverter : DiffChangeTypeConverter
     /// Initializes a new instance of the NewDiffChangeTypeConverter class.
     /// </summary>
     public NewDiffChangeTypeConverter()
+        : base(ChangeType.Inserted)
+    {
+    }
+}
+
+/// <summary>
+/// The base converter for change type.
+/// </summary>
+/// <param name="defaultChangeType">The default chagne type.</param>
+public class DiffTextHighlighterConverter(ChangeType defaultChangeType) : IValueConverter
+{
+    /// <summary>
+    /// Gets or sets the default change type for modify.
+    /// </summary>
+    public ChangeType ModifyChangeType { get; set; } = defaultChangeType;
+
+    /// <summary>
+    /// Gets or sets the foreground.
+    /// </summary>
+    public Brush Foreground { get; set; }
+
+    /// <summary>
+    /// Converts a source to target.
+    /// </summary>
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is FrameworkElement element) value = element.DataContext;
+        if (value is not List<DiffPiece> sub)
+        {
+            if (value is DiffPiece p) sub = p.SubPieces;
+            else return null;
+        }
+
+        return InternalUtilities.GetTextHighlighter(sub, ModifyChangeType, Foreground ?? (parameter as Brush));
+    }
+
+    /// <summary>
+    /// Converts the source back.
+    /// </summary>
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        return null;
+    }
+}
+
+/// <summary>
+/// The diff change type converter for old text.
+/// </summary>
+public class DeletedDiffTextHighlighterConverter : DiffTextHighlighterConverter
+{
+    /// <summary>
+    /// Initializes a new instance of the DeletedDiffTextHighlighterConverter class.
+    /// </summary>
+    public DeletedDiffTextHighlighterConverter()
+        : base(ChangeType.Deleted)
+    {
+    }
+}
+
+/// <summary>
+/// The diff change type converter for new text.
+/// </summary>
+public class InsertedDiffTextHighlighterConverter : DiffTextHighlighterConverter
+{
+    /// <summary>
+    /// Initializes a new instance of the InsertedDiffTextHighlighterConverter class.
+    /// </summary>
+    public InsertedDiffTextHighlighterConverter()
         : base(ChangeType.Inserted)
     {
     }

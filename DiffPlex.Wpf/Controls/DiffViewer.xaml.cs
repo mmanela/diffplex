@@ -26,7 +26,7 @@ namespace DiffPlex.Wpf.Controls;
 /// <summary>
 /// The diff control for text.
 /// </summary>
-public partial class DiffViewer : UserControl
+public partial class DiffViewer : UserControl, IDiffViewer
 {
     /// <summary>
     /// The event arguments of view mode changed.
@@ -78,6 +78,11 @@ public partial class DiffViewer : UserControl
     /// The property of line number background brush.
     /// </summary>
     public static readonly DependencyProperty LineNumberForegroundProperty = RegisterDependencyProperty<Brush>(nameof(LineNumberForeground), new SolidColorBrush(Color.FromArgb(255, 64, 128, 160)));
+
+    /// <summary>
+    /// The property of text wrapping state.
+    /// </summary>
+    public static readonly DependencyProperty IsTextWrapEnabledProperty = RegisterRefreshDependencyProperty(nameof(IsTextWrapEnabled), false);
 
     /// <summary>
     /// The property of line number width.
@@ -651,6 +656,17 @@ public partial class DiffViewer : UserControl
     }
 
     /// <summary>
+    /// Gets or sets the value indicating whether is wrap text.
+    /// </summary>
+    [Bindable(true)]
+    [Category("Appearance")]
+    public bool IsTextWrapEnabled
+    {
+        get => (bool)GetValue(IsTextWrapEnabledProperty);
+        set => SetValue(IsTextWrapEnabledProperty, value);
+    }
+
+    /// <summary>
     /// Gets or sets the display name of inline mode toggle.
     /// </summary>
     [Category("Appearance")]
@@ -1152,7 +1168,7 @@ public partial class DiffViewer : UserControl
         var m = sideBySideResult;
         CollapseUnchangedSectionsToggle.IsChecked = IgnoreUnchanged;
         if (m == null) return;
-        var contextLineCount = IgnoreUnchanged ? LinesContext: -1;
+        var contextLineCount = IgnoreUnchanged ? LinesContext : -1;
         Helper.InsertLines(LeftContentPanel, m.OldText?.Lines, true, this, contextLineCount);
         Helper.InsertLines(RightContentPanel, m.NewText.Lines, false, this, contextLineCount);
     }
@@ -1314,6 +1330,13 @@ public partial class DiffViewer : UserControl
         var line = GetLinesAfterViewport(isLeft, VisibilityLevels.All).FirstOrDefault(ele => ele.Type != ChangeType.Unchanged);
         GoTo(line, isLeft);
         return line;
+    }
+
+    public void ToggleTextWrapping()
+    {
+       IsTextWrapEnabled = !IsTextWrapEnabled; 
+
+        this.Refresh();
     }
 
     private string GenerateHeader(FileInfo file)

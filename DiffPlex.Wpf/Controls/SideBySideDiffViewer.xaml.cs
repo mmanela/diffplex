@@ -24,7 +24,7 @@ namespace DiffPlex.Wpf.Controls;
 /// The side by side diff control for text.
 /// Interaction logic for SideBySideDiffViewer.xaml
 /// </summary>
-public partial class SideBySideDiffViewer : UserControl
+public partial class SideBySideDiffViewer : UserControl, IDiffViewer
 {
     /// <summary>
     /// The property of diff model.
@@ -57,6 +57,11 @@ public partial class SideBySideDiffViewer : UserControl
         if (!(d is SideBySideDiffViewer c) || e.OldValue == e.NewValue || !(e.NewValue is int n)) return;
         c.LeftContentPanel.LineNumberWidth = c.RightContentPanel.LineNumberWidth = n;
     });
+
+    /// <summary>
+    /// The property of text wrapping state.
+    /// </summary>
+    public static readonly DependencyProperty IsTextWrapEnabledProperty = RegisterDependencyProperty(nameof(IsTextWrapEnabled), false);
 
     /// <summary>
     /// The property of change type symbol foreground brush.
@@ -398,6 +403,7 @@ public partial class SideBySideDiffViewer : UserControl
         get => (int)GetValue(LinesContextProperty);
         set => SetValue(LinesContextProperty, value);
     }
+    public bool IsTextWrapEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     /// <summary>
     /// Sets a new diff model.

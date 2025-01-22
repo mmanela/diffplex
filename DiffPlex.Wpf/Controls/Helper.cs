@@ -17,9 +17,11 @@ internal static class Helper
     /// <summary>
     /// Updates the inline diffs view.
     /// </summary>
-    internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source, int contextLineCount)
+    internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, IDiffViewer source, int contextLineCount)
     {
         viewer.Clear();
+        var diffViewer = source as DiffViewer;
+
         if (lines == null) return;
         if (lines.Any() == false) return;
         var disableSubPieces = lines.Count > MaxCount;    // For performance.
@@ -29,6 +31,7 @@ internal static class Helper
             {
                 var c = viewer.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
                 c.Tag = line;
+
                 continue;
             }
 
@@ -44,8 +47,10 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, true);
+
                         var c = viewer.Add(line.Position, "+", details, changeType.ToString(), source);
                         c.Tag = line;
+
                         hasAdded = true;
                     }
 
@@ -54,8 +59,10 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, false);
+
                         var c = viewer.Add(line.Position, "-", details, changeType.ToString(), source);
                         c.Tag = line;
+
                         hasAdded = true;
                     }
 
@@ -84,7 +91,7 @@ internal static class Helper
         viewer.AdjustScrollView();
     }
 
-    internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, int contextLineCount)
     {
         if (lines == null || panel == null) return;
         var guid = panel.TrackingId = Guid.NewGuid();
@@ -98,7 +105,7 @@ internal static class Helper
         _ = InsertLinesAsync(guid, panel, lines, isOld, source, contextLineCount);
     }
 
-    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, int contextLineCount)
     {   // For performance.
         if (lines == null || panel == null) return;
         var disablePieces = lines.Count > MaxCount;
@@ -210,7 +217,7 @@ internal static class Helper
         catch (InvalidOperationException)
         {
         }
-        
+
         return false;
     }
 
@@ -474,14 +481,17 @@ internal static class Helper
         return details;
     }
 
-    private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
+    private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, IDiffViewer source, bool disableSubPieces = false)
     {
+        var diffViewer = source as DiffViewer;
+
         foreach (var line in lines)
         {
             if (line == null)
             {
                 var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
                 c.Tag = line;
+
                 continue;
             }
 
@@ -495,8 +505,10 @@ internal static class Helper
                     if (line.SubPieces != null && line.SubPieces.Count > 1 && !disableSubPieces)
                     {
                         var details = GetSubPiecesInfo(line, isOld);
+
                         var c = panel.Add(line.Position, isOld ? "-" : "+", details, changeType.ToString(), source);
                         c.Tag = line;
+
                         hasAdded = true;
                     }
 

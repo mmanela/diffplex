@@ -45,6 +45,11 @@ public partial class SideBySideDiffViewer : UserControl
          }));
 
     /// <summary>
+    /// The property to hide line numbers.
+    /// </summary>
+    public static readonly DependencyProperty HideLineNumbersProperty = RegisterDependencyProperty(nameof(HideLineNumbers), false);
+
+    /// <summary>
     /// The property of line number background brush.
     /// </summary>
     public static readonly DependencyProperty LineNumberForegroundProperty = RegisterDependencyProperty<Brush>(nameof(LineNumberForeground), new SolidColorBrush(Color.FromArgb(255, 64, 128, 160)));
@@ -217,6 +222,16 @@ public partial class SideBySideDiffViewer : UserControl
     /// Gets the new text.
     /// </summary>
     public DiffPaneModel NewText => DiffModel?.NewText;
+
+    /// <summary>
+    /// Hides the line numbers.
+    /// </summary>
+    [Bindable(true)]
+    public bool HideLineNumbers
+    {
+        get => (bool)GetValue(HideLineNumbersProperty);
+        set => SetValue(HideLineNumbersProperty, value);
+    }
 
     /// <summary>
     /// Gets or sets the foreground brush of the line number.

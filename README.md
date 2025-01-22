@@ -306,6 +306,9 @@ public bool IsSideBySideViewMode { get; }
 // true if collapse unchanged sections; otherwise, false.
 public bool IgnoreUnchanged { get; set; }
 
+// Hides the line numbers.
+public bool HideLineNumbers { get; set; }
+
 // The font size.
 public double FontSize { get; set; }
 

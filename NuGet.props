@@ -17,7 +17,7 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.0' OR '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net30'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.0' OR '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net35'">
     <DefineConstants>NET_TOO_OLD_VER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

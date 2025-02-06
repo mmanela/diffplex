@@ -1183,12 +1183,12 @@ public partial class DiffViewer : UserControl
 
     private void ApplyHeaderTextProperties(TextBlock text)
     {
-        text.SetBinding(TextBlock.FontSizeProperty, new Binding("FontSize") { Source = this, Mode = BindingMode.OneWay });
-        text.SetBinding(TextBlock.FontFamilyProperty, new Binding("FontFamily") { Source = this, Mode = BindingMode.OneWay });
-        text.SetBinding(TextBlock.FontWeightProperty, new Binding("FontWeight") { Source = this, Mode = BindingMode.OneWay });
-        text.SetBinding(TextBlock.FontStretchProperty, new Binding("FontStretch") { Source = this, Mode = BindingMode.OneWay });
-        text.SetBinding(TextBlock.FontStyleProperty, new Binding("FontStyle") { Source = this, Mode = BindingMode.OneWay });
-        text.SetBinding(TextBlock.ForegroundProperty, new Binding("HeaderForeground") { Source = this, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
+        text.SetBinding(TextBlock.FontSizeProperty, new Binding(nameof(FontSize)) { Source = this, Mode = BindingMode.OneWay });
+        text.SetBinding(TextBlock.FontFamilyProperty, new Binding(nameof(FontFamily)) { Source = this, Mode = BindingMode.OneWay });
+        text.SetBinding(TextBlock.FontWeightProperty, new Binding(nameof(FontWeight)) { Source = this, Mode = BindingMode.OneWay });
+        text.SetBinding(TextBlock.FontStretchProperty, new Binding(nameof(FontStretch)) { Source = this, Mode = BindingMode.OneWay });
+        text.SetBinding(TextBlock.FontStyleProperty, new Binding(nameof(FontStyle)) { Source = this, Mode = BindingMode.OneWay });
+        text.SetBinding(TextBlock.ForegroundProperty, new Binding(nameof(HeaderForeground)) { Source = this, Mode = BindingMode.OneWay, TargetNullValue = Foreground });
     }
 
     private void UpdateHeaderText()

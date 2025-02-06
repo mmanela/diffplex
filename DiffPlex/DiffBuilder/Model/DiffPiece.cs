@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DiffPlex.DiffBuilder.Model;
 
-public enum ChangeType
+public enum ChangeType : byte
 {
     Unchanged,
     Deleted,
@@ -100,6 +100,11 @@ public class DiffPiece : IEquatable<DiffPiece>
     }
 
 #if !NET_TOO_OLD_VER
+    /// <summary>
+    /// Writes current diff piece into UTF-8 JSON stream.
+    /// </summary>
+    /// <param name="writer">The UTF-8 JSON stream writer.</param>
+    /// <param name="options">The JSON srialization options.</param>
     public void Write(System.Text.Json.Utf8JsonWriter writer, System.Text.Json.JsonSerializerOptions options)
     {
         writer.WriteStartObject();

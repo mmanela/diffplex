@@ -1163,7 +1163,7 @@ public partial class DiffViewer : UserControl
     private void RenderInlineDiffs()
     {
         if (inlineResult?.Lines == null) return;
-        ICollection<DiffPiece> selectedLines = inlineResult.Lines;
+        IReadOnlyCollection<DiffPiece> selectedLines = inlineResult.Lines;
         Helper.RenderInlineDiffs(InlineContentPanel, selectedLines, this, IgnoreUnchanged ? LinesContext : -1);
     }
 

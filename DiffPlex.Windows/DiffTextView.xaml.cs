@@ -149,7 +149,7 @@ public sealed partial class DiffTextView : UserControl
 
     private readonly DiffTextViewReference reference;
     private List<DiffTextViewModel> sideBySide;
-    private List<DiffPiece> inlines;
+    private IReadOnlyList<DiffPiece> inlines;
     private bool skipRefresh = true;
 
     /// <summary>
@@ -815,8 +815,8 @@ public sealed partial class DiffTextView : UserControl
         if (SplitElement.ItemsSource != null && !forceToUpdate) return;
         sideBySide = null;
         var diff = SideBySideDiffBuilder.Diff(OldText ?? string.Empty, NewText ?? string.Empty, IgnoreWhiteSpace, !IsCaseSensitive);
-        var left = diff?.OldText?.Lines ?? new();
-        var right = diff?.NewText?.Lines ?? new();
+        var left = diff?.OldText?.Lines ?? new List<DiffPiece>();
+        var right = diff?.NewText?.Lines ?? new List<DiffPiece>();
         var count = Math.Max(left.Count, right.Count);
         var col = new List<DiffTextViewModel>();
         var add = 0;

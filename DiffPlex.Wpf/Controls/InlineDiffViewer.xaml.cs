@@ -171,7 +171,7 @@ public partial class InlineDiffViewer : UserControl
     /// <summary>
     /// Gets the lines in the diff model.
     /// </summary>
-    public IReadOnlyList<DiffPiece> Lines => DiffModel?.Lines?.AsReadOnly();
+    public IReadOnlyList<DiffPiece> Lines => DiffModel?.Lines;
 
     /// <summary>
     /// Gets or sets the foreground brush of the line number.

@@ -17,7 +17,7 @@ internal static class Helper
     /// <summary>
     /// Updates the inline diffs view.
     /// </summary>
-    internal static void RenderInlineDiffs(InternalLinesViewer viewer, ICollection<DiffPiece> lines, UIElement source, int contextLineCount)
+    internal static void RenderInlineDiffs(InternalLinesViewer viewer, IReadOnlyCollection<DiffPiece> lines, UIElement source, int contextLineCount)
     {
         viewer.Clear();
         if (lines == null) return;
@@ -84,7 +84,7 @@ internal static class Helper
         viewer.AdjustScrollView();
     }
 
-    internal static void InsertLines(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    internal static void InsertLines(InternalLinesViewer panel, IReadOnlyCollection<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
     {
         if (lines == null || panel == null) return;
         var guid = panel.TrackingId = Guid.NewGuid();
@@ -98,7 +98,7 @@ internal static class Helper
         _ = InsertLinesAsync(guid, panel, lines, isOld, source, contextLineCount);
     }
 
-    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
+    private static async Task InsertLinesAsync(Guid guid, InternalLinesViewer panel, IReadOnlyCollection<DiffPiece> lines, bool isOld, UIElement source, int contextLineCount)
     {   // For performance.
         if (lines == null || panel == null) return;
         var disablePieces = lines.Count > MaxCount;
@@ -474,7 +474,7 @@ internal static class Helper
         return details;
     }
 
-    private static void InsertLinesInteral(InternalLinesViewer panel, List<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
+    private static void InsertLinesInteral(InternalLinesViewer panel, IReadOnlyCollection<DiffPiece> lines, bool isOld, UIElement source, bool disableSubPieces = false)
     {
         foreach (var line in lines)
         {

@@ -42,5 +42,18 @@ namespace DiffPlex
         /// <param name="chunker">Component responsible for tokenizing the compared texts</param>
         /// <returns>A <see cref="DiffResult"/> object which details the differences</returns>
         DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
+
+#if !NET_TOO_OLD_VER
+        /// <summary>
+        /// Creates a diff by comparing text line by line.
+        /// </summary>
+        /// <param name="oldText">The old text.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreWhiteSpace">If set to <see langword="true"/> will ignore white space when determining if lines are the same.</param>
+        /// <param name="ignoreCase">Determine if the text comparision is case sensitive or not</param>
+        /// <param name="chunker">Component responsible for tokenizing the compared texts</param>
+        /// <returns>A <see cref="DiffResult"/> object which details the differences</returns>
+        DiffResult CreateDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
+#endif
     }
 }

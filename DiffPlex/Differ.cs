@@ -57,23 +57,84 @@ namespace DiffPlex
             if (oldText == null) throw new ArgumentNullException(nameof(oldText));
             if (newText == null) throw new ArgumentNullException(nameof(newText));
             if (chunker == null) throw new ArgumentNullException(nameof(chunker));
-
-            var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
-            var lineDiffs = new List<DiffBlock>();
-
             var modOld = new ModificationData(oldText);
             var modNew = new ModificationData(newText);
+            return CreateDiffs(modOld, modNew, ignoreWhiteSpace, ignoreCase, chunker);
+        }
 
+#if !NET_TOO_OLD_VER
+        public DiffResult CreateLineDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());
+        }
+
+        public DiffResult CreateLineDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace, bool ignoreCase)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
+        }
+
+        public DiffResult CreateCharacterDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new CharacterChunker());
+        }
+
+        public DiffResult CreateCharacterDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace, bool ignoreCase)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new CharacterChunker());
+        }
+
+        public DiffResult CreateWordDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace, char[] separators)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new DelimiterChunker(separators));
+        }
+
+        public DiffResult CreateWordDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new DelimiterChunker(separators));
+        }
+
+        public DiffResult CreateCustomDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhiteSpace, Func<string, string[]> chunker)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhiteSpace, false, new CustomFunctionChunker(chunker));
+        }
+
+        public DiffResult CreateCustomDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
+        {
+            return CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, new CustomFunctionChunker(chunker));
+        }
+
+        public DiffResult CreateDiffs(ReadOnlySpan<char> oldText, ReadOnlySpan<char> newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+        {
+            if (chunker == null) throw new ArgumentNullException(nameof(chunker));
+            var modOld = new ModificationDataInfo();
+            var modNew = new ModificationDataInfo();
+            return CreateDiffs(modOld, oldText, modNew, newText, ignoreWhiteSpace, ignoreCase, chunker);
+        }
+
+        private DiffResult CreateDiffs(ModificationDataInfo modOld, ReadOnlySpan<char> oldText, ModificationDataInfo modNew, ReadOnlySpan<char> newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+        {
+            var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+            BuildPieceHashes(pieceHash, modOld, oldText, ignoreWhiteSpace, chunker);
+            BuildPieceHashes(pieceHash, modNew, newText, ignoreWhiteSpace, chunker);
+            return CreateDiffsByPieces(modOld, modNew, ignoreWhiteSpace, ignoreCase, chunker);
+        }
+#endif
+        private DiffResult CreateDiffs(ModificationData modOld, ModificationData modNew, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+        {
+            var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
             BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, chunker);
             BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, chunker);
+            return CreateDiffsByPieces(modOld, modNew, ignoreWhiteSpace, ignoreCase, chunker);
+        }
 
+        private DiffResult CreateDiffsByPieces(ModificationDataInfo modOld, ModificationDataInfo modNew, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+        {
             BuildModificationData(modOld, modNew);
-
-            int piecesALength = modOld.HashedPieces.Length;
-            int piecesBLength = modNew.HashedPieces.Length;
-            int posA = 0;
-            int posB = 0;
-
+            var lineDiffs = new List<DiffBlock>();
+            var piecesALength = modOld.HashedPieces.Length;
+            var piecesBLength = modNew.HashedPieces.Length;
+            var posA = 0;
+            var posB = 0;
             do
             {
                 while (posA < piecesALength
@@ -260,7 +321,7 @@ namespace DiffPlex
             throw new Exception("Should never get here");
         }
 
-        protected static void BuildModificationData(ModificationData A, ModificationData B)
+        protected static void BuildModificationData(ModificationDataInfo A, ModificationDataInfo B)
         {
             int N = A.HashedPieces.Length;
             int M = B.HashedPieces.Length;
@@ -271,10 +332,10 @@ namespace DiffPlex
         }
 
         private static void BuildModificationData
-            (ModificationData A,
+            (ModificationDataInfo A,
              int startA,
              int endA,
-             ModificationData B,
+             ModificationDataInfo B,
              int startB,
              int endB,
              int[] forwardDiagonal,
@@ -334,6 +395,27 @@ namespace DiffPlex
             }
 
             var pieces = chunker.Chunk(data.RawData);
+            BuildPieceHashes(pieces, pieceHash, data, ignoreWhitespace, chunker);
+        }
+
+#if !NET_TOO_OLD_VER
+        private static void BuildPieceHashes(IDictionary<string, int> pieceHash, ModificationDataInfo data, ReadOnlySpan<char> text, bool ignoreWhitespace, IChunker chunker)
+        {
+            if (text.Length == 0)
+            {
+                data.Pieces = [];
+                data.HashedPieces = [];
+                data.Modifications = [];
+                return;
+            }
+
+            var pieces = chunker is ISpanChunker spanChunker ? spanChunker.Chunk(text) : chunker.Chunk(text.ToString());
+            BuildPieceHashes(pieces, pieceHash, data, ignoreWhitespace, chunker);
+        }
+#endif
+
+        private static void BuildPieceHashes(IReadOnlyList<string> pieces, IDictionary<string, int> pieceHash, ModificationDataInfo data, bool ignoreWhitespace, IChunker chunker)
+        {
             data.Pieces = pieces;
             data.HashedPieces = new int[pieces.Count];
             data.Modifications = new bool[pieces.Count];

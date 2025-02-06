@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.14.0" />
+    <PackageVersion Include="System.Memory" Version="4.6.0" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageVersion Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2957.106" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.6.250108002" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="Trivial.WindowsKit" Version="9.3.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
+  </ItemGroup>
+</Project>

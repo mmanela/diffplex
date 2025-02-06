@@ -432,31 +432,22 @@ namespace Facts.DiffPlex
                     new DiffPiece[]
                     {
                         new DiffPiece("1", ChangeType.Unchanged, 1),
-                        new DiffPiece(" 2", ChangeType.Modified, 2)
+                        new DiffPiece(" 2", ChangeType.Modified, 2, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece(" ", ChangeType.Deleted, 1),
-                                new DiffPiece("2", ChangeType.Unchanged, 2),
-                            },
-                        },
-                        new DiffPiece("3 ", ChangeType.Modified, 3)
+                            new DiffPiece(" ", ChangeType.Deleted, 1),
+                            new DiffPiece("2", ChangeType.Unchanged, 2),
+                        }),
+                        new DiffPiece("3 ", ChangeType.Modified, 3, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece("3", ChangeType.Unchanged, 1),
-                                new DiffPiece(" ", ChangeType.Deleted, 2),
-                            },
-                        },
-                        new DiffPiece(" 4 ", ChangeType.Modified, 4)
+                            new DiffPiece("3", ChangeType.Unchanged, 1),
+                            new DiffPiece(" ", ChangeType.Deleted, 2),
+                        }),
+                        new DiffPiece(" 4 ", ChangeType.Modified, 4, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece(" ", ChangeType.Deleted, 1),
-                                new DiffPiece("4", ChangeType.Unchanged, 2),
-                                new DiffPiece(" ", ChangeType.Deleted, 3),
-                            },
-                        },
+                            new DiffPiece(" ", ChangeType.Deleted, 1),
+                            new DiffPiece("4", ChangeType.Unchanged, 2),
+                            new DiffPiece(" ", ChangeType.Deleted, 3),
+                        }),
                         new DiffPiece("5", ChangeType.Unchanged, 5),
                     });
                 Assert.Equal(
@@ -464,31 +455,22 @@ namespace Facts.DiffPlex
                     new DiffPiece[]
                     {
                         new DiffPiece("1", ChangeType.Unchanged, 1),
-                        new DiffPiece("2", ChangeType.Modified, 2)
+                        new DiffPiece("2", ChangeType.Modified, 2, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece(null, ChangeType.Imaginary),
-                                new DiffPiece("2", ChangeType.Unchanged, 1),
-                            },
-                        },
-                        new DiffPiece("3", ChangeType.Modified, 3)
+                            new DiffPiece(null, ChangeType.Imaginary),
+                            new DiffPiece("2", ChangeType.Unchanged, 1),
+                        }),
+                        new DiffPiece("3", ChangeType.Modified, 3, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece("3", ChangeType.Unchanged, 1),
-                                new DiffPiece(null, ChangeType.Imaginary),
-                            },
-                        },
-                        new DiffPiece("4", ChangeType.Modified, 4)
+                            new DiffPiece("3", ChangeType.Unchanged, 1),
+                            new DiffPiece(null, ChangeType.Imaginary),
+                        }),
+                        new DiffPiece("4", ChangeType.Modified, 4, new List<DiffPiece>
                         {
-                            SubPieces =
-                            {
-                                new DiffPiece(null, ChangeType.Imaginary),
-                                new DiffPiece("4", ChangeType.Unchanged, 1),
-                                new DiffPiece(null, ChangeType.Imaginary),
-                            },
-                        },
+                            new DiffPiece(null, ChangeType.Imaginary),
+                            new DiffPiece("4", ChangeType.Unchanged, 1),
+                            new DiffPiece(null, ChangeType.Imaginary),
+                        }),
                         new DiffPiece("5", ChangeType.Unchanged, 5),
                     });
             }

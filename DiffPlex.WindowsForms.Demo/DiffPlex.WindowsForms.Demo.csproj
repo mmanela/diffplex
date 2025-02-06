@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net8.0-windows;net48;net46</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net48;net462</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>

@@ -34,6 +34,9 @@ public enum DiffTextViewType : byte
     Right = 3,
 }
 
+/// <summary>
+/// The view info of diff text.
+/// </summary>
 public struct DiffTextViewInfo
 {
     private readonly object token;
@@ -48,11 +51,13 @@ public struct DiffTextViewInfo
     {
         this.token = token ?? new();
         ViewType = viewType;
-        model ??= new();
-        ChangeType = model.Type;
-        Position = model.Position;
-        Text = model.Text;
+        Model = model ?? new();
     }
+
+    /// <summary>
+    /// Gets the data model of source.
+    /// </summary>
+    public DiffPiece Model { get; }
 
     /// <summary>
     /// Gets the view type.
@@ -62,41 +67,27 @@ public struct DiffTextViewInfo
     /// <summary>
     /// Gets the change type.
     /// </summary>
-    public ChangeType ChangeType { get; }
+    public ChangeType ChangeType => Model.Type;
 
     /// <summary>
     /// Gets the line position.
     /// </summary>
-    public int? Position { get; }
+    public int? Position => Model.Position;
 
     /// <summary>
     /// Gets the content text.
     /// </summary>
-    public string Text { get; }
+    public string Text => Model.Text;
+
+    /// <summary>
+    /// Gets the sub pieces.
+    /// </summary>
+    public IReadOnlyList<DiffPiece> SubPieces => Model.SubPieces;
 
     /// <inheritdoc />
     public override string ToString()
     {
-        var sb = new StringBuilder();
-        if (Position.HasValue)
-        {
-            sb.Append(Position.Value);
-            sb.Append(' ');
-        }
-
-        switch (ChangeType)
-        {
-            case ChangeType.Inserted:
-                sb.Append("+ ");
-                break;
-            case ChangeType.Deleted:
-                sb.Append("- ");
-                break;
-        }
-
-        sb.Append('\t');
-        sb.Append(Text);
-        return sb.ToString();
+        return Model.ToString();
     }
 
     /// <summary>
@@ -105,7 +96,17 @@ public struct DiffTextViewInfo
     /// <param name="token">The token to test.</param>
     /// <returns>true if the same; otherwise, false.</returns>
     internal bool IsToken(object token)
-        => token == this.token;
+    {
+        return token == this.token;
+    }
+
+    /// <summary>
+    /// Writes current diff piece into UTF-8 JSON stream.
+    /// </summary>
+    /// <param name="writer">The UTF-8 JSON stream writer.</param>
+    /// <param name="options">The JSON srialization options.</param>
+    public void Write(System.Text.Json.Utf8JsonWriter writer, System.Text.Json.JsonSerializerOptions options)
+        => Model.Write(writer, options);
 }
 
 /// <summary>
@@ -171,8 +172,6 @@ internal abstract class BaseDiffTextViewModel : IEquatable<DiffTextViewInfo>
 /// </summary>
 internal class DiffTextViewModel : BaseDiffTextViewModel
 {
-    private object token = new();
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DiffTextViewModel"/> class.
     /// </summary>

@@ -25,7 +25,7 @@ internal class InternalUtilities
 
     public static readonly SolidColorBrush GrayBackground = new(Color.FromArgb(32, 128, 128, 128));
 
-    public static List<TextHighlighter> GetTextHighlighter(List<DiffPiece> sub, ChangeType modify, Brush foreground)
+    public static List<TextHighlighter> GetTextHighlighter(IEnumerable<DiffPiece> sub, ChangeType modify, Brush foreground)
     {
         if (sub == null) return null;
         var insert = new TextHighlighter

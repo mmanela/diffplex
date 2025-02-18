@@ -38,7 +38,7 @@ public class DiffChangeTypeConverter(ChangeType defaultChangeType) : IValueConve
         {
             if (targetType == typeof(IEnumerable<TextHighlighter>))
             {
-                if (value is not List<DiffPiece> sub)
+                if (value is not IEnumerable<DiffPiece> sub)
                 {
                     if (value is not DiffPiece diffPiece) return null;
                     sub = diffPiece.SubPieces;
@@ -144,7 +144,7 @@ public class DiffTextHighlighterConverter(ChangeType defaultChangeType) : IValue
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is FrameworkElement element) value = element.DataContext;
-        if (value is not List<DiffPiece> sub)
+        if (value is not IEnumerable<DiffPiece> sub)
         {
             if (value is DiffPiece p) sub = p.SubPieces;
             else return null;

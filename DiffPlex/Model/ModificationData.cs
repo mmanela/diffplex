@@ -1,20 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace DiffPlex.Model
+namespace DiffPlex.Model;
+
+public class ModificationData : ModificationDataInfo
 {
-    public class ModificationData
+    public ModificationData(string str)
     {
-        public int[] HashedPieces { get; set; }
-
-        public string RawData { get; }
-
-        public bool[] Modifications { get; set; }
-
-        public IReadOnlyList<string> Pieces { get; set; }
-
-        public ModificationData(string str)
-        {
-            RawData = str;
-        }
+        RawData = str;
     }
+
+    public string RawData { get; }
+}
+
+public class ModificationDataInfo
+{
+    public int[] HashedPieces { get; set; }
+
+    public bool[] Modifications { get; set; }
+
+    public IReadOnlyList<string> Pieces { get; set; }
 }

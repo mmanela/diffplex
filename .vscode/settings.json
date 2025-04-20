@@ -1,3 +1,6 @@
 {
     "dotnet-test-explorer.testProjectPath": "Facts.DiffPlex",
+    "cSpell.words": [
+        "Xunit"
+    ],
 }

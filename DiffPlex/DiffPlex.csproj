@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.0;netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;net6.0</TargetFrameworks>
     <Version>1.7.2</Version>
     <PackageTags>diff</PackageTags>
     <Description>DiffPlex is a diffing library that allows you to programmatically create text diffs. DiffPlex is a fast and tested library.</Description>

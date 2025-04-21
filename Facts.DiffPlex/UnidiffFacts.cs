@@ -97,7 +97,7 @@ footer line 2";
             // Assert
             string expected = @"--- old.txt
 +++ new.txt
-@@ -1,9 +1,10 @@
+@@ -1,7 +1,8 @@
  header line 1
 -header line 2
 +header line 2 modified
@@ -153,7 +153,7 @@ footer line 5";
             // Assert
             string expected = @"--- old.txt
 +++ new.txt
-@@ -1,6 +1,6 @@
+@@ -1,5 +1,5 @@
  header line 1
 -header line 2
 +modified header

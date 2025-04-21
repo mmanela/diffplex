@@ -3,11 +3,13 @@
 # Create a temporary file for the old version
 TEMP_FILE=$(mktemp)
 
+FILE_PATH="DiffPlex/Renderer/Unidiff.cs"
+
 # Get the previous version of Program.cs from git history
-git show HEAD~1:DiffPlex.ConsoleRunner/Program.cs > "$TEMP_FILE"
+git show HEAD~1:$FILE_PATH > "$TEMP_FILE"
 
 # Run the ConsoleRunner with file mode
-dotnet run --project DiffPlex.ConsoleRunner file "$TEMP_FILE" "DiffPlex.ConsoleRunner/Program.cs"
+dotnet run --project DiffPlex.ConsoleRunner file "$TEMP_FILE" "$FILE_PATH"
 
 # Clean up the temporary file
 rm "$TEMP_FILE"

@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
+using DiffPlex;
+using DiffPlex.Chunkers;
+using DiffPlex.Model;
 
 namespace DiffPlex.Renderer
 {
     /// <summary>
-    /// Renderer for generating unified diff (unidiff) format output from inline diff results
+    /// Renderer for generating unified diff (unidiff) format output from diff results
     /// </summary>
     public class UnidiffRenderer
     {
-        private readonly IInlineDiffBuilder diffBuilder;
+        private readonly IDiffer differ;
         private readonly int contextLines;
         
         /// <summary>
@@ -23,11 +24,11 @@ namespace DiffPlex.Renderer
         /// <summary>
         /// Initializes a new instance of the <see cref="UnidiffRenderer"/> class.
         /// </summary>
-        /// <param name="diffBuilder">The diff builder to use. If null, uses the default InlineDiffBuilder.</param>
+        /// <param name="differ">The differ to use. If null, uses the default Differ.</param>
         /// <param name="contextLines">Number of unchanged context lines to include around changes.</param>
-        public UnidiffRenderer(IInlineDiffBuilder diffBuilder = null, int contextLines = 3)
+        public UnidiffRenderer(IDiffer differ = null, int contextLines = 3)
         {
-            this.diffBuilder = diffBuilder ?? InlineDiffBuilder.Instance;
+            this.differ = differ ?? Differ.Instance;
             this.contextLines = contextLines;
         }
         
@@ -48,48 +49,26 @@ namespace DiffPlex.Renderer
             if (oldFileName == null) throw new ArgumentNullException(nameof(oldFileName));
             if (newFileName == null) throw new ArgumentNullException(nameof(newFileName));
             
-            var model = diffBuilder.BuildDiffModel(oldText, newText, ignoreWhitespace, ignoreCase, new DiffPlex.Chunkers.LineChunker());
-            return Generate(model, oldFileName, newFileName);
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
+            return Generate(diffResult, oldFileName, newFileName);
         }
         
         /// <summary>
-        /// Generates a unified diff format output from a diff model.
+        /// Generates a unified diff format output from a diff result.
         /// </summary>
-        /// <param name="model">The diff model to render.</param>
+        /// <param name="diffResult">The diff result to render.</param>
         /// <param name="oldFileName">The old file name to show in the headers.</param>
         /// <param name="newFileName">The new file name to show in the headers.</param>
         /// <returns>A string containing the unified diff output.</returns>
-        public string Generate(DiffPaneModel model, string oldFileName = "a", string newFileName = "b")
+        public string Generate(DiffResult diffResult, string oldFileName = "a", string newFileName = "b")
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (diffResult == null) throw new ArgumentNullException(nameof(diffResult));
             if (oldFileName == null) throw new ArgumentNullException(nameof(oldFileName));
             if (newFileName == null) throw new ArgumentNullException(nameof(newFileName));
             
-            if (!model.HasDifferences)
+            if (diffResult.DiffBlocks.Count == 0)
             {
                 return string.Empty;
-            }
-            
-            // Normalize the model by filtering out trailing empty lines if present
-            var lines = model.Lines;
-            var lastChangedIndex = lines.FindLastIndex(line => line.Type != ChangeType.Unchanged);
-            if (lastChangedIndex >= 0 && lastChangedIndex < lines.Count - 1)
-            {
-                // Check if all remaining lines are empty
-                bool allEmpty = true;
-                for (int i = lastChangedIndex + 1; i < lines.Count; i++)
-                {
-                    if (!string.IsNullOrEmpty(lines[i].Text))
-                    {
-                        allEmpty = false;
-                        break;
-                    }
-                }
-                
-                if (allEmpty)
-                {
-                    lines = lines.Take(lastChangedIndex + 1).ToList();
-                }
             }
             
             var sb = new StringBuilder();
@@ -99,29 +78,31 @@ namespace DiffPlex.Renderer
             sb.AppendLine($"+++ {newFileName}");
             
             // Group changes into hunks with context
-            var hunks = CreateHunks(lines);
+            var hunks = CreateHunks(diffResult);
             
             foreach (var hunk in hunks)
             {
                 // Calculate line numbers for the hunk header
-                int oldStart = GetOldLineNumber(hunk, out int oldCount);
-                int newStart = GetNewLineNumber(hunk, out int newCount);
+                int oldStart = hunk.OldStartLine;
+                int oldCount = hunk.OldLength;
+                int newStart = hunk.NewStartLine;
+                int newCount = hunk.NewLength;
                 
                 // Generate the hunk header
                 sb.AppendLine($"@@ -{oldStart},{oldCount} +{newStart},{newCount} @@");
                 
                 // Generate the hunk content
-                foreach (var line in hunk)
+                foreach (var line in hunk.Lines)
                 {
                     switch (line.Type)
                     {
-                        case ChangeType.Unchanged:
+                        case LineType.Unchanged:
                             sb.AppendLine($" {line.Text}");
                             break;
-                        case ChangeType.Deleted:
+                        case LineType.Deleted:
                             sb.AppendLine($"-{line.Text}");
                             break;
-                        case ChangeType.Inserted:
+                        case LineType.Inserted:
                             sb.AppendLine($"+{line.Text}");
                             break;
                     }
@@ -131,135 +112,152 @@ namespace DiffPlex.Renderer
             return sb.ToString();
         }
         
-        private IList<List<DiffPiece>> CreateHunks(List<DiffPiece> lines)
+        private List<DiffHunk> CreateHunks(DiffResult diffResult)
         {
-            var hunks = new List<List<DiffPiece>>();
-            if (lines.Count == 0) return hunks;
+            var hunks = new List<DiffHunk>();
             
-            var currentHunk = new List<DiffPiece>();
-            int lastChanged = -1;
+            if (diffResult.DiffBlocks.Count == 0) return hunks;
             
-            for (int i = 0; i < lines.Count; i++)
+            var oldPieces = diffResult.PiecesOld;
+            var newPieces = diffResult.PiecesNew;
+            
+            // First, organize the diff blocks into potential hunks separated by contextLines boundary
+            List<List<DiffBlock>> hunkGroups = new List<List<DiffBlock>>();
+            List<DiffBlock> currentGroup = new List<DiffBlock>();
+            hunkGroups.Add(currentGroup);
+            
+            DiffBlock previousBlock = null;
+            foreach (var block in diffResult.DiffBlocks)
             {
-                var line = lines[i];
-                bool isChanged = line.Type != ChangeType.Unchanged;
+                if (previousBlock != null)
+                {
+                    // If the blocks are too far apart, start a new group
+                    // We want to create a new hunk if the distance between blocks is more than 2*contextLines
+                    if (block.DeleteStartA > (previousBlock.DeleteStartA + previousBlock.DeleteCountA + 2 * contextLines))
+                    {
+                        currentGroup = new List<DiffBlock>();
+                        hunkGroups.Add(currentGroup);
+                    }
+                }
                 
-                if (isChanged)
-                {
-                    // If we're starting a new hunk after only unchanged lines
-                    if (currentHunk.Count == 0 || (lastChanged == -1 && i > 0))
-                    {
-                        // Add context lines before the change
-                        int contextStart = Math.Max(0, i - contextLines);
-                        for (int j = contextStart; j < i; j++)
-                        {
-                            currentHunk.Add(lines[j]);
-                        }
-                    }
-                    
-                    currentHunk.Add(line);
-                    lastChanged = i;
-                }
-                else if (lastChanged != -1) // It's an unchanged line after a change
-                {
-                    currentHunk.Add(line);
-                    
-                    // If we've collected enough context lines after a change
-                    if (i - lastChanged >= contextLines)
-                    {
-                        hunks.Add(currentHunk);
-                        currentHunk = new List<DiffPiece>();
-                        lastChanged = -1;
-                    }
-                }
+                currentGroup.Add(block);
+                previousBlock = block;
             }
             
-            // Add the last hunk if it's not empty
-            if (currentHunk.Count > 0)
+            // Now convert each group to a hunk
+            foreach (var group in hunkGroups)
             {
-                hunks.Add(currentHunk);
+                if (group.Count == 0) continue;
+                
+                // Find the range of the entire group with context
+                int firstBlockStartA = group[0].DeleteStartA;
+                int lastBlockEndA = group[group.Count - 1].DeleteStartA + group[group.Count - 1].DeleteCountA;
+                
+                int contextStartA = Math.Max(0, firstBlockStartA - contextLines);
+                int contextEndA = Math.Min(oldPieces.Count, lastBlockEndA + contextLines);
+                
+                // Calculate B file positions
+                int firstBlockStartB = group[0].InsertStartB;
+                int contextStartB = Math.Max(0, firstBlockStartB - contextLines);
+                
+                // Create a new hunk
+                DiffHunk hunk = new DiffHunk
+                {
+                    OldStartLine = contextStartA + 1, // 1-based indexing
+                    NewStartLine = contextStartB + 1  // 1-based indexing
+                };
+                
+                // Add context lines before first change
+                for (int i = contextStartA; i < firstBlockStartA; i++)
+                {
+                    hunk.Lines.Add(new DiffLine
+                    {
+                        Type = LineType.Unchanged,
+                        Text = oldPieces[i],
+                        OldIndex = i,
+                        NewIndex = contextStartB + (i - contextStartA)
+                    });
+                }
+                
+                // Add all blocks and intermediate context
+                int currentPosA = firstBlockStartA;
+                int currentPosB = firstBlockStartB;
+                
+                for (int blockIndex = 0; blockIndex < group.Count; blockIndex++)
+                {
+                    var block = group[blockIndex];
+                    
+                    // Add context between blocks if needed
+                    for (int i = currentPosA; i < block.DeleteStartA; i++)
+                    {
+                        int newIndex = currentPosB + (i - currentPosA);
+                        hunk.Lines.Add(new DiffLine
+                        {
+                            Type = LineType.Unchanged,
+                            Text = oldPieces[i],
+                            OldIndex = i,
+                            NewIndex = newIndex
+                        });
+                    }
+                    
+                    // Update the current position in B
+                    if (currentPosA < block.DeleteStartA)
+                    {
+                        currentPosB += (block.DeleteStartA - currentPosA);
+                    }
+                    
+                    // Add deleted lines
+                    for (int i = 0; i < block.DeleteCountA; i++)
+                    {
+                        hunk.Lines.Add(new DiffLine
+                        {
+                            Type = LineType.Deleted,
+                            Text = oldPieces[block.DeleteStartA + i],
+                            OldIndex = block.DeleteStartA + i,
+                            NewIndex = -1
+                        });
+                    }
+                    
+                    // Add inserted lines
+                    for (int i = 0; i < block.InsertCountB; i++)
+                    {
+                        hunk.Lines.Add(new DiffLine
+                        {
+                            Type = LineType.Inserted,
+                            Text = newPieces[block.InsertStartB + i],
+                            OldIndex = -1,
+                            NewIndex = block.InsertStartB + i
+                        });
+                    }
+                    
+                    currentPosA = block.DeleteStartA + block.DeleteCountA;
+                    currentPosB = block.InsertStartB + block.InsertCountB;
+                }
+                
+                // Add context after last block
+                for (int i = currentPosA; i < contextEndA; i++)
+                {
+                    int newIndex = currentPosB + (i - currentPosA);
+                    if (newIndex < newPieces.Count) // Ensure we don't go out of bounds
+                    {
+                        hunk.Lines.Add(new DiffLine
+                        {
+                            Type = LineType.Unchanged,
+                            Text = oldPieces[i],
+                            OldIndex = i,
+                            NewIndex = newIndex
+                        });
+                    }
+                }
+                
+                // Calculate final hunk lengths
+                hunk.OldLength = hunk.Lines.Count(l => l.Type != LineType.Inserted);
+                hunk.NewLength = hunk.Lines.Count(l => l.Type != LineType.Deleted);
+                
+                hunks.Add(hunk);
             }
             
             return hunks;
-        }
-        
-        private int GetOldLineNumber(List<DiffPiece> hunk, out int count)
-        {
-            var oldLines = hunk.Where(l => l.Type == ChangeType.Unchanged || l.Type == ChangeType.Deleted).ToList();
-            count = oldLines.Count;
-            
-            if (oldLines.Count == 0)
-            {
-                // Special case: if there are no old lines, we'll use a zero-based offset
-                return 0;
-            }
-            
-            // Find the first line with a position
-            var firstLineWithPosition = hunk.FirstOrDefault(l => l.Position.HasValue);
-            
-            if (firstLineWithPosition != null)
-            {
-                // For the old file, we need to calculate based on position of unchanged lines
-                // or estimate based on the position of inserted lines
-                
-                // Find the first unchanged line in the hunk with a position
-                var firstUnchanged = hunk.FirstOrDefault(l => l.Type == ChangeType.Unchanged && l.Position.HasValue);
-                
-                if (firstUnchanged != null)
-                {
-                    // Count deleted lines before this unchanged line
-                    int deletedBefore = 0;
-                    int hunkIndex = hunk.IndexOf(firstUnchanged);
-                    
-                    for (int i = 0; i < hunkIndex; i++)
-                    {
-                        if (hunk[i].Type == ChangeType.Deleted)
-                            deletedBefore++;
-                    }
-                    
-                    return Math.Max(1, firstUnchanged.Position.Value - (hunkIndex - deletedBefore));
-                }
-                else
-                {
-                    // If there are no unchanged lines but only inserted lines with positions,
-                    // we need to estimate the old line number based on the inserted position
-                    return Math.Max(1, firstLineWithPosition.Position.Value);
-                }
-            }
-            
-            return 1; // Default to 1 if we can't determine the starting line
-        }
-        
-        private int GetNewLineNumber(List<DiffPiece> hunk, out int count)
-        {
-            var newLines = hunk.Where(l => l.Type == ChangeType.Unchanged || l.Type == ChangeType.Inserted).ToList();
-            count = newLines.Count;
-            
-            if (newLines.Count == 0)
-            {
-                // Special case: if there are no new lines, we'll use a zero-based offset
-                return 0;
-            }
-            
-            // Get the first line with a position (unchanged or inserted line)
-            var firstLine = hunk.FirstOrDefault(l => l.Position.HasValue);
-            if (firstLine != null)
-            {
-                // For inserted/unchanged lines, the position directly represents the new file's line number
-                // We need to adjust based on how many lines with positions come before this in the hunk
-                int positionedLinesBefore = 0;
-                int hunkIndex = hunk.IndexOf(firstLine);
-                
-                for (int i = 0; i < hunkIndex; i++)
-                {
-                    if (hunk[i].Type == ChangeType.Inserted || hunk[i].Type == ChangeType.Unchanged)
-                        positionedLinesBefore++;
-                }
-                
-                return Math.Max(1, firstLine.Position.Value - positionedLinesBefore);
-            }
-            
-            return 1; // Default to 1 if we can't determine the starting line
         }
         
         /// <summary>
@@ -285,5 +283,31 @@ namespace DiffPlex.Renderer
             var renderer = new UnidiffRenderer(contextLines: contextLines);
             return renderer.Generate(oldText, newText, oldFileName, newFileName, ignoreWhitespace, ignoreCase);
         }
+        
+        #region Helper Classes
+        private enum LineType
+        {
+            Unchanged,
+            Deleted,
+            Inserted
+        }
+        
+        private class DiffLine
+        {
+            public LineType Type { get; set; }
+            public string Text { get; set; }
+            public int OldIndex { get; set; }
+            public int NewIndex { get; set; }
+        }
+        
+        private class DiffHunk
+        {
+            public int OldStartLine { get; set; }
+            public int OldLength { get; set; }
+            public int NewStartLine { get; set; }
+            public int NewLength { get; set; }
+            public List<DiffLine> Lines { get; } = new List<DiffLine>();
+        }
+        #endregion
     }
 }

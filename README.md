@@ -5,10 +5,11 @@ DiffPlex is C# library to generate textual diffs. It targets `netstandard1.0+`.
 
 # About the API
 
-The DiffPlex library currently exposes two interfaces for generating diffs:
+The DiffPlex library currently exposes several interfaces and classes for generating diffs:
 
 * `IDiffer` (implemented by the `Differ` class) - This is the core diffing class.  It exposes the low level functions to generate differences between texts.
 * `ISidebySideDiffer` (implemented by the `SideBySideDiffer` class) - This is a higher level interface.  It consumes the `IDiffer` interface and generates a `SideBySideDiffModel`.  This is a model which is suited for displaying the differences of two pieces of text in a side by side view.
+* `UnidiffRenderer` - A renderer class that generates unified diff (unidiff) format output compatible with Git, patch utilities, and other standard diff tools.
 
 ## Examples
 
@@ -23,6 +24,10 @@ For use of the `ISidebySideDiffer` interface see:
 
 * `DiffController.cs` and associated MVC views in the `WebDiffer` project
 * `TextBoxDiffRenderer.cs` in the `SilverlightDiffer` project
+
+For use of the `UnidiffRenderer` class see:
+
+* `Program.cs` in the `DiffPlex.ConsoleRunner` project
 
 ## Sample code
 
@@ -133,6 +138,41 @@ Currently provided implementations:
 - `LineEndingsPreservingChunker`
 - `WordChunker`
 
+## UnidiffRenderer Class
+
+The `UnidiffRenderer` class provides functionality to generate unified diff (unidiff) format output, which is the standard format used by Git, patch utilities, and other diff tools.
+
+```csharp
+// Static method for simple usage
+string unidiff = UnidiffRenderer.GenerateUnidiff(
+    oldText: "old content", 
+    newText: "new content",
+    oldFileName: "file1.txt",
+    newFileName: "file2.txt"
+);
+
+// Instance usage with custom settings
+var renderer = new UnidiffRenderer(contextLines: 5);
+string unidiff = renderer.Generate(oldText, newText, "before.txt", "after.txt");
+```
+
+Key features:
+- Generates standard unified diff format compatible with Git and patch tools
+- Configurable number of context lines around changes
+- Support for custom file names in diff headers  
+- Options to ignore whitespace and case differences
+
+Example output:
+```
+--- before.txt
++++ after.txt
+@@ -1,4 +1,4 @@
+ Line 1
+-Old line 2
++New line 2  
+ Line 3
+ Line 4
+```
 
 ## ISideBySideDifferBuilder Interface
 

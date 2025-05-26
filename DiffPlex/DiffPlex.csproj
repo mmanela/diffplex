@@ -5,7 +5,7 @@
     <Version>1.8</Version>
     <PackageTags>diff</PackageTags>
     <Description>DiffPlex is a diffing library that allows you to programmatically create text diffs. DiffPlex is a fast and tested library.</Description>
-    <PackageReleaseNotes>Fixed diffing of sub-components (like words). Ensures ignoreWhitespace and ignoreCase are honored in that case and that the parent reflects modification state of the child.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added UnidiffRenderer class for rendering diffs in Unified Diff format.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>

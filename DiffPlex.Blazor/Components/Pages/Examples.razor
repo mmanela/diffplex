@@ -1,0 +1,296 @@
+@page "/examples"
+@using DiffPlex.Blazor.Components
+@using DiffPlex
+@rendermode InteractiveServer
+
+<PageTitle>DiffPlex Examples</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>DiffPlex Examples</h1>
+            <p>Various examples demonstrating different diff scenarios.</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                @foreach (var example in examples)
+                {
+                    <button type="button" class="btn @(selectedExample == example.Key ? "btn-primary" : "btn-outline-primary")" 
+                            @onclick="() => SelectExample(example.Key)">
+                        @example.Value.Name
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (currentExample != null)
+    {
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <strong>@currentExample.Name:</strong> @currentExample.Description
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn @(viewMode == "side-by-side" ? "btn-secondary" : "btn-outline-secondary")" 
+                            @onclick='() => SetViewMode("side-by-side")'>
+                        Side by Side
+                    </button>
+                    <button type="button" class="btn @(viewMode == "inline" ? "btn-secondary" : "btn-outline-secondary")" 
+                            @onclick='() => SetViewMode("inline")'>
+                        Inline
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                @if (viewMode == "side-by-side")
+                {
+                    <DiffViewer OldText="@currentExample.OldText" 
+                               NewText="@currentExample.NewText" 
+                               OldTextHeader="@currentExample.OldHeader" 
+                               NewTextHeader="@currentExample.NewHeader"
+                               IgnoreWhiteSpace="true" />
+                }
+                else
+                {
+                    <InlineDiffViewer OldText="@currentExample.OldText" 
+                                     NewText="@currentExample.NewText" 
+                                     Header="@currentExample.Name"
+                                     IgnoreWhiteSpace="true" />
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private string viewMode = "side-by-side";
+    private string selectedExample = "code-refactor";
+    private ExampleData? currentExample;
+
+    private Dictionary<string, ExampleData> examples = new()
+    {
+        ["code-refactor"] = new ExampleData
+        {
+            Name = "Code Refactor",
+            Description = "Shows a typical code refactoring scenario with method extraction and variable renaming.",
+            OldHeader = "Before Refactor",
+            NewHeader = "After Refactor",
+            OldText = @"public class Calculator
+{
+    public double Calculate(double a, double b, string operation)
+    {
+        if (operation == ""add"")
+        {
+            return a + b;
+        }
+        else if (operation == ""subtract"")
+        {
+            return a - b;
+        }
+        else if (operation == ""multiply"")
+        {
+            return a * b;
+        }
+        else if (operation == ""divide"")
+        {
+            if (b != 0)
+            {
+                return a / b;
+            }
+            else
+            {
+                throw new ArgumentException(""Cannot divide by zero"");
+            }
+        }
+        else
+        {
+            throw new ArgumentException(""Unknown operation"");
+        }
+    }
+}",
+            NewText = @"public class Calculator
+{
+    public double Calculate(double firstNumber, double secondNumber, string operation)
+    {
+        return operation switch
+        {
+            ""add"" => Add(firstNumber, secondNumber),
+            ""subtract"" => Subtract(firstNumber, secondNumber),
+            ""multiply"" => Multiply(firstNumber, secondNumber),
+            ""divide"" => Divide(firstNumber, secondNumber),
+            _ => throw new ArgumentException(""Unknown operation"")
+        };
+    }
+
+    private double Add(double a, double b) => a + b;
+    
+    private double Subtract(double a, double b) => a - b;
+    
+    private double Multiply(double a, double b) => a * b;
+    
+    private double Divide(double a, double b)
+    {
+        if (b == 0)
+            throw new ArgumentException(""Cannot divide by zero"");
+        return a / b;
+    }
+}"
+        },
+        ["json-config"] = new ExampleData
+        {
+            Name = "JSON Config",
+            Description = "Configuration file changes showing property additions and modifications.",
+            OldHeader = "Old Config",
+            NewHeader = "New Config",
+            OldText = @"{
+  ""database"": {
+    ""connectionString"": ""Server=localhost;Database=mydb;"",
+    ""timeout"": 30
+  },
+  ""logging"": {
+    ""level"": ""Info"",
+    ""path"": ""/var/log/app.log""
+  },
+  ""features"": {
+    ""enableCache"": true
+  }
+}",
+            NewText = @"{
+  ""database"": {
+    ""connectionString"": ""Server=prod-server;Database=mydb;Encrypt=true;"",
+    ""timeout"": 60,
+    ""retryCount"": 3
+  },
+  ""logging"": {
+    ""level"": ""Warning"",
+    ""path"": ""/var/log/app.log"",
+    ""maxFileSize"": ""10MB""
+  },
+  ""features"": {
+    ""enableCache"": true,
+    ""enableMetrics"": true
+  },
+  ""security"": {
+    ""apiKey"": ""${API_KEY}"",
+    ""encryption"": true
+  }
+}"
+        },
+        ["markdown-doc"] = new ExampleData
+        {
+            Name = "Documentation",
+            Description = "Documentation updates showing content additions and restructuring.",
+            OldHeader = "Original Docs",
+            NewHeader = "Updated Docs",
+            OldText = @"# DiffPlex Library
+
+DiffPlex is a .NET library for generating textual diffs.
+
+## Installation
+
+Install via NuGet:
+```
+Install-Package DiffPlex
+```
+
+## Basic Usage
+
+```csharp
+var differ = new Differ();
+var result = differ.CreateLineDiffs(oldText, newText, false);
+```
+
+## Features
+
+- Line-by-line comparison
+- Character-by-character comparison
+- Ignore whitespace option",
+            NewText = @"# DiffPlex Library
+
+DiffPlex is a powerful .NET library for generating textual diffs with support for multiple comparison modes.
+
+## Installation
+
+Install via NuGet Package Manager:
+```
+Install-Package DiffPlex
+```
+
+Or via .NET CLI:
+```
+dotnet add package DiffPlex
+```
+
+## Quick Start
+
+```csharp
+using DiffPlex;
+using DiffPlex.DiffBuilder;
+
+var differ = new InlineDiffBuilder(new Differ());
+var diff = differ.BuildDiffModel(oldText, newText);
+
+foreach (var line in diff.Lines)
+{
+    Console.WriteLine($""{line.Type}: {line.Text}"");
+}
+```
+
+## Features
+
+- **Line-by-line comparison** - Compare texts line by line
+- **Character-by-character comparison** - Detailed character-level diffs
+- **Word-by-word comparison** - Compare at word boundaries
+- **Ignore whitespace option** - Flexible whitespace handling
+- **Side-by-side view** - Display diffs in split view
+- **Inline view** - Display diffs in unified view
+- **Custom chunkers** - Define your own comparison units
+
+## Advanced Usage
+
+### Side-by-Side Diff
+```csharp
+var differ = new SideBySideDiffBuilder(new Differ());
+var diffModel = differ.BuildDiffModel(oldText, newText);
+```"
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        currentExample = examples[selectedExample];
+    }
+
+    private void SelectExample(string exampleKey)
+    {
+        selectedExample = exampleKey;
+        currentExample = examples[exampleKey];
+    }
+
+    private void SetViewMode(string mode)
+    {
+        viewMode = mode;
+    }
+
+    private class ExampleData
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string OldHeader { get; set; } = "";
+        public string NewHeader { get; set; } = "";
+        public string OldText { get; set; } = "";
+        public string NewText { get; set; } = "";
+    }
+}

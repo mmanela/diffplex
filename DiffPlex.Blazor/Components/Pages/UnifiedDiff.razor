@@ -1,0 +1,239 @@
+@page "/unified"
+@using DiffPlex
+@using DiffPlex.Renderer
+@rendermode InteractiveServer
+
+<PageTitle>Unified Diff</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Unified Diff Format</h1>
+            <p>Generate unified diff format output compatible with Git and patch utilities.</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <label for="oldText" class="form-label">Original Text</label>
+            <textarea class="form-control" id="oldText" rows="8" @bind="oldText" @bind:event="oninput"></textarea>
+        </div>
+        <div class="col-6">
+            <label for="newText" class="form-label">Modified Text</label>
+            <textarea class="form-control" id="newText" rows="8" @bind="newText" @bind:event="oninput"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="oldFileName" class="form-label">Old File Name</label>
+                    <input type="text" class="form-control" id="oldFileName" @bind="oldFileName" @bind:event="oninput">
+                </div>
+                <div class="col-md-3">
+                    <label for="newFileName" class="form-label">New File Name</label>
+                    <input type="text" class="form-control" id="newFileName" @bind="newFileName" @bind:event="oninput">
+                </div>
+                <div class="col-md-3">
+                    <label for="contextLines" class="form-label">Context Lines</label>
+                    <input type="number" class="form-control" id="contextLines" @bind="contextLines" min="0" max="10" @bind:event="oninput">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ignoreWhitespace" @bind="ignoreWhitespace">
+                        <label class="form-check-label" for="ignoreWhitespace">
+                            Ignore Whitespace
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h4>Unified Diff Output</h4>
+            <div class="unified-diff-output">
+                <pre><code>@unifiedDiffOutput</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <button class="btn btn-secondary" @onclick="CopyToClipboard">
+                <i class="bi bi-clipboard"></i> Copy to Clipboard
+            </button>
+            <button class="btn btn-outline-secondary ms-2" @onclick="LoadExample">
+                Load Example
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _oldText = "";
+    private string _newText = "";
+    private string _oldFileName = "file1.txt";
+    private string _newFileName = "file2.txt";
+    private int _contextLines = 3;
+    private bool _ignoreWhitespace = false;
+    private string unifiedDiffOutput = "";
+
+    private string oldText
+    {
+        get => _oldText;
+        set
+        {
+            _oldText = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    private string newText
+    {
+        get => _newText;
+        set
+        {
+            _newText = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    private string oldFileName
+    {
+        get => _oldFileName;
+        set
+        {
+            _oldFileName = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    private string newFileName
+    {
+        get => _newFileName;
+        set
+        {
+            _newFileName = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    private int contextLines
+    {
+        get => _contextLines;
+        set
+        {
+            _contextLines = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    private bool ignoreWhitespace
+    {
+        get => _ignoreWhitespace;
+        set
+        {
+            _ignoreWhitespace = value;
+            UpdateUnifiedDiff();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        LoadExample();
+    }
+
+    private void UpdateUnifiedDiff()
+    {
+        try
+        {
+            unifiedDiffOutput = UnidiffRenderer.GenerateUnidiff(
+                oldText, 
+                newText, 
+                oldFileName, 
+                newFileName, 
+                ignoreWhitespace, 
+                false, 
+                contextLines);
+        }
+        catch (Exception ex)
+        {
+            unifiedDiffOutput = $"Error generating diff: {ex.Message}";
+        }
+    }
+
+    private void LoadExample()
+    {
+        _oldText = @"using System;
+
+namespace HelloWorld
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine(""Hello World!"");
+            Console.WriteLine(""Welcome to C#"");
+        }
+    }
+}";
+
+        _newText = @"using System;
+
+namespace HelloWorld
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var message = ""Hello World!"";
+            Console.WriteLine(message);
+            Console.WriteLine(""Welcome to C# Programming"");
+            Console.WriteLine(""This is a demo application"");
+        }
+    }
+}";
+
+        _oldFileName = "Program.cs";
+        _newFileName = "Program.cs";
+        
+        UpdateUnifiedDiff();
+    }
+
+    private async Task CopyToClipboard()
+    {
+        // Note: In a real application, you would need to implement clipboard functionality
+        // This is a placeholder showing the intention
+        await Task.CompletedTask;
+        // await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", unifiedDiffOutput);
+    }
+}
+
+<style>
+    .unified-diff-output {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .unified-diff-output pre {
+        margin: 0;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+        line-height: 1.4;
+        white-space: pre;
+    }
+
+    .unified-diff-output code {
+        background: none;
+        color: inherit;
+        font-size: inherit;
+        padding: 0;
+    }
+</style>

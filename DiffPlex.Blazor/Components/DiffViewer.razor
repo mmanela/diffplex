@@ -1,0 +1,169 @@
+@using DiffPlex
+@using DiffPlex.DiffBuilder
+@using DiffPlex.DiffBuilder.Model
+
+<div class="diff-viewer">
+    <div class="diff-header">
+        <div class="left-header">
+            <h5>@OldTextHeader</h5>
+        </div>
+        <div class="right-header">
+            <h5>@NewTextHeader</h5>
+        </div>
+    </div>
+    
+    <div class="diff-content">
+        @if (_diffModel != null)
+        {
+            <div class="left-panel">
+                @foreach (var line in _diffModel.OldText.Lines)
+                {
+                    <div class="line @GetLineClass(line.Type)">
+                        <span class="line-number">@(line.Position?.ToString() ?? "")</span>
+                        <span class="line-content">@line.Text</span>
+                    </div>
+                }
+            </div>
+            
+            <div class="right-panel">
+                @foreach (var line in _diffModel.NewText.Lines)
+                {
+                    <div class="line @GetLineClass(line.Type)">
+                        <span class="line-number">@(line.Position?.ToString() ?? "")</span>
+                        <span class="line-content">@line.Text</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string OldText { get; set; } = "";
+    [Parameter] public string NewText { get; set; } = "";
+    [Parameter] public string OldTextHeader { get; set; } = "Original";
+    [Parameter] public string NewTextHeader { get; set; } = "Modified";
+    [Parameter] public bool IgnoreWhiteSpace { get; set; } = true;
+
+    private SideBySideDiffModel? _diffModel;
+
+    protected override void OnParametersSet()
+    {
+        UpdateDiff();
+    }
+
+    private void UpdateDiff()
+    {
+        if (!string.IsNullOrEmpty(OldText) || !string.IsNullOrEmpty(NewText))
+        {
+            var differ = new SideBySideDiffBuilder(new Differ());
+            _diffModel = differ.BuildDiffModel(OldText ?? "", NewText ?? "", IgnoreWhiteSpace);
+        }
+    }
+
+    private string GetLineClass(ChangeType changeType)
+    {
+        return changeType switch
+        {
+            ChangeType.Inserted => "inserted",
+            ChangeType.Deleted => "deleted",
+            ChangeType.Modified => "modified",
+            _ => "unchanged"
+        };
+    }
+}
+
+<style>
+    .diff-viewer {
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        overflow: hidden;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+    }
+
+    .diff-header {
+        display: flex;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .left-header, .right-header {
+        flex: 1;
+        padding: 8px 12px;
+        font-weight: 600;
+        color: #24292f;
+    }
+
+    .left-header {
+        border-right: 1px solid #d0d7de;
+    }
+
+    .diff-content {
+        display: flex;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .left-panel, .right-panel {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .left-panel {
+        border-right: 1px solid #d0d7de;
+    }
+
+    .line {
+        display: flex;
+        min-height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+    }
+
+    .line-number {
+        width: 50px;
+        padding: 0 8px;
+        text-align: right;
+        color: #656d76;
+        background-color: #f6f8fa;
+        border-right: 1px solid #d0d7de;
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    .line-content {
+        padding: 0 8px;
+        white-space: pre;
+        overflow-x: auto;
+        flex: 1;
+    }
+
+    .line.inserted {
+        background-color: #d1f4d0;
+    }
+
+    .line.inserted .line-number {
+        background-color: #a7f3d0;
+    }
+
+    .line.deleted {
+        background-color: #ffeef0;
+    }
+
+    .line.deleted .line-number {
+        background-color: #fecdd3;
+    }
+
+    .line.modified {
+        background-color: #fff8dc;
+    }
+
+    .line.modified .line-number {
+        background-color: #fef3c7;
+    }
+
+    .line.unchanged {
+        background-color: #ffffff;
+    }
+</style>

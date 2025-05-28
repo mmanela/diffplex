@@ -1,0 +1,99 @@
+﻿@page "/"
+@using DiffPlex.Blazor.Components
+@rendermode InteractiveServer
+
+<PageTitle>DiffPlex Blazor Demo</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>DiffPlex Blazor Demo</h1>
+            <p>This demo shows how to use DiffPlex in a Blazor application to render text diffs.</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn @(viewMode == "side-by-side" ? "btn-primary" : "btn-outline-primary")" 
+                        @onclick='() => SetViewMode("side-by-side")'>
+                    Side by Side
+                </button>
+                <button type="button" class="btn @(viewMode == "inline" ? "btn-primary" : "btn-outline-primary")" 
+                        @onclick='() => SetViewMode("inline")'>
+                    Inline
+                </button>
+            </div>
+            
+            <div class="form-check form-check-inline ms-3">
+                <input class="form-check-input" type="checkbox" id="ignoreWhitespace" @bind="ignoreWhitespace">
+                <label class="form-check-label" for="ignoreWhitespace">
+                    Ignore Whitespace
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <label for="oldText" class="form-label">Original Text</label>
+            <textarea class="form-control" id="oldText" rows="10" @bind="oldText" @oninput="OnTextChanged"></textarea>
+        </div>
+        <div class="col-6">
+            <label for="newText" class="form-label">Modified Text</label>
+            <textarea class="form-control" id="newText" rows="10" @bind="newText" @oninput="OnTextChanged"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (viewMode == "side-by-side")
+            {
+                <DiffViewer OldText="@oldText" 
+                           NewText="@newText" 
+                           OldTextHeader="Original" 
+                           NewTextHeader="Modified"
+                           IgnoreWhiteSpace="@ignoreWhitespace" />
+            }
+            else
+            {
+                <InlineDiffViewer OldText="@oldText" 
+                                 NewText="@newText" 
+                                 Header="Diff View"
+                                 IgnoreWhiteSpace="@ignoreWhitespace" />
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string viewMode = "side-by-side";
+    private bool ignoreWhitespace = true;
+    
+    private string oldText = @"The quick brown fox
+jumps over the lazy dog.
+This is a sample text
+for demonstrating diff functionality.
+Line 5
+Line 6
+Line 7";
+
+    private string newText = @"The quick red fox
+jumps over the lazy cat.
+This is a sample text
+for demonstrating diff functionality.
+Line 5 modified
+Line 6
+Line 8
+New line added";
+
+    private void SetViewMode(string mode)
+    {
+        viewMode = mode;
+    }
+
+    private void OnTextChanged(ChangeEventArgs e)
+    {
+        StateHasChanged();
+    }
+}

@@ -200,28 +200,24 @@ DiffPlex also contains a sample website that shows how to create a basic side by
 
 ## Sample Blazor App
 
-DiffPlex includes a Blazor component library and sample application demonstrating how to render textual diffs in modern Blazor applications. The sample showcases both server-side and client-side rendering capabilities with interactive diff visualization.
+DiffPlex includes a Blazor sample application demonstrating how to render textual diffs in modern Blazor applications. The sample showcases both server-side and client-side rendering capabilities with interactive diff visualization.
 
-[Screenshot placeholder - Blazor app overview]
+![image](https://github.com/user-attachments/assets/862030f5-c759-4556-8b10-19cc281c5e7d)
+
 
 The Blazor components provide:
 - Interactive side-by-side diff rendering
 - Inline diff view mode
-- Responsive design for various screen sizes
-- Customizable styling and themes
-- Real-time diff updates
+- Unififf rendering 
 
-[Screenshot placeholder - Side-by-side diff view]
+![image](https://github.com/user-attachments/assets/eabcf30d-3699-4529-8d74-191627e06241)
 
-[Screenshot placeholder - Inline diff view]
 
 To run the sample Blazor application:
 ```bash
 cd DiffPlex.Blazor
 dotnet run
 ```
-
-The Blazor library is available as a NuGet package for integration into your own Blazor applications.
 
 # Windows app
 

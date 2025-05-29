@@ -210,8 +210,7 @@ The Blazor components provide:
 - Inline diff view mode
 - Unififf rendering 
 
-![image](https://github.com/user-attachments/assets/eabcf30d-3699-4529-8d74-191627e06241)
-
+![image](https://github.com/user-attachments/assets/d91f26d6-da4a-47fd-b490-daeb65ddad11)
 
 To run the sample Blazor application:
 ```bash

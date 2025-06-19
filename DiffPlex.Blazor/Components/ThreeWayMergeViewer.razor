@@ -1,0 +1,651 @@
+@using DiffPlex
+@using DiffPlex.Model
+@using DiffPlex.Chunkers
+
+<div class="three-way-merge-viewer">
+    <div class="three-way-header">
+        <div class="base-header">
+            <h5>@BaseHeader</h5>
+        </div>
+        <div class="yours-header">
+            <h5>@YoursHeader</h5>
+        </div>
+        <div class="theirs-header">
+            <h5>@TheirsHeader</h5>
+        </div>
+    </div>
+    
+    <div class="three-way-content">
+        @if (_diffResult != null)
+        {
+            <div class="base-panel">
+                @RenderTextWithBlocks(_diffResult.PiecesBase, _diffResult.DiffBlocks, TextSource.Base)
+            </div>
+            
+            <div class="yours-panel">
+                @RenderTextWithBlocks(_diffResult.PiecesOld, _diffResult.DiffBlocks, TextSource.Yours)
+            </div>
+            
+            <div class="theirs-panel">
+                @RenderTextWithBlocks(_diffResult.PiecesNew, _diffResult.DiffBlocks, TextSource.Theirs)
+            </div>
+        }
+    </div>
+    
+    @if (_mergeResult != null && !_mergeResult.IsSuccessful)
+    {
+        <div class="conflicts-section">
+            <div class="conflicts-header">
+                <h5>Conflicts (@_mergeResult.ConflictBlocks.Count)</h5>
+            </div>
+            
+            @if (_mergeResult.ConflictBlocks.Any())
+            {
+                <div class="conflicts-list">
+                    @foreach (var conflict in _mergeResult.ConflictBlocks.Select((c, i) => new { Conflict = c, Index = i }))
+                    {
+                        <div class="conflict-block">
+                            <div class="conflict-title">
+                                <strong>Conflict @(conflict.Index + 1)</strong>
+                                <div class="conflict-actions">
+                                    <button class="btn btn-sm btn-success" @onclick="() => ResolveConflict(conflict.Index, ConflictResolution.Yours)">
+                                        Take Yours
+                                    </button>
+                                    <button class="btn btn-sm btn-info" @onclick="() => ResolveConflict(conflict.Index, ConflictResolution.Theirs)">
+                                        Take Theirs
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" @onclick="() => ResolveConflict(conflict.Index, ConflictResolution.Base)">
+                                        Take Base
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="conflict-content">
+                                <div class="conflict-section yours-section">
+                                    <div class="section-label">Yours:</div>
+                                    <div class="section-content">
+                                        @foreach (var piece in conflict.Conflict.OldPieces)
+                                        {
+                                            <div class="line">@piece</div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="conflict-section base-section">
+                                    <div class="section-label">Base:</div>
+                                    <div class="section-content">
+                                        @foreach (var piece in conflict.Conflict.BasePieces)
+                                        {
+                                            <div class="line">@piece</div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="conflict-section theirs-section">
+                                    <div class="section-label">Theirs:</div>
+                                    <div class="section-content">
+                                        @foreach (var piece in conflict.Conflict.NewPieces)
+                                        {
+                                            <div class="line">@piece</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+    
+    @if (_mergeResult != null)
+    {
+        <div class="merge-result-section">
+            <div class="merge-result-header">
+                <h5>Merge Result @(_mergeResult.IsSuccessful ? "(Clean)" : "(With Conflicts)")</h5>
+            </div>
+            <div class="merge-result-content">
+                @foreach (var piece in _mergeResult.MergedPieces.Select((p, i) => new { Piece = p, Index = i }))
+                {
+                    <div class="line @GetMergeLineClass(piece.Piece)">
+                        <span class="line-number">@(piece.Index + 1)</span>
+                        <span class="line-content">@piece.Piece</span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string BaseText { get; set; } = "";
+    [Parameter] public string YoursText { get; set; } = "";
+    [Parameter] public string TheirsText { get; set; } = "";
+    [Parameter] public string BaseHeader { get; set; } = "Base";
+    [Parameter] public string YoursHeader { get; set; } = "Yours";
+    [Parameter] public string TheirsHeader { get; set; } = "Theirs";
+    [Parameter] public bool IgnoreWhiteSpace { get; set; } = true;
+    [Parameter] public bool IgnoreCase { get; set; } = false;
+
+    private ThreeWayDiffResult? _diffResult;
+    private ThreeWayMergeResult? _mergeResult;
+    private Dictionary<int, ConflictResolution?> conflictResolutions = new();
+
+    private enum TextSource { Base, Yours, Theirs }
+    private enum ConflictResolution { Base, Yours, Theirs }
+
+    protected override void OnParametersSet()
+    {
+        UpdateDiff();
+    }
+
+    private void UpdateDiff()
+    {
+        if (!string.IsNullOrEmpty(BaseText) || !string.IsNullOrEmpty(YoursText) || !string.IsNullOrEmpty(TheirsText))
+        {
+            var chunker = new LineChunker();
+            var differ = ThreeWayDiffer.Instance;
+            
+            _diffResult = differ.CreateDiffs(BaseText ?? "", YoursText ?? "", TheirsText ?? "", 
+                IgnoreWhiteSpace, IgnoreCase, chunker);
+            
+            _mergeResult = differ.CreateMerge(BaseText ?? "", YoursText ?? "", TheirsText ?? "", 
+                IgnoreWhiteSpace, IgnoreCase, chunker);
+                
+            conflictResolutions.Clear();
+        }
+    }
+
+    private RenderFragment RenderTextWithBlocks(IReadOnlyList<string> pieces, IList<ThreeWayDiffBlock> blocks, TextSource source)
+    {
+        return builder =>
+        {
+            var currentIndex = 0;
+            var lineNumber = 1;
+
+            foreach (var block in blocks)
+            {
+                var (startIndex, count) = GetBlockIndices(block, source);
+                
+                // Render lines before this block (unchanged)
+                while (currentIndex < startIndex)
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddAttribute(1, "class", "line unchanged");
+                    
+                    builder.OpenElement(2, "span");
+                    builder.AddAttribute(3, "class", "line-number");
+                    builder.AddContent(4, lineNumber.ToString());
+                    builder.CloseElement();
+                    
+                    builder.OpenElement(5, "span");
+                    builder.AddAttribute(6, "class", "line-content");
+                    builder.AddContent(7, pieces[currentIndex]);
+                    builder.CloseElement();
+                    
+                    builder.CloseElement();
+                    currentIndex++;
+                    lineNumber++;
+                }
+
+                // Render the block content with appropriate styling
+                for (int i = 0; i < count; i++)
+                {
+                    var blockLineIndex = startIndex + i;
+                    if (blockLineIndex < pieces.Count)
+                    {
+                        builder.OpenElement(10, "div");
+                        builder.AddAttribute(11, "class", $"line {GetBlockClass(block.ChangeType, source)}");
+                        
+                        builder.OpenElement(12, "span");
+                        builder.AddAttribute(13, "class", "line-number");
+                        builder.AddContent(14, lineNumber.ToString());
+                        builder.CloseElement();
+                        
+                        builder.OpenElement(15, "span");
+                        builder.AddAttribute(16, "class", "line-content");
+                        builder.AddContent(17, pieces[blockLineIndex]);
+                        builder.CloseElement();
+                        
+                        builder.CloseElement();
+                        lineNumber++;
+                    }
+                }
+                
+                currentIndex = startIndex + count;
+            }
+
+            // Render remaining unchanged lines
+            while (currentIndex < pieces.Count)
+            {
+                builder.OpenElement(20, "div");
+                builder.AddAttribute(21, "class", "line unchanged");
+                
+                builder.OpenElement(22, "span");
+                builder.AddAttribute(23, "class", "line-number");
+                builder.AddContent(24, lineNumber.ToString());
+                builder.CloseElement();
+                
+                builder.OpenElement(25, "span");
+                builder.AddAttribute(26, "class", "line-content");
+                builder.AddContent(27, pieces[currentIndex]);
+                builder.CloseElement();
+                
+                builder.CloseElement();
+                currentIndex++;
+                lineNumber++;
+            }
+        };
+    }
+
+    private (int startIndex, int count) GetBlockIndices(ThreeWayDiffBlock block, TextSource source)
+    {
+        return source switch
+        {
+            TextSource.Base => (block.BaseStart, block.BaseCount),
+            TextSource.Yours => (block.OldStart, block.OldCount),
+            TextSource.Theirs => (block.NewStart, block.NewCount),
+            _ => (0, 0)
+        };
+    }
+
+    private string GetBlockClass(ThreeWayChangeType changeType, TextSource source)
+    {
+        return changeType switch
+        {
+            ThreeWayChangeType.Unchanged => "unchanged",
+            ThreeWayChangeType.OldOnly => source == TextSource.Yours ? "changed-yours" : "changed-base",
+            ThreeWayChangeType.NewOnly => source == TextSource.Theirs ? "changed-theirs" : "changed-base",
+            ThreeWayChangeType.BothSame => source == TextSource.Base ? "changed-base" : "changed-both",
+            ThreeWayChangeType.Conflict => source switch
+            {
+                TextSource.Base => "conflict-base",
+                TextSource.Yours => "conflict-yours",
+                TextSource.Theirs => "conflict-theirs",
+                _ => "conflict"
+            },
+            _ => "unchanged"
+        };
+    }
+
+    private string GetMergeLineClass(string line)
+    {
+        if (line.StartsWith("<<<<<<<")) return "conflict-marker-start";
+        if (line.StartsWith("|||||||")) return "conflict-marker-base";
+        if (line.StartsWith("=======")) return "conflict-marker-separator";
+        if (line.StartsWith(">>>>>>>")) return "conflict-marker-end";
+        return "merge-line";
+    }
+
+
+
+    private void ResolveConflict(int conflictIndex, ConflictResolution resolution)
+    {
+        conflictResolutions[conflictIndex] = resolution;
+        UpdateMergeResult();
+        StateHasChanged();
+    }
+
+    private void UpdateMergeResult()
+    {
+        if (_mergeResult == null || !_mergeResult.ConflictBlocks.Any())
+            return;
+
+        // Create a new merge result by replacing resolved conflicts
+        var originalMergedPieces = new List<string>(_mergeResult.MergedPieces);
+        var unresolvedConflicts = new List<ThreeWayConflictBlock>();
+
+        foreach (var conflictBlock in _mergeResult.ConflictBlocks.Select((c, i) => new { Conflict = c, Index = i }))
+        {
+            if (conflictResolutions.TryGetValue(conflictBlock.Index, out var resolution) && resolution.HasValue)
+            {
+                // Find the conflict markers in the merged pieces and replace them
+                var piecesToUse = resolution.Value switch
+                {
+                    ConflictResolution.Base => conflictBlock.Conflict.BasePieces,
+                    ConflictResolution.Yours => conflictBlock.Conflict.OldPieces,
+                    ConflictResolution.Theirs => conflictBlock.Conflict.NewPieces,
+                    _ => conflictBlock.Conflict.BasePieces
+                };
+
+                // Replace conflict markers with resolved content
+                // This is a simplified approach - in practice you'd need to track the exact positions
+                ReplaceConflictWithResolution(originalMergedPieces, conflictBlock.Conflict, piecesToUse);
+            }
+            else
+            {
+                unresolvedConflicts.Add(conflictBlock.Conflict);
+            }
+        }
+
+        // Update the merge result
+        _mergeResult = new ThreeWayMergeResult(
+            originalMergedPieces.ToArray(),
+            unresolvedConflicts.Count == 0,
+            unresolvedConflicts,
+            _mergeResult.DiffResult
+        );
+    }
+
+    private void ReplaceConflictWithResolution(List<string> mergedPieces, ThreeWayConflictBlock conflict, IReadOnlyList<string> resolution)
+    {
+        // Find conflict markers and replace the entire conflict section
+        var startMarkerIndex = -1;
+        var endMarkerIndex = -1;
+
+        for (int i = 0; i < mergedPieces.Count; i++)
+        {
+            if (mergedPieces[i].StartsWith("<<<<<<<"))
+            {
+                startMarkerIndex = i;
+            }
+            else if (mergedPieces[i].StartsWith(">>>>>>>") && startMarkerIndex != -1)
+            {
+                endMarkerIndex = i;
+                break;
+            }
+        }
+
+        if (startMarkerIndex != -1 && endMarkerIndex != -1)
+        {
+            // Remove the conflict section
+            mergedPieces.RemoveRange(startMarkerIndex, endMarkerIndex - startMarkerIndex + 1);
+            
+            // Insert the resolved content
+            mergedPieces.InsertRange(startMarkerIndex, resolution);
+        }
+    }
+}
+
+<style>
+    .three-way-merge-viewer {
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        overflow: hidden;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+    }
+
+    .three-way-header {
+        display: flex;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .base-header, .yours-header, .theirs-header {
+        flex: 1;
+        padding: 8px 12px;
+        font-weight: 600;
+        color: #24292f;
+        border-right: 1px solid #d0d7de;
+    }
+
+    .theirs-header {
+        border-right: none;
+    }
+
+    .three-way-content {
+        display: flex;
+        max-height: 400px;
+        overflow: auto;
+    }
+
+    .base-panel, .yours-panel, .theirs-panel {
+        flex: 1;
+        min-width: 0;
+        border-right: 1px solid #d0d7de;
+    }
+
+    .theirs-panel {
+        border-right: none;
+    }
+
+    .line {
+        display: flex;
+        min-height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+    }
+
+    .line-number {
+        width: 40px;
+        padding: 0 6px;
+        text-align: right;
+        color: #656d76;
+        background-color: #f6f8fa;
+        border-right: 1px solid #d0d7de;
+        user-select: none;
+        flex-shrink: 0;
+        font-size: 11px;
+    }
+
+    .line-content {
+        padding: 0 8px;
+        white-space: pre;
+        overflow-x: auto;
+        flex: 1;
+    }
+
+    /* Change type styling */
+    .line.unchanged {
+        background-color: #ffffff;
+    }
+
+    .line.changed-yours {
+        background-color: #d1f4d0;
+    }
+
+    .line.changed-yours .line-number {
+        background-color: #a7f3d0;
+    }
+
+    .line.changed-theirs {
+        background-color: #dbeafe;
+    }
+
+    .line.changed-theirs .line-number {
+        background-color: #bfdbfe;
+    }
+
+    .line.changed-base {
+        background-color: #fef3c7;
+    }
+
+    .line.changed-base .line-number {
+        background-color: #fde68a;
+    }
+
+    .line.changed-both {
+        background-color: #e0e7ff;
+    }
+
+    .line.changed-both .line-number {
+        background-color: #c7d2fe;
+    }
+
+    .line.conflict-base, .line.conflict-yours, .line.conflict-theirs {
+        background-color: #ffeef0;
+    }
+
+    .line.conflict-base .line-number, 
+    .line.conflict-yours .line-number, 
+    .line.conflict-theirs .line-number {
+        background-color: #fecdd3;
+    }
+
+    /* Conflicts section */
+    .conflicts-section {
+        border-top: 1px solid #d0d7de;
+        background-color: #fff8f0;
+    }
+
+    .conflicts-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background-color: #fef3c7;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .conflicts-header h5 {
+        margin: 0;
+        color: #b45309;
+    }
+
+    .conflicts-list {
+        padding: 12px;
+    }
+
+    .conflict-block {
+        margin-bottom: 16px;
+        border: 1px solid #fed7aa;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .conflict-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: #fef3c7;
+        border-bottom: 1px solid #fed7aa;
+    }
+
+    .conflict-actions {
+        display: flex;
+        gap: 4px;
+    }
+
+    .conflict-content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .conflict-section {
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .section-label {
+        padding: 4px 8px;
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+
+    .yours-section .section-label {
+        background-color: #d1f4d0;
+        color: #0d7377;
+    }
+
+    .base-section .section-label {
+        background-color: #fef3c7;
+        color: #b45309;
+    }
+
+    .theirs-section .section-label {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .section-content {
+        padding: 8px;
+        background-color: #ffffff;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+    /* Merge result section */
+    .merge-result-section {
+        border-top: 1px solid #d0d7de;
+        background-color: #f8f9fa;
+    }
+
+    .merge-result-header {
+        padding: 12px;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .merge-result-header h5 {
+        margin: 0;
+        color: #24292f;
+    }
+
+    .merge-result-content {
+        max-height: 300px;
+        overflow: auto;
+        background-color: #ffffff;
+    }
+
+    .merge-result-content .line {
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .conflict-marker-start, .conflict-marker-base, 
+    .conflict-marker-separator, .conflict-marker-end {
+        background-color: #ffeef0;
+        font-weight: bold;
+    }
+
+    .conflict-marker-start .line-content,
+    .conflict-marker-end .line-content {
+        color: #d1242f;
+    }
+
+    .conflict-marker-base .line-content,
+    .conflict-marker-separator .line-content {
+        color: #b45309;
+    }
+
+    .merge-line {
+        background-color: #ffffff;
+    }
+
+    .btn {
+        padding: 4px 8px;
+        border: 1px solid;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-sm {
+        padding: 2px 6px;
+        font-size: 10px;
+    }
+
+    .btn-primary {
+        background-color: #0969da;
+        color: white;
+        border-color: #0969da;
+    }
+
+    .btn-outline-primary {
+        background-color: transparent;
+        color: #0969da;
+        border-color: #0969da;
+    }
+
+    .btn-success {
+        background-color: #1f883d;
+        color: white;
+        border-color: #1f883d;
+    }
+
+    .btn-info {
+        background-color: #0550ae;
+        color: white;
+        border-color: #0550ae;
+    }
+
+    .btn-warning {
+        background-color: #bf8700;
+        color: white;
+        border-color: #bf8700;
+    }
+</style>

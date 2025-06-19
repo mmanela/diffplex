@@ -1,4 +1,4 @@
-﻿<Window x:Class="DiffPlex.Wpf.Demo.MainWindow"
+<Window x:Class="DiffPlex.Wpf.Demo.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -24,6 +24,7 @@
             <Label Height="20" VerticalContentAlignment="Center" Padding="0,0,8,0" x:Name="MarginLineCountLabel" Target="{Binding ElementName=MarginLineCount}" Foreground="{Binding Foreground, ElementName=DiffView}">LinesContext</Label>
             <TextBox Width="100" Height="20" VerticalContentAlignment="Center" x:Name="MarginLineCount" Padding="8,0,8,0" Text="{Binding LinesContext, ElementName=DiffView, UpdateSourceTrigger=PropertyChanged}" Foreground="{Binding Foreground, ElementName=DiffView}" Background="{x:Null}" Margin="0,0,32,0" />
             <Button Width="100" Height="20" x:Name="WindowButton" Content="Test window" Click="WindowButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="16,0,1,0" />
+            <Button Width="120" Height="20" x:Name="MergeWindowButton" Content="Three-Way Merge" Click="MergeWindowButton_Click" BorderBrush="{x:Null}" BorderThickness="0" Margin="1,0,0,0" />
         </StackPanel>
     </Grid>
 </Window>

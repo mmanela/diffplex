@@ -1,0 +1,280 @@
+@page "/three-way-merge"
+@using DiffPlex.Blazor.Components
+@rendermode InteractiveServer
+
+<PageTitle>Three-Way Merge - DiffPlex</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Three-Way Merge</h1>
+            <p>Interactive three-way merge tool for resolving conflicts between two branches with a common base.</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Input Texts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="baseText">Base Text:</label>
+                                <textarea id="baseText" class="form-control" rows="8" @bind="baseText" @bind:event="oninput"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="yoursText">Your Changes:</label>
+                                <textarea id="yoursText" class="form-control" rows="8" @bind="yoursText" @bind:event="oninput"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="theirsText">Their Changes:</label>
+                                <textarea id="theirsText" class="form-control" rows="8" @bind="theirsText" @bind:event="oninput"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary" @onclick="LoadConflictExample">
+                                    Load Conflict Example
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="LoadCleanMergeExample">
+                                    Load Clean Merge Example
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" @onclick="ClearAll">
+                                    Clear All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <ThreeWayMergeViewer BaseText="@baseText" 
+                                YoursText="@yoursText" 
+                                TheirsText="@theirsText" 
+                                BaseHeader="Base" 
+                                YoursHeader="Yours" 
+                                TheirsHeader="Theirs"
+                                IgnoreWhiteSpace="true" />
+        </div>
+    </div>
+</div>
+
+@code {
+    private string baseText = "";
+    private string yoursText = "";
+    private string theirsText = "";
+
+    protected override void OnInitialized()
+    {
+        LoadConflictExample();
+    }
+
+    private void LoadConflictExample()
+    {
+        baseText = @"function calculateTotal(items) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price;
+    }
+    return total;
+}
+
+function processOrder(order) {
+    // Basic processing
+    return order;
+}";
+
+        yoursText = @"function calculateTotal(items, tax = 0.08) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price * item.quantity;
+    }
+    return total * (1 + tax);
+}
+
+function processOrder(order) {
+    // Validate order before processing
+    if (!order.items || order.items.length === 0) {
+        throw new Error('Order must contain items');
+    }
+    return order;
+}";
+
+        theirsText = @"function calculateTotal(items, discountRate = 0) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price;
+    }
+    return total * (1 - discountRate);
+}
+
+function processOrder(order) {
+    // Add logging
+    console.log('Processing order:', order.id);
+    return order;
+}";
+    }
+
+    private void LoadCleanMergeExample()
+    {
+        baseText = @"class UserService {
+    constructor() {
+        this.users = [];
+    }
+
+    addUser(user) {
+        this.users.push(user);
+    }
+
+    getUser(id) {
+        return this.users.find(u => u.id === id);
+    }
+}";
+
+        yoursText = @"class UserService {
+    constructor() {
+        this.users = [];
+        this.cache = new Map();
+    }
+
+    addUser(user) {
+        this.users.push(user);
+        this.cache.set(user.id, user);
+    }
+
+    getUser(id) {
+        // Check cache first
+        if (this.cache.has(id)) {
+            return this.cache.get(id);
+        }
+        return this.users.find(u => u.id === id);
+    }
+}";
+
+        theirsText = @"class UserService {
+    constructor(database) {
+        this.users = [];
+        this.database = database;
+    }
+
+    addUser(user) {
+        this.users.push(user);
+    }
+
+    getUser(id) {
+        return this.users.find(u => u.id === id);
+    }
+
+    deleteUser(id) {
+        this.users = this.users.filter(u => u.id !== id);
+    }
+}";
+    }
+
+    private void ClearAll()
+    {
+        baseText = "";
+        yoursText = "";
+        theirsText = "";
+    }
+}
+
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #24292f;
+    }
+
+    .form-control {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        padding: 8px;
+    }
+
+    .form-control:focus {
+        border-color: #0969da;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.1);
+    }
+
+    .card {
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+        padding: 12px 16px;
+    }
+
+    .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #24292f;
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border: 1px solid;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+    }
+
+    .btn-outline-primary {
+        background-color: transparent;
+        color: #0969da;
+        border-color: #0969da;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #0969da;
+        color: white;
+    }
+
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #656d76;
+        border-color: #d0d7de;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f6f8fa;
+        color: #24292f;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 8px;
+    }
+</style>

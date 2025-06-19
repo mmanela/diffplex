@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using DiffPlex.DiffBuilder.Model;
 
 namespace DiffPlex.Wpf.Controls;
@@ -332,6 +333,38 @@ internal static class Helper
         return original.StartsWith(hotkey, StringComparison.OrdinalIgnoreCase)
             ? ("_" + original)
             : $"{original} (_{hotkey})";
+    }
+
+    internal static void RenderDiffPaneLines(InternalLinesViewer panel, List<DiffPiece> lines, Brush lineNumberForeground, UIElement source)
+    {
+        if (lines == null || panel == null) return;
+        
+        panel.Clear();
+        
+        foreach (var line in lines)
+        {
+            if (line == null)
+            {
+                var c = panel.Add(null, null, null as string, ChangeType.Unchanged.ToString(), source);
+                c.Tag = line;
+                continue;
+            }
+
+            var changeType = line.Type;
+            var text = line.Text;
+            var prefix = changeType switch
+            {
+                ChangeType.Inserted => "+",
+                ChangeType.Deleted => "-", 
+                ChangeType.Modified => "~",
+                _ => " "
+            };
+
+            var c2 = panel.Add(line.Position, prefix, text, changeType.ToString(), source);
+            c2.Tag = line;
+        }
+        
+        panel.AdjustScrollView();
     }
 
     internal static ContextMenu CreateLineContextMenu(FrameworkElement parentElement)

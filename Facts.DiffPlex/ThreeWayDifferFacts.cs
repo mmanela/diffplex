@@ -308,6 +308,348 @@ namespace Facts.DiffPlex
                 Assert.True(result.IsSuccessful);
                 Assert.Empty(result.ConflictBlocks);
             }
+
+            [Fact]
+            public void Can_merge_config_file_changes()
+            {
+                const string baseText = @"{
+  ""database"": {
+    ""host"": ""localhost"",
+    ""port"": 5432
+  },
+  ""logging"": {
+    ""level"": ""info""    
+  }
+}";
+
+                const string yoursText = @"{
+  ""database"": {
+    ""host"": ""localhost"",
+    ""port"": 5432,
+    ""timeout"": 30
+  },
+  ""logging"": {
+    ""level"": ""info""    
+  }
+}";
+
+                const string theirsText = @"{
+  ""database"": {
+    ""host"": ""localhost"",
+    ""port"": 5432
+  },
+  ""logging"": {
+    ""level"": ""debug"",
+    ""file"": ""app.log""
+  }
+}";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.True(result.IsSuccessful);
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("\"timeout\": 30", mergedText);
+                Assert.Contains("\"level\": \"debug\"", mergedText);
+                Assert.Contains("\"file\": \"app.log\"", mergedText);
+            }
+
+            [Fact]
+            public void Can_handle_import_statement_conflicts()
+            {
+                const string baseText = @"using System;
+using System.Collections.Generic;
+
+namespace MyApp
+{
+    public class Service
+    {
+        public void DoWork() { }
+    }
+}";
+
+                const string yoursText = @"using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace MyApp
+{
+    public class Service
+    {
+        public async Task DoWorkAsync() { }
+    }
+}";
+
+                const string theirsText = @"using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MyApp
+{
+    public class Service
+    {
+        public void DoWork() 
+        { 
+            var items = new List<int>().Where(x => x > 0);
+        }
+    }
+}";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.False(result.IsSuccessful); // Method signature conflict
+                Assert.True(result.ConflictBlocks.Count > 0);
+                
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("using System.Threading.Tasks", mergedText);
+                Assert.Contains("using System.Linq", mergedText);
+            }
+
+            [Fact]
+            public void Can_merge_documentation_changes() 
+            {
+                const string baseText = @"# Project Documentation
+
+## Overview
+This is a sample project.
+
+## Installation
+Run npm install.
+
+## Usage
+Basic usage instructions.";
+
+                const string yoursText = @"# Project Documentation
+
+## Overview
+This is a sample project for demonstrating features.
+
+## Installation
+Run npm install.
+
+## Usage
+Basic usage instructions.
+
+## Examples
+Here are some examples of usage.";
+
+                const string theirsText = @"# Project Documentation
+
+## Overview
+This is a sample project.
+
+## Requirements
+- Node.js 16+
+- npm 8+
+
+## Installation
+Run npm install.
+
+## Usage
+Basic usage instructions.";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.True(result.IsSuccessful);
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("for demonstrating features", mergedText);
+                Assert.Contains("## Requirements", mergedText);
+                Assert.Contains("## Examples", mergedText);
+            }
+
+            [Fact]
+            public void Can_handle_complex_refactoring_conflict()
+            {
+                const string baseText = @"public class UserService
+{
+    private readonly IRepository repository;
+    
+    public User GetUser(int id)
+    {
+        return repository.GetById(id);
+    }
+    
+    public void UpdateUser(User user)
+    {
+        repository.Update(user);
+    }
+}";
+
+                const string yoursText = @"public class UserService
+{
+    private readonly IUserRepository userRepository;
+    
+    public User GetUser(int id)
+    {
+        var user = userRepository.GetById(id);
+        if (user == null) throw new UserNotFoundException();
+        return user;
+    }
+    
+    public void UpdateUser(User user)
+    {
+        userRepository.Update(user);
+    }
+}";
+
+                const string theirsText = @"public class UserService
+{
+    private readonly IRepository repository;
+    
+    public async Task<User> GetUserAsync(int id)
+    {
+        return await repository.GetByIdAsync(id);
+    }
+    
+    public async Task UpdateUserAsync(User user)
+    {
+        await repository.UpdateAsync(user);
+    }
+}";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.False(result.IsSuccessful);
+                Assert.True(result.ConflictBlocks.Count > 0);
+                
+                // Verify conflicts contain both refactoring attempts
+                var conflictText = string.Join(" ", result.ConflictBlocks.SelectMany(c => c.OldPieces.Concat(c.NewPieces)));
+                Assert.Contains("userRepository", conflictText);
+                Assert.Contains("await", conflictText);
+            }
+
+            [Fact]
+            public void Can_merge_html_template_changes()
+            {
+                const string baseText = @"<div class=""container"">
+    <h1>Welcome</h1>
+    <p>Basic content</p>
+</div>";
+
+                const string yoursText = @"<div class=""container"">
+    <h1>Welcome to Our Site</h1>
+    <p>Basic content</p>
+    <button onclick=""showMore()"">Show More</button>
+</div>";
+
+                const string theirsText = @"<div class=""container responsive"">
+    <h1>Welcome</h1>
+    <p>Enhanced content with more details</p>
+</div>";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.True(result.IsSuccessful);
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("responsive", mergedText);
+                Assert.Contains("Welcome to Our Site", mergedText);
+                Assert.Contains("Enhanced content", mergedText);
+                Assert.Contains("showMore()", mergedText);
+            }
+
+            [Fact]
+            public void Can_handle_sql_schema_migration_conflict()
+            {
+                const string baseText = @"CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(255)
+);";
+
+                const string yoursText = @"CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);";
+
+                const string theirsText = @"CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50), 
+    email VARCHAR(255)
+);";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.False(result.IsSuccessful);
+                Assert.Single(result.ConflictBlocks);
+                
+                // Verify conflict contains both approaches to name field
+                var conflictText = string.Join(" ", result.ConflictBlocks[0].OldPieces.Concat(result.ConflictBlocks[0].NewPieces));
+                Assert.Contains("name VARCHAR(100) NOT NULL", conflictText);
+                Assert.Contains("first_name", conflictText);
+                Assert.Contains("last_name", conflictText);
+            }
+
+            [Fact]
+            public void Can_merge_different_feature_additions()
+            {
+                const string baseText = @"public class Calculator
+{
+    public double Add(double a, double b) => a + b;
+    public double Subtract(double a, double b) => a - b;
+}";
+
+                const string yoursText = @"public class Calculator
+{
+    public double Add(double a, double b) => a + b;
+    public double Subtract(double a, double b) => a - b;
+    public double Multiply(double a, double b) => a * b;
+    public double Power(double baseNum, double exponent) => Math.Pow(baseNum, exponent);
+}";
+
+                const string theirsText = @"public class Calculator
+{
+    public double Add(double a, double b) => a + b;
+    public double Subtract(double a, double b) => a - b;
+    public double Divide(double a, double b) => b != 0 ? a / b : throw new DivideByZeroException();
+    public double Modulo(double a, double b) => a % b;
+}";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                // This might conflict if additions are on same lines
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("Multiply", mergedText);
+                Assert.Contains("Power", mergedText);
+                Assert.Contains("Divide", mergedText);
+                Assert.Contains("Modulo", mergedText);
+            }
+
+            [Fact]
+            public void Can_handle_comment_and_code_changes()
+            {
+                const string baseText = @"// Basic validation
+public bool IsValid(string input)
+{
+    return !string.IsNullOrEmpty(input);
+}";
+
+                const string yoursText = @"/// <summary>
+/// Validates input string for basic requirements
+/// </summary>
+/// <param name=""input"">The input string to validate</param>
+/// <returns>True if valid, false otherwise</returns>
+public bool IsValid(string input)
+{
+    return !string.IsNullOrEmpty(input) && input.Length > 2;
+}";
+
+                const string theirsText = @"// Enhanced validation with trim
+public bool IsValid(string input)
+{
+    return !string.IsNullOrWhiteSpace(input?.Trim());
+}";
+
+                var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
+                
+                Assert.False(result.IsSuccessful);
+                Assert.True(result.ConflictBlocks.Count > 0);
+                
+                // Both changed the implementation differently  
+                var mergedText = string.Join("\n", result.MergedPieces);
+                Assert.Contains("summary", mergedText);  // XML doc was added by yours
+            }
         }
     }
 }

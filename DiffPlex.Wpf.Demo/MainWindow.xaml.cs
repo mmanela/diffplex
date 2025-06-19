@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,7 +43,7 @@ public partial class MainWindow : Window
         DiffView.NewText = TestData.DuplicateText(TestData.NewText, 100);
         DiffView.SetHeaderAsOldToNew();
         Background = new SolidColorBrush(isDark ? Color.FromRgb(32, 32, 32) : Color.FromRgb(251, 251, 251));
-        DiffButton.Background = FutherActionsButton.Background = WindowButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
+        DiffButton.Background = FutherActionsButton.Background = WindowButton.Background = MergeWindowButton.Background = new SolidColorBrush(isDark ? Color.FromRgb(80, 160, 240) : Color.FromRgb(160, 216, 240));
         IgnoreUnchangedCheckBox.Content = TestData.RemoveHotkey(DiffView.CollapseUnchangedSectionsToggleTitle);
         MarginLineCountLabel.Content = TestData.RemoveHotkey(DiffView.ContextLinesMenuItemsTitle);
     }
@@ -80,6 +80,24 @@ public partial class MainWindow : Window
         if (has) return;
         var win = new DiffWindow();
         win.OpenFileOnBoth();
+        win.Show();
+    }
+
+    private void MergeWindowButton_Click(object sender, RoutedEventArgs e)
+    {
+        var has = false;
+        foreach (var w in Application.Current.Windows)
+        {
+            if (w is ThreeWayMergeWindow mw)
+            {
+                mw.Activate();
+                has = true;
+                break;
+            }
+        }
+
+        if (has) return;
+        var win = new ThreeWayMergeWindow();
         win.Show();
     }
 }

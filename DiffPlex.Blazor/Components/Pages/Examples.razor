@@ -48,6 +48,13 @@
                             @onclick='() => SetViewMode("inline")'>
                         Inline
                     </button>
+                    @if (IsThreeWayExample())
+                    {
+                        <button type="button" class="btn @(viewMode == "three-way" ? "btn-secondary" : "btn-outline-secondary")" 
+                                @onclick='() => SetViewMode("three-way")'>
+                            Three-Way Merge
+                        </button>
+                    }
                 </div>
             </div>
         </div>
@@ -61,6 +68,16 @@
                                OldTextHeader="@currentExample.OldHeader" 
                                NewTextHeader="@currentExample.NewHeader"
                                IgnoreWhiteSpace="true" />
+                }
+                else if (viewMode == "three-way")
+                {
+                    <ThreeWayMergeViewer BaseText="@currentExample.BaseText" 
+                                        YoursText="@currentExample.YoursText" 
+                                        TheirsText="@currentExample.TheirsText" 
+                                        BaseHeader="@currentExample.BaseHeader" 
+                                        YoursHeader="@currentExample.YoursHeader" 
+                                        TheirsHeader="@currentExample.TheirsHeader"
+                                        IgnoreWhiteSpace="true" />
                 }
                 else
                 {
@@ -76,11 +93,117 @@
 
 @code {
     private string viewMode = "side-by-side";
-    private string selectedExample = "code-refactor";
+    private string selectedExample = "merge-conflict";
     private ExampleData? currentExample;
 
     private Dictionary<string, ExampleData> examples = new()
     {
+        ["merge-conflict"] = new ExampleData
+        {
+            Name = "Merge Conflict",
+            Description = "Shows a three-way merge scenario with conflicts that need manual resolution.",
+            BaseHeader = "Common Base",
+            YoursHeader = "Your Changes",
+            TheirsHeader = "Their Changes",
+            BaseText = @"function calculateTotal(items) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price;
+    }
+    return total;
+}
+
+function processOrder(order) {
+    // Basic processing
+    return order;
+}",
+            YoursText = @"function calculateTotal(items, tax = 0.08) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price * item.quantity;
+    }
+    return total * (1 + tax);
+}
+
+function processOrder(order) {
+    // Validate order before processing
+    if (!order.items || order.items.length === 0) {
+        throw new Error('Order must contain items');
+    }
+    return order;
+}",
+            TheirsText = @"function calculateTotal(items, discountRate = 0) {
+    let total = 0;
+    for (let item of items) {
+        total += item.price;
+    }
+    return total * (1 - discountRate);
+}
+
+function processOrder(order) {
+    // Add logging
+    console.log('Processing order:', order.id);
+    return order;
+}"
+        },
+        ["merge-clean"] = new ExampleData
+        {
+            Name = "Clean Merge",
+            Description = "Shows a three-way merge scenario where changes can be automatically merged without conflicts.",
+            BaseHeader = "Original Code",
+            YoursHeader = "Feature Branch",
+            TheirsHeader = "Main Branch",
+            BaseText = @"class UserService {
+    constructor() {
+        this.users = [];
+    }
+
+    addUser(user) {
+        this.users.push(user);
+    }
+
+    getUser(id) {
+        return this.users.find(u => u.id === id);
+    }
+}",
+            YoursText = @"class UserService {
+    constructor() {
+        this.users = [];
+        this.cache = new Map();
+    }
+
+    addUser(user) {
+        this.users.push(user);
+        this.cache.set(user.id, user);
+    }
+
+    getUser(id) {
+        // Check cache first
+        if (this.cache.has(id)) {
+            return this.cache.get(id);
+        }
+        return this.users.find(u => u.id === id);
+    }
+}",
+            TheirsText = @"class UserService {
+    constructor(database) {
+        this.users = [];
+        this.database = database;
+    }
+
+    addUser(user) {
+        this.users.push(user);
+    }
+
+    getUser(id) {
+        return this.users.find(u => u.id === id);
+    }
+
+    deleteUser(id) {
+        this.users = this.users.filter(u => u.id !== id);
+    }
+}"
+        },
         ["code-refactor"] = new ExampleData
         {
             Name = "Code Refactor",
@@ -284,6 +407,11 @@ var diffModel = differ.BuildDiffModel(oldText, newText);
         viewMode = mode;
     }
 
+    private bool IsThreeWayExample()
+    {
+        return currentExample != null && !string.IsNullOrEmpty(currentExample.BaseText);
+    }
+
     private class ExampleData
     {
         public string Name { get; set; } = "";
@@ -292,5 +420,13 @@ var diffModel = differ.BuildDiffModel(oldText, newText);
         public string NewHeader { get; set; } = "";
         public string OldText { get; set; } = "";
         public string NewText { get; set; } = "";
+        
+        // Three-way merge properties
+        public string BaseText { get; set; } = "";
+        public string YoursText { get; set; } = "";
+        public string TheirsText { get; set; } = "";
+        public string BaseHeader { get; set; } = "";
+        public string YoursHeader { get; set; } = "";
+        public string TheirsHeader { get; set; } = "";
     }
 }

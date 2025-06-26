@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12">
             <h1>Three-Way Merge</h1>
-            <p>Interactive three-way merge tool for resolving conflicts between two branches with a common base.</p>
+            <p>Interactive three-way merge tool for resolving conflicts between two branches with a common base. Navigate between conflicts, choose different view modes, and resolve conflicts with a single click.</p>
         </div>
     </div>
 
@@ -61,13 +61,13 @@
 
     <div class="row">
         <div class="col-12">
-            <ThreeWayMergeViewer BaseText="@baseText" 
-                                YoursText="@yoursText" 
-                                TheirsText="@theirsText" 
-                                BaseHeader="Base" 
-                                YoursHeader="Yours" 
-                                TheirsHeader="Theirs"
-                                IgnoreWhiteSpace="true" />
+            <InteractiveThreeWayMergeViewer BaseText="@baseText" 
+                                           YoursText="@yoursText" 
+                                           TheirsText="@theirsText" 
+                                           BaseHeader="Base" 
+                                           YoursHeader="Yours" 
+                                           TheirsHeader="Theirs"
+                                           IgnoreWhiteSpace="true" />
         </div>
     </div>
 </div>

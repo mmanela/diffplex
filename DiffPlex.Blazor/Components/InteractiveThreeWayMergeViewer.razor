@@ -1,0 +1,1037 @@
+@using DiffPlex
+@using DiffPlex.Model
+@using DiffPlex.Chunkers
+
+<div class="interactive-three-way-merge-viewer">
+    @if (_diffResult != null && _mergeResult != null)
+    {
+        <!-- Navigation Bar -->
+        <div class="merge-navigation">
+            <div class="nav-left">
+                <div class="view-mode-toggle">
+                    <button type="button" class="btn @(_viewMode == ViewMode.FullFile ? "btn-primary" : "btn-outline-primary")" 
+                            @onclick="() => SetViewMode(ViewMode.FullFile)">
+                        Full File
+                    </button>
+                    <button type="button" class="btn @(_viewMode == ViewMode.ChangesOnly ? "btn-primary" : "btn-outline-primary")" 
+                            @onclick="() => SetViewMode(ViewMode.ChangesOnly)">
+                        Changes Only
+                    </button>
+                    <button type="button" class="btn @(_viewMode == ViewMode.ConflictsOnly ? "btn-primary" : "btn-outline-primary")" 
+                            @onclick="() => SetViewMode(ViewMode.ConflictsOnly)">
+                        Conflicts Only (@_conflictBlocks.Count)
+                    </button>
+                </div>
+            </div>
+            
+            @if (_conflictBlocks.Any())
+            {
+                <div class="nav-center">
+                    <div class="conflict-navigation">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                @onclick="GoToPreviousConflict" 
+                                disabled="@(_currentConflictIndex <= 0)">
+                            ← Previous
+                        </button>
+                        <span class="conflict-counter">
+                            Conflict @(_currentConflictIndex + 1) of @_conflictBlocks.Count
+                        </span>
+                        <button type="button" class="btn btn-outline-secondary" 
+                                @onclick="GoToNextConflict" 
+                                disabled="@(_currentConflictIndex >= _conflictBlocks.Count - 1)">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            }
+
+            <div class="nav-right">
+                <div class="merge-status">
+                    @if (_mergeResult.IsSuccessful)
+                    {
+                        <span class="status-badge status-success">✓ Clean Merge</span>
+                    }
+                    else
+                    {
+                        var unresolvedCount = _conflictBlocks.Count(c => !conflictResolutions.ContainsKey(c.Index) || !conflictResolutions[c.Index].HasValue);
+                        <span class="status-badge status-conflict">
+                            @unresolvedCount Unresolved Conflict@(unresolvedCount != 1 ? "s" : "")
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Three-way view headers -->
+        <div class="three-way-header">
+            <div class="yours-header">
+                <h5>@YoursHeader</h5>
+            </div>
+            <div class="base-header">
+                <h5>@BaseHeader</h5>
+            </div>
+            <div class="theirs-header">
+                <h5>@TheirsHeader</h5>
+            </div>
+        </div>
+        
+        <!-- Three-way content panels -->
+        <div class="three-way-content" @ref="contentContainer">
+            <div class="yours-panel" @ref="yoursPanelRef">
+                @RenderTextWithBlocks(_diffResult.PiecesOld, _diffResult.DiffBlocks, TextSource.Yours)
+            </div>
+            
+            <div class="base-panel" @ref="basePanelRef">
+                @RenderTextWithBlocks(_diffResult.PiecesBase, _diffResult.DiffBlocks, TextSource.Base)
+            </div>
+            
+            <div class="theirs-panel" @ref="theirsPanelRef">
+                @RenderTextWithBlocks(_diffResult.PiecesNew, _diffResult.DiffBlocks, TextSource.Theirs)
+            </div>
+        </div>
+
+        <!-- Active conflict resolution panel -->
+        @if (_conflictBlocks.Any() && _currentConflictIndex >= 0 && _currentConflictIndex < _conflictBlocks.Count)
+        {
+            var currentConflict = _conflictBlocks[_currentConflictIndex];
+            <div class="active-conflict-panel">
+                <div class="conflict-header">
+                    <h6>Resolve Conflict @(_currentConflictIndex + 1)</h6>
+                    <div class="quick-actions">
+                        <button class="btn @(IsConflictResolved(currentConflict.Index, ConflictResolution.Yours) ? "btn-success" : "btn-outline-success") btn-sm" 
+                                @onclick="() => ResolveCurrentConflict(ConflictResolution.Yours)">
+                            @(IsConflictResolved(currentConflict.Index, ConflictResolution.Yours) ? "✓ " : "")Take Yours
+                        </button>
+                        <button class="btn @(IsConflictResolved(currentConflict.Index, ConflictResolution.Base) ? "btn-warning" : "btn-outline-warning") btn-sm" 
+                                @onclick="() => ResolveCurrentConflict(ConflictResolution.Base)">
+                            @(IsConflictResolved(currentConflict.Index, ConflictResolution.Base) ? "✓ " : "")Take Base
+                        </button>
+                        <button class="btn @(IsConflictResolved(currentConflict.Index, ConflictResolution.Theirs) ? "btn-info" : "btn-outline-info") btn-sm" 
+                                @onclick="() => ResolveCurrentConflict(ConflictResolution.Theirs)">
+                            @(IsConflictResolved(currentConflict.Index, ConflictResolution.Theirs) ? "✓ " : "")Take Theirs
+                        </button>
+                        @if (conflictResolutions.ContainsKey(currentConflict.Index))
+                        {
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => ClearConflictResolution(currentConflict.Index)">
+                                Clear Selection
+                            </button>
+                        }
+                    </div>
+                </div>
+                
+                <div class="conflict-comparison">
+                    <div class="conflict-section yours-section @(IsConflictResolved(currentConflict.Index, ConflictResolution.Yours) ? "selected" : "")">
+                        <div class="section-label">
+                            Yours
+                            @if (IsConflictResolved(currentConflict.Index, ConflictResolution.Yours))
+                            {
+                                <span class="selection-indicator">✓</span>
+                            }
+                        </div>
+                        <div class="section-content">
+                            @foreach (var piece in currentConflict.Conflict.OldPieces)
+                            {
+                                <div class="line">@piece</div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="conflict-section base-section @(IsConflictResolved(currentConflict.Index, ConflictResolution.Base) ? "selected" : "")">
+                        <div class="section-label">
+                            Base
+                            @if (IsConflictResolved(currentConflict.Index, ConflictResolution.Base))
+                            {
+                                <span class="selection-indicator">✓</span>
+                            }
+                        </div>
+                        <div class="section-content">
+                            @foreach (var piece in currentConflict.Conflict.BasePieces)
+                            {
+                                <div class="line">@piece</div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="conflict-section theirs-section @(IsConflictResolved(currentConflict.Index, ConflictResolution.Theirs) ? "selected" : "")">
+                        <div class="section-label">
+                            Theirs
+                            @if (IsConflictResolved(currentConflict.Index, ConflictResolution.Theirs))
+                            {
+                                <span class="selection-indicator">✓</span>
+                            }
+                        </div>
+                        <div class="section-content">
+                            @foreach (var piece in currentConflict.Conflict.NewPieces)
+                            {
+                                <div class="line">@piece</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Merge Result Section -->
+        @if (_mergeResult != null)
+        {
+            <div class="merge-result-section">
+                <div class="merge-result-header">
+                    <h5>Merge Result @(_mergeResult.IsSuccessful ? "(Clean)" : "(With Conflicts)")</h5>
+                </div>
+                <div class="merge-result-content">
+                    @{
+                        var actualLineNumber = 1;
+                        foreach (var piece in _mergeResult.MergedPieces)
+                        {
+                            var isConflictMarker = piece.StartsWith("<<<<<<<") || piece.StartsWith("=======") || piece.StartsWith(">>>>>>>") || piece.StartsWith("|||||||");
+                            <div class="line @GetMergeLineClass(piece)">
+                                <span class="line-number">@(isConflictMarker ? "" : actualLineNumber.ToString())</span>
+                                <span class="line-content">@piece</span>
+                            </div>
+                            if (!isConflictMarker) actualLineNumber++;
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string BaseText { get; set; } = "";
+    [Parameter] public string YoursText { get; set; } = "";
+    [Parameter] public string TheirsText { get; set; } = "";
+    [Parameter] public string BaseHeader { get; set; } = "Base";
+    [Parameter] public string YoursHeader { get; set; } = "Yours";
+    [Parameter] public string TheirsHeader { get; set; } = "Theirs";
+    [Parameter] public bool IgnoreWhiteSpace { get; set; } = true;
+    [Parameter] public bool IgnoreCase { get; set; } = false;
+
+    private ThreeWayDiffResult? _diffResult;
+    private ThreeWayMergeResult? _mergeResult;
+    private Dictionary<int, ConflictResolution?> conflictResolutions = new();
+    private List<(ThreeWayConflictBlock Conflict, int Index)> _conflictBlocks = new();
+    private List<ThreeWayConflictBlock> _originalConflictBlocks = new();
+    private List<string> _originalMergedPieces = new();
+    private int _currentConflictIndex = 0;
+    private ViewMode _viewMode = ViewMode.FullFile;
+
+    private ElementReference contentContainer;
+    private ElementReference basePanelRef;
+    private ElementReference yoursPanelRef;
+    private ElementReference theirsPanelRef;
+
+    private enum ViewMode { FullFile, ChangesOnly, ConflictsOnly }
+    private enum TextSource { Base, Yours, Theirs }
+    private enum ConflictResolution { Base, Yours, Theirs }
+
+    protected override void OnParametersSet()
+    {
+        UpdateDiff();
+    }
+
+    private void UpdateDiff()
+    {
+        if (!string.IsNullOrEmpty(BaseText) || !string.IsNullOrEmpty(YoursText) || !string.IsNullOrEmpty(TheirsText))
+        {
+            var chunker = new LineChunker();
+            var differ = ThreeWayDiffer.Instance;
+            
+            _diffResult = differ.CreateDiffs(BaseText ?? "", YoursText ?? "", TheirsText ?? "", 
+                IgnoreWhiteSpace, IgnoreCase, chunker);
+            
+            _mergeResult = differ.CreateMerge(BaseText ?? "", YoursText ?? "", TheirsText ?? "", 
+                IgnoreWhiteSpace, IgnoreCase, chunker);
+                
+            conflictResolutions.Clear();
+            _conflictBlocks = _mergeResult.ConflictBlocks.Select((c, i) => (c, i)).ToList();
+            _originalConflictBlocks = _mergeResult.ConflictBlocks.ToList();
+            _originalMergedPieces = _mergeResult.MergedPieces.ToList();
+            _currentConflictIndex = _conflictBlocks.Any() ? 0 : -1;
+        }
+    }
+
+    private void SetViewMode(ViewMode mode)
+    {
+        _viewMode = mode;
+        StateHasChanged();
+    }
+
+    private async Task GoToNextConflict()
+    {
+        if (_currentConflictIndex < _conflictBlocks.Count - 1)
+        {
+            _currentConflictIndex++;
+            await ScrollToConflict(_currentConflictIndex);
+            StateHasChanged();
+        }
+    }
+
+    private async Task GoToPreviousConflict()
+    {
+        if (_currentConflictIndex > 0)
+        {
+            _currentConflictIndex--;
+            await ScrollToConflict(_currentConflictIndex);
+            StateHasChanged();
+        }
+    }
+
+    private async Task ScrollToConflict(int conflictIndex)
+    {
+        if (conflictIndex >= 0 && conflictIndex < _conflictBlocks.Count)
+        {
+            var conflict = _conflictBlocks[conflictIndex];
+            // Find the line number where this conflict starts
+            var lineNumber = GetConflictStartLine(conflict.Conflict);
+            
+            // Scroll to the line in all three panels
+            await ScrollToLine(lineNumber);
+        }
+    }
+
+    private async Task ScrollToLine(int lineNumber)
+    {
+        // Calculate the scroll position (assuming 20px per line)
+        var scrollTop = (lineNumber - 1) * 20;
+        
+        // Small delay to ensure rendering
+        await Task.Delay(50);
+        StateHasChanged();
+    }
+
+    private int GetConflictStartLine(ThreeWayConflictBlock conflict)
+    {
+        // Calculate which line the conflict starts on based on the merge result
+        var lineNumber = 1;
+        foreach (var piece in _mergeResult!.MergedPieces)
+        {
+            if (piece.StartsWith("<<<<<<<"))
+            {
+                // Found start of a conflict, check if it matches our conflict
+                break;
+            }
+            lineNumber++;
+        }
+        return lineNumber;
+    }
+
+    private void ResolveCurrentConflict(ConflictResolution resolution)
+    {
+        if (_currentConflictIndex >= 0 && _currentConflictIndex < _conflictBlocks.Count)
+        {
+            var conflictIndex = _conflictBlocks[_currentConflictIndex].Index;
+            ResolveConflict(conflictIndex, resolution);
+        }
+    }
+
+    private void ResolveConflict(int conflictIndex, ConflictResolution resolution)
+    {
+        conflictResolutions[conflictIndex] = resolution;
+        UpdateMergeResult();
+        StateHasChanged();
+    }
+
+    private void ClearConflictResolution(int conflictIndex)
+    {
+        conflictResolutions.Remove(conflictIndex);
+        UpdateMergeResult();
+        StateHasChanged();
+    }
+
+    private bool IsConflictResolved(int conflictIndex, ConflictResolution resolution)
+    {
+        return conflictResolutions.TryGetValue(conflictIndex, out var currentResolution) 
+               && currentResolution == resolution;
+    }
+
+    private void UpdateMergeResult()
+    {
+        if (_mergeResult == null || !_originalConflictBlocks.Any())
+            return;
+
+        // Rebuild the merge result from scratch, processing each conflict block individually
+        var mergedPieces = new List<string>();
+        var unresolvedConflicts = new List<ThreeWayConflictBlock>();
+        
+        // Get the original merge pieces and find conflict markers
+        var originalPieces = _originalMergedPieces.ToList();
+        var conflictRanges = new List<(int start, int end, int blockIndex)>();
+        
+        // First pass: identify all conflict ranges and map them to their block indices
+        var currentBlockIndex = 0;
+        for (int i = 0; i < originalPieces.Count; i++)
+        {
+            if (originalPieces[i].StartsWith("<<<<<<<"))
+            {
+                var conflictStart = i;
+                var conflictEnd = -1;
+                
+                // Find the end of this conflict
+                for (int j = i + 1; j < originalPieces.Count; j++)
+                {
+                    if (originalPieces[j].StartsWith(">>>>>>>"))
+                    {
+                        conflictEnd = j;
+                        break;
+                    }
+                }
+                
+                if (conflictEnd > conflictStart && currentBlockIndex < _originalConflictBlocks.Count)
+                {
+                    conflictRanges.Add((conflictStart, conflictEnd, currentBlockIndex));
+                    currentBlockIndex++;
+                    i = conflictEnd; // Skip past this conflict in the loop
+                }
+            }
+        }
+        
+        // Second pass: rebuild the merged content
+        var processedUpTo = 0;
+        
+        foreach (var (start, end, blockIndex) in conflictRanges)
+        {
+            // Add any content before this conflict
+            for (int i = processedUpTo; i < start; i++)
+            {
+                mergedPieces.Add(originalPieces[i]);
+            }
+            
+            // Handle this specific conflict
+            var conflictBlock = _originalConflictBlocks[blockIndex];
+            
+            if (conflictResolutions.TryGetValue(blockIndex, out var resolution) && resolution.HasValue)
+            {
+                // Add the resolved content for this specific conflict
+                var piecesToUse = resolution.Value switch
+                {
+                    ConflictResolution.Base => conflictBlock.BasePieces,
+                    ConflictResolution.Yours => conflictBlock.OldPieces,
+                    ConflictResolution.Theirs => conflictBlock.NewPieces,
+                    _ => conflictBlock.BasePieces
+                };
+                
+                mergedPieces.AddRange(piecesToUse);
+            }
+            else
+            {
+                // Keep the conflict markers for this unresolved conflict
+                for (int k = start; k <= end; k++)
+                {
+                    mergedPieces.Add(originalPieces[k]);
+                }
+                unresolvedConflicts.Add(conflictBlock);
+            }
+            
+            processedUpTo = end + 1;
+        }
+        
+        // Add any remaining content after the last conflict
+        for (int i = processedUpTo; i < originalPieces.Count; i++)
+        {
+            mergedPieces.Add(originalPieces[i]);
+        }
+
+        // Update only the merged pieces, keep original conflict blocks unchanged
+        _mergeResult = new ThreeWayMergeResult(
+            mergedPieces.ToArray(),
+            unresolvedConflicts.Count == 0,
+            _originalConflictBlocks, // Keep original conflict blocks
+            _mergeResult.DiffResult
+        );
+    }
+
+    private bool ShouldShowLine(ThreeWayDiffBlock block, int lineIndex, TextSource source)
+    {
+        if (_viewMode == ViewMode.FullFile)
+            return true;
+
+        var isConflict = block.ChangeType == ThreeWayChangeType.Conflict;
+        var isChange = block.ChangeType != ThreeWayChangeType.Unchanged;
+
+        if (_viewMode == ViewMode.ConflictsOnly)
+            return isConflict;
+
+        if (_viewMode == ViewMode.ChangesOnly)
+            return isChange;
+
+        return true;
+    }
+
+    private RenderFragment RenderTextWithBlocks(IReadOnlyList<string> pieces, IList<ThreeWayDiffBlock> blocks, TextSource source)
+    {
+        return builder =>
+        {
+            var currentIndex = 0;
+            var fileLineNumber = 1;
+
+            foreach (var block in blocks)
+            {
+                var (startIndex, count) = GetBlockIndices(block, source);
+                
+                // Render lines before this block (unchanged)
+                while (currentIndex < startIndex)
+                {
+                    if (ShouldShowLine(block, currentIndex, source) || _viewMode == ViewMode.FullFile)
+                    {
+                        builder.OpenElement(0, "div");
+                        builder.AddAttribute(1, "class", "line unchanged");
+                        builder.AddAttribute(2, "data-line-number", fileLineNumber);
+                        
+                        builder.OpenElement(3, "span");
+                        builder.AddAttribute(4, "class", "line-number");
+                        builder.AddContent(5, fileLineNumber.ToString());
+                        builder.CloseElement();
+                        
+                        builder.OpenElement(6, "span");
+                        builder.AddAttribute(7, "class", "line-content");
+                        builder.AddContent(8, pieces[currentIndex]);
+                        builder.CloseElement();
+                        
+                        builder.CloseElement();
+                    }
+                    currentIndex++;
+                    fileLineNumber++;
+                }
+
+                // Render the block content with appropriate styling
+                for (int i = 0; i < count; i++)
+                {
+                    var blockLineIndex = startIndex + i;
+                    if (blockLineIndex < pieces.Count && ShouldShowLine(block, blockLineIndex, source))
+                    {
+                        builder.OpenElement(10, "div");
+                        builder.AddAttribute(11, "class", $"line {GetBlockClass(block.ChangeType, source)}");
+                        builder.AddAttribute(12, "data-line-number", fileLineNumber);
+                        
+                        builder.OpenElement(13, "span");
+                        builder.AddAttribute(14, "class", "line-number");
+                        builder.AddContent(15, fileLineNumber.ToString());
+                        builder.CloseElement();
+                        
+                        builder.OpenElement(16, "span");
+                        builder.AddAttribute(17, "class", "line-content");
+                        builder.AddContent(18, pieces[blockLineIndex]);
+                        builder.CloseElement();
+                        
+                        builder.CloseElement();
+                    }
+                    fileLineNumber++;
+                }
+                
+                currentIndex = startIndex + count;
+            }
+
+            // Render remaining unchanged lines
+            while (currentIndex < pieces.Count)
+            {
+                if (_viewMode == ViewMode.FullFile)
+                {
+                    builder.OpenElement(20, "div");
+                    builder.AddAttribute(21, "class", "line unchanged");
+                    builder.AddAttribute(22, "data-line-number", fileLineNumber);
+                    
+                    builder.OpenElement(23, "span");
+                    builder.AddAttribute(24, "class", "line-number");
+                    builder.AddContent(25, fileLineNumber.ToString());
+                    builder.CloseElement();
+                    
+                    builder.OpenElement(26, "span");
+                    builder.AddAttribute(27, "class", "line-content");
+                    builder.AddContent(28, pieces[currentIndex]);
+                    builder.CloseElement();
+                    
+                    builder.CloseElement();
+                }
+                currentIndex++;
+                fileLineNumber++;
+            }
+        };
+    }
+
+    private (int startIndex, int count) GetBlockIndices(ThreeWayDiffBlock block, TextSource source)
+    {
+        return source switch
+        {
+            TextSource.Base => (block.BaseStart, block.BaseCount),
+            TextSource.Yours => (block.OldStart, block.OldCount),
+            TextSource.Theirs => (block.NewStart, block.NewCount),
+            _ => (0, 0)
+        };
+    }
+
+    private string GetBlockClass(ThreeWayChangeType changeType, TextSource source)
+    {
+        return changeType switch
+        {
+            ThreeWayChangeType.Unchanged => "unchanged",
+            ThreeWayChangeType.OldOnly => source == TextSource.Yours ? "changed-yours" : "changed-base",
+            ThreeWayChangeType.NewOnly => source == TextSource.Theirs ? "changed-theirs" : "changed-base",
+            ThreeWayChangeType.BothSame => source == TextSource.Base ? "changed-base" : "changed-both",
+            ThreeWayChangeType.Conflict => source switch
+            {
+                TextSource.Base => "conflict-base",
+                TextSource.Yours => "conflict-yours",
+                TextSource.Theirs => "conflict-theirs",
+                _ => "conflict"
+            },
+            _ => "unchanged"
+        };
+    }
+
+    private string GetMergeLineClass(string line)
+    {
+        if (line.StartsWith("<<<<<<<")) return "conflict-marker-start";
+        if (line.StartsWith("|||||||")) return "conflict-marker-base";
+        if (line.StartsWith("=======")) return "conflict-marker-separator";
+        if (line.StartsWith(">>>>>>>")) return "conflict-marker-end";
+        return "merge-line";
+    }
+}
+
+<style>
+    .interactive-three-way-merge-viewer {
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        overflow: hidden;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+        background-color: #ffffff;
+        margin-bottom: 20px;
+    }
+
+    /* Navigation Bar */
+    .merge-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+        gap: 16px;
+    }
+
+    .nav-left, .nav-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .view-mode-toggle {
+        display: flex;
+        gap: 4px;
+    }
+
+    .conflict-navigation {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .conflict-counter {
+        font-weight: 600;
+        color: #24292f;
+        font-size: 14px;
+    }
+
+    .merge-status {
+        display: flex;
+        align-items: center;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .status-success {
+        background-color: #dafbe1;
+        color: #137547;
+    }
+
+    .status-conflict {
+        background-color: #ffebe9;
+        color: #cf222e;
+    }
+
+    /* Three-way headers */
+    .three-way-header {
+        display: flex;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .base-header, .yours-header, .theirs-header {
+        flex: 1;
+        padding: 8px 12px;
+        font-weight: 600;
+        color: #24292f;
+        border-right: 1px solid #d0d7de;
+    }
+
+    .theirs-header {
+        border-right: none;
+    }
+
+    /* Three-way content */
+    .three-way-content {
+        display: flex;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .base-panel, .yours-panel, .theirs-panel {
+        flex: 1;
+        min-width: 0;
+        border-right: 1px solid #d0d7de;
+        overflow-y: auto;
+    }
+
+    .theirs-panel {
+        border-right: none;
+    }
+
+    .line {
+        display: flex;
+        min-height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+    }
+
+    .line-number {
+        width: 40px;
+        padding: 0 6px;
+        text-align: right;
+        color: #656d76;
+        background-color: #f6f8fa;
+        border-right: 1px solid #d0d7de;
+        user-select: none;
+        flex-shrink: 0;
+        font-size: 11px;
+    }
+
+    .line-content {
+        padding: 0 8px;
+        white-space: pre;
+        overflow-x: auto;
+        flex: 1;
+    }
+
+    /* Change type styling */
+    .line.unchanged {
+        background-color: #ffffff;
+    }
+
+    .line.changed-yours {
+        background-color: #d1f4d0;
+    }
+
+    .line.changed-yours .line-number {
+        background-color: #a7f3d0;
+    }
+
+    .line.changed-theirs {
+        background-color: #dbeafe;
+    }
+
+    .line.changed-theirs .line-number {
+        background-color: #bfdbfe;
+    }
+
+    .line.changed-base {
+        background-color: #fef3c7;
+    }
+
+    .line.changed-base .line-number {
+        background-color: #fde68a;
+    }
+
+    .line.changed-both {
+        background-color: #e0e7ff;
+    }
+
+    .line.changed-both .line-number {
+        background-color: #c7d2fe;
+    }
+
+    .line.conflict-base, .line.conflict-yours, .line.conflict-theirs {
+        background-color: #ffeef0;
+    }
+
+    .line.conflict-base .line-number, 
+    .line.conflict-yours .line-number, 
+    .line.conflict-theirs .line-number {
+        background-color: #fecdd3;
+    }
+
+    /* Active conflict panel */
+    .active-conflict-panel {
+        border-top: 1px solid #d0d7de;
+        background-color: #fff8f0;
+    }
+
+    .conflict-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: #fef3c7;
+        border-bottom: 1px solid #fed7aa;
+    }
+
+    .conflict-header h6 {
+        margin: 0;
+        color: #b45309;
+        font-weight: 600;
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 6px;
+    }
+
+    .conflict-comparison {
+        display: flex;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .conflict-section {
+        flex: 1;
+        border: 2px solid #e5e7eb;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+    }
+
+    .conflict-section.selected {
+        border-color: #0969da;
+        box-shadow: 0 0 0 1px #0969da;
+    }
+
+    .section-label {
+        padding: 8px 12px;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .selection-indicator {
+        color: #0969da;
+        font-weight: bold;
+    }
+
+    .yours-section .section-label {
+        background-color: #d1f4d0;
+        color: #0d7377;
+    }
+
+    .base-section .section-label {
+        background-color: #fef3c7;
+        color: #b45309;
+    }
+
+    .theirs-section .section-label {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .section-content {
+        padding: 12px;
+        background-color: #ffffff;
+        max-height: 120px;
+        overflow-y: auto;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 11px;
+    }
+
+    .section-content .line {
+        min-height: 16px;
+        line-height: 16px;
+        padding: 2px 0;
+        white-space: pre-wrap;
+    }
+
+    /* Button styles */
+    .btn {
+        padding: 6px 12px;
+        border: 1px solid;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+        transition: all 0.15s ease;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    .btn-primary {
+        background-color: #0969da;
+        color: white;
+        border-color: #0969da;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background-color: #0550ae;
+        border-color: #0550ae;
+    }
+
+    .btn-outline-primary {
+        background-color: transparent;
+        color: #0969da;
+        border-color: #0969da;
+    }
+
+    .btn-outline-primary:hover:not(:disabled) {
+        background-color: #0969da;
+        color: white;
+    }
+
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #656d76;
+        border-color: #d0d7de;
+    }
+
+    .btn-outline-secondary:hover:not(:disabled) {
+        background-color: #f6f8fa;
+        color: #24292f;
+    }
+
+    .btn-success {
+        background-color: #1f883d;
+        color: white;
+        border-color: #1f883d;
+    }
+
+    .btn-success:hover:not(:disabled) {
+        background-color: #1a7f37;
+        border-color: #1a7f37;
+    }
+
+    .btn-info {
+        background-color: #0550ae;
+        color: white;
+        border-color: #0550ae;
+    }
+
+    .btn-info:hover:not(:disabled) {
+        background-color: #044289;
+        border-color: #044289;
+    }
+
+    .btn-warning {
+        background-color: #bf8700;
+        color: white;
+        border-color: #bf8700;
+    }
+
+    .btn-warning:hover:not(:disabled) {
+        background-color: #9a6700;
+        border-color: #9a6700;
+    }
+
+    .btn-outline-success {
+        background-color: transparent;
+        color: #1f883d;
+        border-color: #1f883d;
+    }
+
+    .btn-outline-success:hover:not(:disabled) {
+        background-color: #1f883d;
+        color: white;
+        border-color: #1f883d;
+    }
+
+    .btn-outline-info {
+        background-color: transparent;
+        color: #0550ae;
+        border-color: #0550ae;
+    }
+
+    .btn-outline-info:hover:not(:disabled) {
+        background-color: #0550ae;
+        color: white;
+        border-color: #0550ae;
+    }
+
+    .btn-outline-warning {
+        background-color: transparent;
+        color: #bf8700;
+        border-color: #bf8700;
+    }
+
+    .btn-outline-warning:hover:not(:disabled) {
+        background-color: #bf8700;
+        color: white;
+        border-color: #bf8700;
+    }
+
+    /* Merge result section */
+    .merge-result-section {
+        border-top: 1px solid #d0d7de;
+        background-color: #f8f9fa;
+    }
+
+    .merge-result-header {
+        padding: 12px 16px;
+        background-color: #f6f8fa;
+        border-bottom: 1px solid #d0d7de;
+    }
+
+    .merge-result-header h5 {
+        margin: 0;
+        color: #24292f;
+        font-weight: 600;
+    }
+
+    .merge-result-content {
+        max-height: 300px;
+        overflow: auto;
+        background-color: #ffffff;
+    }
+
+    .merge-result-content .line {
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .conflict-marker-start, .conflict-marker-base, 
+    .conflict-marker-separator, .conflict-marker-end {
+        background-color: #ffeef0;
+        font-weight: bold;
+    }
+
+    .conflict-marker-start .line-content,
+    .conflict-marker-end .line-content {
+        color: #d1242f;
+    }
+
+    .conflict-marker-base .line-content,
+    .conflict-marker-separator .line-content {
+        color: #b45309;
+    }
+
+    .merge-line {
+        background-color: #ffffff;
+    }
+</style>

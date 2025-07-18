@@ -285,10 +285,10 @@ namespace Facts.DiffPlex
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.True(result.IsSuccessful);
                 Assert.Empty(result.ConflictBlocks);
-                
+
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("// Added validation", mergedText);
                 Assert.Contains("public int Multiply", mergedText);
@@ -301,9 +301,9 @@ namespace Facts.DiffPlex
                 const string baseText = "line1\n    line2\nline3";
                 const string yoursText = "line1\n\tline2\nline3";  // Tab instead of spaces
                 const string theirsText = "line1\n        line2\nline3";  // Different number of spaces
-                
+
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, true, false, new LineChunker());
-                
+
                 // With ignoreWhiteSpace=true, this should be treated as BothSame
                 Assert.True(result.IsSuccessful);
                 Assert.Empty(result.ConflictBlocks);
@@ -345,7 +345,7 @@ namespace Facts.DiffPlex
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.True(result.IsSuccessful);
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("\"timeout\": 30", mergedText);
@@ -395,17 +395,17 @@ namespace MyApp
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.False(result.IsSuccessful); // Method signature conflict
                 Assert.True(result.ConflictBlocks.Count > 0);
-                
+
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("using System.Threading.Tasks", mergedText);
                 Assert.Contains("using System.Linq", mergedText);
             }
 
             [Fact]
-            public void Can_merge_documentation_changes() 
+            public void Can_merge_documentation_changes()
             {
                 const string baseText = @"# Project Documentation
 
@@ -448,7 +448,7 @@ Run npm install.
 Basic usage instructions.";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.True(result.IsSuccessful);
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("for demonstrating features", mergedText);
@@ -507,10 +507,10 @@ Basic usage instructions.";
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.False(result.IsSuccessful);
                 Assert.True(result.ConflictBlocks.Count > 0);
-                
+
                 // Verify conflicts contain both refactoring attempts
                 var conflictText = string.Join(" ", result.ConflictBlocks.SelectMany(c => c.OldPieces.Concat(c.NewPieces)));
                 Assert.Contains("userRepository", conflictText);
@@ -537,7 +537,7 @@ Basic usage instructions.";
 </div>";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.True(result.IsSuccessful);
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("responsive", mergedText);
@@ -570,10 +570,10 @@ Basic usage instructions.";
 );";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.False(result.IsSuccessful);
                 Assert.Single(result.ConflictBlocks);
-                
+
                 // Verify conflict contains both approaches to name field
                 var conflictText = string.Join(" ", result.ConflictBlocks[0].OldPieces.Concat(result.ConflictBlocks[0].NewPieces));
                 Assert.Contains("name VARCHAR(100) NOT NULL", conflictText);
@@ -607,7 +607,7 @@ Basic usage instructions.";
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 // This might conflict if additions are on same lines
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("Multiply", mergedText);
@@ -642,13 +642,117 @@ public bool IsValid(string input)
 }";
 
                 var result = _differ.CreateMerge(baseText, yoursText, theirsText, false, false, new LineChunker());
-                
+
                 Assert.False(result.IsSuccessful);
                 Assert.True(result.ConflictBlocks.Count > 0);
-                
+
                 // Both changed the implementation differently  
                 var mergedText = string.Join("\n", result.MergedPieces);
                 Assert.Contains("summary", mergedText);  // XML doc was added by yours
+            }
+
+            [Fact]
+            public void Will_handle_consecutive_pure_insertions_at_same_position()
+            {
+                // This tests for the potential infinite loop mentioned by the Oracle
+                // where two consecutive pure insertion blocks at the same BaseStart could cause issues
+
+                var baseText = "line1\nline3\n";
+                var oldText = "line1\ninserted_old1\ninserted_old2\nline3\n";
+                var newText = "line1\ninserted_new1\ninserted_new2\nline3\n";
+
+                var differ = ThreeWayDiffer.Instance;
+
+                // This should not hang or throw an exception
+                var result = differ.CreateDiffs(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+                Assert.True(result.DiffBlocks.Count > 0);
+            }
+
+            [Fact]
+            public void Will_handle_empty_base_with_insertions()
+            {
+                var baseText = "";
+                var oldText = "old_line1\nold_line2\n";
+                var newText = "new_line1\nnew_line2\n";
+
+                var differ = ThreeWayDiffer.Instance;
+
+                var result = differ.CreateDiffs(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+                Assert.True(result.DiffBlocks.Count >= 1);
+                Assert.Contains(result.DiffBlocks, block => block.ChangeType == ThreeWayChangeType.Conflict);
+            }
+
+            [Fact]
+            public void Will_handle_pure_deletions()
+            {
+                var baseText = "line1\nline2\nline3\n";
+                var oldText = "line1\nline3\n";
+                var newText = "line1\nline3\n";
+
+                var differ = ThreeWayDiffer.Instance;
+
+                var result = differ.CreateDiffs(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+            }
+
+            [Fact]
+            public void Will_create_merge_with_consecutive_insertions()
+            {
+                var baseText = "line1\nline3\n";
+                var oldText = "line1\ninserted_old\nline3\n";
+                var newText = "line1\ninserted_new\nline3\n";
+
+                var differ = ThreeWayDiffer.Instance;
+
+                var result = differ.CreateMerge(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+                Assert.False(result.IsSuccessful); // Should be a conflict
+                Assert.True(result.ConflictBlocks.Count > 0);
+            }
+
+            [Fact]
+            public void Will_handle_zero_length_deletions_properly()
+            {
+                // Test case where DeleteCountA is 0 (pure insertion)
+                var baseText = "line1\nline2\n";
+                var oldText = "line1\ninserted\nline2\n";  // Pure insertion at position 1
+                var newText = "line1\nline2\n";  // No change
+
+                var differ = ThreeWayDiffer.Instance;
+
+                var result = differ.CreateDiffs(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+                Assert.True(result.DiffBlocks.Count > 0);
+
+                // Should have OldOnly change type for the insertion
+                Assert.Contains(result.DiffBlocks, block => block.ChangeType == ThreeWayChangeType.OldOnly);
+            }
+
+            [Fact]
+            public void Will_handle_complex_three_way_scenario()
+            {
+                // A more complex scenario that could stress test the loop logic
+                var baseText = "A\nB\nC\nD\nE\n";
+                var oldText = "A\nB_OLD\nNEW_OLD\nC\nD\nE_OLD\n";
+                var newText = "A_NEW\nB\nNEW_NEW\nC\nD_NEW\nE\n";
+
+                var differ = ThreeWayDiffer.Instance;
+
+                var result = differ.CreateDiffs(baseText, oldText, newText, false, false, LineChunker.Instance);
+
+                Assert.NotNull(result);
+                Assert.True(result.DiffBlocks.Count > 0);
+
+                // Test that merge doesn't hang
+                var mergeResult = differ.CreateMerge(baseText, oldText, newText, false, false, LineChunker.Instance);
+                Assert.NotNull(mergeResult);
             }
         }
     }

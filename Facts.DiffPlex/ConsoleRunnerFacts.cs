@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,8 +17,39 @@ namespace Facts.DiffPlex
         {
             // Find the console runner executable
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var consoleRunnerDir = Path.Combine(baseDir, "..", "..", "..", "..", "DiffPlex.ConsoleRunner", "bin", "Debug", "net6.0");
-            _consoleRunnerPath = Path.Combine(consoleRunnerDir, "DiffPlex.ConsoleRunner.dll");
+            
+            // Try multiple possible paths for the console runner
+            var targetFrameworks = new[] { "net6.0", "net7.0", "net8.0", "net9.0" };
+            var buildConfigs = new[] { "Debug", "Release" };
+            var relativePaths = new[]
+            {
+                Path.Combine("..", "..", "..", "..", "DiffPlex.ConsoleRunner", "bin"),
+                Path.Combine("..", "..", "DiffPlex.ConsoleRunner", "bin"),
+                Path.Combine("..", "DiffPlex.ConsoleRunner"),
+                ""
+            };
+
+            var possiblePaths = new List<string>();
+            
+            // Generate all combinations of paths, configs, and frameworks
+            foreach (var relativePath in relativePaths)
+            {
+                foreach (var config in buildConfigs)
+                {
+                    foreach (var framework in targetFrameworks)
+                    {
+                        var path = Path.Combine(baseDir, relativePath, config, framework, "DiffPlex.ConsoleRunner.dll");
+                        possiblePaths.Add(path);
+                    }
+                }
+                
+                // Also try without config/framework subfolders (CI scenarios)
+                var simplePath = Path.Combine(baseDir, relativePath, "DiffPlex.ConsoleRunner.dll");
+                possiblePaths.Add(simplePath);
+            }
+
+            _consoleRunnerPath = possiblePaths.FirstOrDefault(File.Exists) 
+                ?? throw new InvalidOperationException($"Could not find DiffPlex.ConsoleRunner.dll in any of the expected locations. Base directory: {baseDir}");
         }
 
         [Fact]

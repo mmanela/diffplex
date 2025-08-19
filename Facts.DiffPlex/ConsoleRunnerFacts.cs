@@ -20,38 +20,35 @@ namespace Facts.DiffPlex
 
         private static string FindConsoleRunnerPath()
         {
-            // Find the console runner executable
+            // Since we added a project reference, the console runner should be built alongside this project
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             
-            // Try multiple possible paths for the console runner
+            // Try multiple .NET versions and build configurations
             var targetFrameworks = new[] { "net6.0", "net7.0", "net8.0", "net9.0" };
             var buildConfigs = new[] { "Debug", "Release" };
-            var relativePaths = new[]
+            var basePaths = new[]
             {
-                Path.Combine("..", "..", "..", "..", "DiffPlex.ConsoleRunner", "bin"),
-                Path.Combine("..", "..", "DiffPlex.ConsoleRunner", "bin"),
-                Path.Combine("..", "DiffPlex.ConsoleRunner"),
-                ""
+                Path.Combine(baseDir, "..", "..", "..", "..", "DiffPlex.ConsoleRunner", "bin"),
+                Path.Combine(baseDir, "..", "..", "DiffPlex.ConsoleRunner", "bin")
             };
 
             var possiblePaths = new List<string>();
-            
-            // Generate all combinations of paths, configs, and frameworks
-            foreach (var relativePath in relativePaths)
+
+            // Standard build output locations with different frameworks
+            foreach (var basePath in basePaths)
             {
                 foreach (var config in buildConfigs)
                 {
                     foreach (var framework in targetFrameworks)
                     {
-                        var path = Path.Combine(baseDir, relativePath, config, framework, "DiffPlex.ConsoleRunner.dll");
-                        possiblePaths.Add(path);
+                        possiblePaths.Add(Path.Combine(basePath, config, framework, "DiffPlex.ConsoleRunner.dll"));
                     }
                 }
-                
-                // Also try without config/framework subfolders (CI scenarios)
-                var simplePath = Path.Combine(baseDir, relativePath, "DiffPlex.ConsoleRunner.dll");
-                possiblePaths.Add(simplePath);
             }
+
+            // CI build patterns (no framework subfolder)
+            possiblePaths.Add(Path.Combine(baseDir, "DiffPlex.ConsoleRunner.dll"));
+            possiblePaths.Add(Path.Combine(baseDir, "..", "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner.dll"));
 
             var foundPath = possiblePaths.FirstOrDefault(File.Exists);
             

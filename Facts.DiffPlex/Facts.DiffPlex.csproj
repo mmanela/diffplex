@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiffPlex\DiffPlex.csproj" />
+    <ProjectReference Include="..\DiffPlex.ConsoleRunner\DiffPlex.ConsoleRunner.csproj" />
   </ItemGroup>
 
   <ItemGroup>

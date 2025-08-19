@@ -266,9 +266,13 @@ DiffPlex includes a Blazor sample application demonstrating how to render textua
 The Blazor components provide:
 - Interactive side-by-side diff rendering
 - Inline diff view mode
-- Unififf rendering 
+- Unififf rendering
+- Three-way merge
 
 ![image](https://github.com/user-attachments/assets/d91f26d6-da4a-47fd-b490-daeb65ddad11)
+
+<img width="1410" height="1219" alt="image" src="https://github.com/user-attachments/assets/be650126-514f-4167-a2a5-2e55c66bc0e3" />
+
 
 To run the sample Blazor application:
 ```bash

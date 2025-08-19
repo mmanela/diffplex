@@ -174,6 +174,64 @@ Example output:
  Line 4
 ```
 
+## IThreeWayDiffer Interface
+
+The `IThreeWayDiffer` interface provides functionality for three-way diffing and merging, which is essential for merge operations in version control systems or when comparing three versions of text.
+
+```csharp
+/// <summary>
+/// Responsible for generating three-way differences and merges between texts
+/// </summary>
+public interface IThreeWayDiffer
+{
+    /// <summary>
+    /// Creates a three-way diff by comparing base, old, and new text line by line.
+    /// </summary>
+    ThreeWayDiffResult CreateDiffs(string baseText, string oldText, string newText, 
+        bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
+
+    /// <summary>
+    /// Creates a three-way merge by comparing base, old, and new text line by line.
+    /// </summary>
+    ThreeWayMergeResult CreateMerge(string baseText, string oldText, string newText, 
+        bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker);
+}
+```
+
+Three-way diffing compares three versions of text:
+- **Base text**: The common ancestor or original version
+- **Old text**: One modified version (e.g., your changes)  
+- **New text**: Another modified version (e.g., incoming changes)
+
+This enables intelligent merging by identifying:
+- Changes unique to the old version
+- Changes unique to the new version
+- Changes made to both versions (conflicts)
+- Unchanged sections
+
+```csharp
+var threeWayDiffer = new ThreeWayDiffer();
+
+// Three-way diff
+var diffResult = threeWayDiffer.CreateDiffs(baseText, oldText, newText, 
+    ignoreWhiteSpace: false, ignoreCase: false, new LineChunker());
+
+// Three-way merge with automatic conflict detection
+var mergeResult = threeWayDiffer.CreateMerge(baseText, oldText, newText, 
+    ignoreWhiteSpace: false, ignoreCase: false, new LineChunker());
+
+// Check for conflicts
+if (mergeResult.HasConflicts)
+{
+    Console.WriteLine($"Found {mergeResult.ConflictBlocks.Count} conflicts");
+}
+else
+{
+    Console.WriteLine("Merge completed successfully");
+    Console.WriteLine(mergeResult.MergedText);
+}
+```
+
 ## ISideBySideDifferBuilder Interface
 
 ```csharp

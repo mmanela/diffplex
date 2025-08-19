@@ -15,6 +15,11 @@ namespace Facts.DiffPlex
 
         public ConsoleRunnerFacts()
         {
+            _consoleRunnerPath = FindConsoleRunnerPath();
+        }
+
+        private static string FindConsoleRunnerPath()
+        {
             // Find the console runner executable
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             
@@ -48,8 +53,15 @@ namespace Facts.DiffPlex
                 possiblePaths.Add(simplePath);
             }
 
-            _consoleRunnerPath = possiblePaths.FirstOrDefault(File.Exists) 
-                ?? throw new InvalidOperationException($"Could not find DiffPlex.ConsoleRunner.dll in any of the expected locations. Base directory: {baseDir}");
+            var foundPath = possiblePaths.FirstOrDefault(File.Exists);
+            
+            if (foundPath == null)
+            {
+                var searchedPaths = string.Join("\n", possiblePaths.Select((path, i) => $"  {i + 1}. {path}"));
+                throw new InvalidOperationException($"Could not find DiffPlex.ConsoleRunner.dll in any of the expected locations.\nBase directory: {baseDir}\nSearched paths:\n{searchedPaths}");
+            }
+
+            return foundPath;
         }
 
         [Fact]

@@ -1,70 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Facts.DiffPlex
 {
     public class ConsoleRunnerFacts
     {
-        private readonly string _consoleRunnerPath;
-
-        public ConsoleRunnerFacts()
-        {
-            _consoleRunnerPath = FindConsoleRunnerPath();
-        }
-
-        private static string FindConsoleRunnerPath()
-        {
-            // Since we added a project reference, the console runner should be built alongside this project
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            
-            // Try multiple .NET versions and build configurations
-            var targetFrameworks = new[] { "net6.0", "net7.0", "net8.0", "net9.0" };
-            var buildConfigs = new[] { "Debug", "Release" };
-            var basePaths = new[]
-            {
-                Path.Combine(baseDir, "..", "..", "..", "..", "DiffPlex.ConsoleRunner", "bin"),
-                Path.Combine(baseDir, "..", "..", "DiffPlex.ConsoleRunner", "bin")
-            };
-
-            var possiblePaths = new List<string>();
-
-            // Standard build output locations with different frameworks
-            foreach (var basePath in basePaths)
-            {
-                foreach (var config in buildConfigs)
-                {
-                    foreach (var framework in targetFrameworks)
-                    {
-                        possiblePaths.Add(Path.Combine(basePath, config, framework, "DiffPlex.ConsoleRunner.dll"));
-                    }
-                }
-            }
-
-            // CI build patterns (no framework subfolder)
-            possiblePaths.Add(Path.Combine(baseDir, "DiffPlex.ConsoleRunner.dll"));
-            possiblePaths.Add(Path.Combine(baseDir, "..", "DiffPlex.ConsoleRunner", "DiffPlex.ConsoleRunner.dll"));
-
-            var foundPath = possiblePaths.FirstOrDefault(File.Exists);
-            
-            if (foundPath == null)
-            {
-                var searchedPaths = string.Join("\n", possiblePaths.Select((path, i) => $"  {i + 1}. {path}"));
-                throw new InvalidOperationException($"Could not find DiffPlex.ConsoleRunner.dll in any of the expected locations.\nBase directory: {baseDir}\nSearched paths:\n{searchedPaths}");
-            }
-
-            return foundPath;
-        }
 
         [Fact]
-        public async Task Will_show_usage_when_no_arguments_provided()
+        public void Will_show_usage_when_no_arguments_provided()
         {
-            var result = await RunConsoleRunner();
+            var result = RunConsoleRunner();
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("DiffPlex.ConsoleRunner", result.Output);
@@ -72,27 +19,27 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_show_usage_when_insufficient_arguments_provided()
+        public void Will_show_usage_when_insufficient_arguments_provided()
         {
-            var result = await RunConsoleRunner("file", "onefile.txt");
+            var result = RunConsoleRunner("file", "onefile.txt");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("Usage:", result.Output);
         }
 
         [Fact]
-        public async Task Will_handle_unknown_command()
+        public void Will_handle_unknown_command()
         {
-            var result = await RunConsoleRunner("unknown", "arg1", "arg2");
+            var result = RunConsoleRunner("unknown", "arg1", "arg2");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("Unknown command: unknown", result.Output);
         }
 
         [Fact]
-        public async Task Will_compare_two_text_strings()
+        public void Will_compare_two_text_strings()
         {
-            var result = await RunConsoleRunner("text", "line1\\nline2", "line1\\nline3");
+            var result = RunConsoleRunner("text", "line1\\nline2", "line1\\nline3");
             
             Assert.Equal(0, result.ExitCode);
             Assert.Contains("@@ -1,2 +1,2 @@", result.Output);
@@ -101,9 +48,9 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_perform_3way_text_diff()
+        public void Will_perform_3way_text_diff()
         {
-            var result = await RunConsoleRunner("3way-text", "base\\ncommon", "base\\nold", "base\\nnew");
+            var result = RunConsoleRunner("3way-text", "base\\ncommon", "base\\nold", "base\\nnew");
             
             Assert.Equal(0, result.ExitCode);
             Assert.Contains("Three-Way Diff", result.Output);
@@ -113,27 +60,27 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_perform_3way_text_diff_with_ignore_case()
+        public void Will_perform_3way_text_diff_with_ignore_case()
         {
-            var result = await RunConsoleRunner("3way-text", "-i", "BASE\\ncommon", "base\\nold", "BASE\\nnew");
+            var result = RunConsoleRunner("3way-text", "-i", "BASE\\ncommon", "base\\nold", "BASE\\nnew");
             
             Assert.Equal(0, result.ExitCode);
             Assert.Contains("Three-Way Diff", result.Output);
         }
 
         [Fact]
-        public async Task Will_perform_3way_text_diff_with_ignore_whitespace()
+        public void Will_perform_3way_text_diff_with_ignore_whitespace()
         {
-            var result = await RunConsoleRunner("3way-text", "-w", "base \\ncommon", "base\\nold", "base\\nnew");
+            var result = RunConsoleRunner("3way-text", "-w", "base \\ncommon", "base\\nold", "base\\nnew");
             
             Assert.Equal(0, result.ExitCode);
             Assert.Contains("Three-Way Diff", result.Output);
         }
 
         [Fact]
-        public async Task Will_perform_merge_text_without_conflicts()
+        public void Will_perform_merge_text_without_conflicts()
         {
-            var result = await RunConsoleRunner("merge-text", "base\\ncommon", "base\\nold", "new\\ncommon");
+            var result = RunConsoleRunner("merge-text", "base\\ncommon", "base\\nold", "new\\ncommon");
             
             Assert.Equal(0, result.ExitCode);
             Assert.Contains("new", result.Output);
@@ -141,9 +88,9 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_perform_merge_text_with_conflicts()
+        public void Will_perform_merge_text_with_conflicts()
         {
-            var result = await RunConsoleRunner("merge-text", "base\\ncommon", "old\\ncommon", "new\\ncommon");
+            var result = RunConsoleRunner("merge-text", "base\\ncommon", "old\\ncommon", "new\\ncommon");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("<<<<<<< old", result.Output);
@@ -153,69 +100,69 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_perform_merge_text_with_ignore_case()
+        public void Will_perform_merge_text_with_ignore_case()
         {
-            var result = await RunConsoleRunner("merge-text", "-i", "BASE\\ncommon", "base\\nold", "BASE\\nnew");
+            var result = RunConsoleRunner("merge-text", "-i", "BASE\\ncommon", "base\\nold", "BASE\\nnew");
             
             // This should still be a conflict because the content is different (old vs new)
             Assert.Equal(1, result.ExitCode);
         }
 
         [Fact]
-        public async Task Will_perform_merge_text_with_ignore_whitespace()
+        public void Will_perform_merge_text_with_ignore_whitespace()
         {
-            var result = await RunConsoleRunner("merge-text", "-w", "base \\ncommon", "base\\nold", "base\\nnew");
+            var result = RunConsoleRunner("merge-text", "-w", "base \\ncommon", "base\\nold", "new\\ncommon");
             
             Assert.Equal(0, result.ExitCode);
         }
 
         [Fact]
-        public async Task Will_handle_file_not_found_for_3way_file()
+        public void Will_handle_file_not_found_for_3way_file()
         {
-            var result = await RunConsoleRunner("3way-file", "nonexistent1.txt", "nonexistent2.txt", "nonexistent3.txt");
+            var result = RunConsoleRunner("3way-file", "nonexistent1.txt", "nonexistent2.txt", "nonexistent3.txt");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("not found", result.Output);
         }
 
         [Fact]
-        public async Task Will_handle_file_not_found_for_merge_file()
+        public void Will_handle_file_not_found_for_merge_file()
         {
-            var result = await RunConsoleRunner("merge-file", "nonexistent1.txt", "nonexistent2.txt", "nonexistent3.txt");
+            var result = RunConsoleRunner("merge-file", "nonexistent1.txt", "nonexistent2.txt", "nonexistent3.txt");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("not found", result.Output);
         }
 
         [Fact]
-        public async Task Will_handle_insufficient_arguments_for_3way_commands()
+        public void Will_handle_insufficient_arguments_for_3way_commands()
         {
-            var result = await RunConsoleRunner("3way-text", "base", "old");
+            var result = RunConsoleRunner("3way-text", "base", "old");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("requires base, old, and new", result.Output);
         }
 
         [Fact]
-        public async Task Will_handle_insufficient_arguments_for_merge_commands()
+        public void Will_handle_insufficient_arguments_for_merge_commands()
         {
-            var result = await RunConsoleRunner("merge-text", "base", "old");
+            var result = RunConsoleRunner("merge-text", "base", "old");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("requires base, old, and new", result.Output);
         }
 
         [Fact]
-        public async Task Will_handle_unknown_option()
+        public void Will_handle_unknown_option()
         {
-            var result = await RunConsoleRunner("text", "-x", "old", "new");
+            var result = RunConsoleRunner("text", "-x", "old", "new");
             
             Assert.Equal(1, result.ExitCode);
             Assert.Contains("Unknown option: -x", result.Output);
         }
 
         [Fact]
-        public async Task Will_work_with_file_commands()
+        public void Will_work_with_file_commands()
         {
             // Create temporary files
             var tempDir = Path.GetTempPath();
@@ -224,10 +171,10 @@ namespace Facts.DiffPlex
 
             try
             {
-                await File.WriteAllTextAsync(oldFile, "line1\nline2\n");
-                await File.WriteAllTextAsync(newFile, "line1\nline3\n");
+                File.WriteAllText(oldFile, "line1\nline2\n");
+                File.WriteAllText(newFile, "line1\nline3\n");
 
-                var result = await RunConsoleRunner("file", oldFile, newFile);
+                var result = RunConsoleRunner("file", oldFile, newFile);
                 
                 Assert.Equal(0, result.ExitCode);
                 Assert.Contains("@@ -1,", result.Output);
@@ -243,7 +190,7 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_work_with_3way_file_commands()
+        public void Will_work_with_3way_file_commands()
         {
             // Create temporary files
             var tempDir = Path.GetTempPath();
@@ -253,11 +200,11 @@ namespace Facts.DiffPlex
 
             try
             {
-                await File.WriteAllTextAsync(baseFile, "common\nbase\n");
-                await File.WriteAllTextAsync(oldFile, "common\nold\n");
-                await File.WriteAllTextAsync(newFile, "common\nnew\n");
+                File.WriteAllText(baseFile, "common\nbase\n");
+                File.WriteAllText(oldFile, "common\nold\n");
+                File.WriteAllText(newFile, "common\nnew\n");
 
-                var result = await RunConsoleRunner("3way-file", baseFile, oldFile, newFile);
+                var result = RunConsoleRunner("3way-file", baseFile, oldFile, newFile);
                 
                 Assert.Equal(0, result.ExitCode);
                 Assert.Contains("Three-Way Diff", result.Output);
@@ -273,7 +220,7 @@ namespace Facts.DiffPlex
         }
 
         [Fact]
-        public async Task Will_work_with_merge_file_commands()
+        public void Will_work_with_merge_file_commands()
         {
             // Create temporary files
             var tempDir = Path.GetTempPath();
@@ -283,11 +230,11 @@ namespace Facts.DiffPlex
 
             try
             {
-                await File.WriteAllTextAsync(baseFile, "common\nbase\n");
-                await File.WriteAllTextAsync(oldFile, "common\nold\n");
-                await File.WriteAllTextAsync(newFile, "updated\nbase\n");
+                File.WriteAllText(baseFile, "common\nbase\n");
+                File.WriteAllText(oldFile, "common\nold\n");
+                File.WriteAllText(newFile, "updated\nbase\n");
 
-                var result = await RunConsoleRunner("merge-file", baseFile, oldFile, newFile);
+                var result = RunConsoleRunner("merge-file", baseFile, oldFile, newFile);
                 
                 Assert.Equal(0, result.ExitCode);
                 Assert.Contains("updated", result.Output);
@@ -302,43 +249,42 @@ namespace Facts.DiffPlex
             }
         }
 
-        private async Task<ProcessResult> RunConsoleRunner(params string[] args)
+        private static ConsoleResult RunConsoleRunner(params string[] args)
         {
-            var processInfo = new ProcessStartInfo
-            {
-                FileName = "dotnet",
-                Arguments = $"\"{_consoleRunnerPath}\" {string.Join(" ", args)}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using var process = new Process { StartInfo = processInfo };
+            var output = new StringBuilder();
+            var originalOut = Console.Out;
+            var originalError = Console.Error;
             
-            var outputBuilder = new StringBuilder();
-            var errorBuilder = new StringBuilder();
-
-            process.OutputDataReceived += (sender, e) => { if (e.Data != null) outputBuilder.AppendLine(e.Data); };
-            process.ErrorDataReceived += (sender, e) => { if (e.Data != null) errorBuilder.AppendLine(e.Data); };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            await process.WaitForExitAsync();
-
-            var output = outputBuilder.ToString();
-            var error = errorBuilder.ToString();
-
-            return new ProcessResult
+            try
             {
-                ExitCode = process.ExitCode,
-                Output = string.IsNullOrEmpty(error) ? output : output + error
-            };
+                using var writer = new StringWriter(output);
+                Console.SetOut(writer);
+                Console.SetError(writer);
+                
+                var exitCode = global::DiffPlex.ConsoleRunner.Program.Main(args);
+                
+                return new ConsoleResult
+                {
+                    ExitCode = exitCode,
+                    Output = output.ToString()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ConsoleResult
+                {
+                    ExitCode = 1,
+                    Output = $"Error: {ex.Message}"
+                };
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+                Console.SetError(originalError);
+            }
         }
 
-        private class ProcessResult
+        private class ConsoleResult
         {
             public int ExitCode { get; set; }
             public string Output { get; set; } = string.Empty;

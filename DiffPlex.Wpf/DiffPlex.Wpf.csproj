@@ -4,13 +4,13 @@
     <TargetFrameworks>net9.0-windows;net8.0-windows;net6.0-windows;net46;net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>1.5.0</Version>
+    <Version>1.9.0</Version>
     <RootNamespace>DiffPlex.Wpf</RootNamespace>
     <AssemblyName>DiffPlex.Wpf</AssemblyName>
     <PackageTags>diff, wpf</PackageTags>
     <Description>DiffPlex.Wpf is a WPF control library that allows you to programatically render visual text diffs in your application. It also provide a diff viewer control used in Windows Forms application.</Description>
-    <AssemblyVersion>1.5.0.0</AssemblyVersion>
-    <FileVersion>1.5.0.0</FileVersion>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
     <ApplicationIcon>..\DiffPlex.ico</ApplicationIcon>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>

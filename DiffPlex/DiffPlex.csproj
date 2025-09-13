@@ -2,10 +2,10 @@
   <Import Project="..\NuGet.props" />
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;net6.0</TargetFrameworks>
-    <Version>1.8</Version>
+    <Version>1.9</Version>
     <PackageTags>diff</PackageTags>
     <Description>DiffPlex is a diffing library that allows you to programmatically create text diffs. DiffPlex is a fast and tested library.</Description>
-    <PackageReleaseNotes>Added UnidiffRenderer class for rendering diffs in Unified Diff format.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added three-way merge and diff apis plus bug fixes.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>

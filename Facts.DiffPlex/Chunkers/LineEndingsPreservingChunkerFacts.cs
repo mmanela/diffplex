@@ -1,4 +1,4 @@
-﻿using DiffPlex.Chunkers;
+using DiffPlex.Chunkers;
 using Xunit;
 
 namespace Facts.DiffPlex.Chunkers
@@ -73,6 +73,40 @@ namespace Facts.DiffPlex.Chunkers
             Assert.Equal("First\n", chunks[1]);
             Assert.Equal("Second\r", chunks[2]);
             Assert.Equal("Last", chunks[3]);
+        }
+
+        [Fact]
+        public void should_preserve_empty_lines_with_lf()
+        {
+            //ARRANGE
+            var chunker = new LineEndingsPreservingChunker();
+            var sampleText = "Line1\n\nLine2";
+
+            //ACT
+            var chunks = chunker.Chunk(sampleText);
+
+            //ASSERT
+            Assert.Equal(3, chunks.Count);
+            Assert.Equal("Line1\n", chunks[0]);
+            Assert.Equal("\n", chunks[1]);
+            Assert.Equal("Line2", chunks[2]);
+        }
+
+        [Fact]
+        public void should_preserve_empty_lines_with_cr()
+        {
+            //ARRANGE
+            var chunker = new LineEndingsPreservingChunker();
+            var sampleText = "Line1\r\rLine2";
+
+            //ACT
+            var chunks = chunker.Chunk(sampleText);
+
+            //ASSERT
+            Assert.Equal(3, chunks.Count);
+            Assert.Equal("Line1\r", chunks[0]);
+            Assert.Equal("\r", chunks[1]);
+            Assert.Equal("Line2", chunks[2]);
         }
     }
 }

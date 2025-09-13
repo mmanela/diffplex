@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace DiffPlex.Chunkers
 {
     public class LineEndingsPreservingChunker:IChunker
     {
-        private readonly string[] emptyArray = new string[0];
+        private static readonly string[] EmptyArray = new string[0];
 
         /// <summary>
         /// Gets the default singleton instance of the chunker.
@@ -14,36 +14,38 @@ namespace DiffPlex.Chunkers
         public IReadOnlyList<string> Chunk(string text)
         {
             if (string.IsNullOrEmpty(text))
-                return emptyArray;
+                return EmptyArray;
 
             var output = new List<string>();
             var lastCut = 0;
-            for (var currentPosition = 0; currentPosition < text.Length; currentPosition++)
+
+            for (int i = 0; i < text.Length; i++)
             {
-                char ch = text[currentPosition];
-                switch (ch)
+                int lineEndLen = 0;
+
+                if (text[i] == '\r')
                 {
-                    case '\n':
-                    case '\r':
-                        currentPosition++;
-                        if (ch == '\r' && currentPosition < text.Length && text[currentPosition] == '\n')
-                        {
-                            currentPosition++;
-                        }
-                        var str = text.Substring(lastCut, currentPosition - lastCut);
-                        lastCut = currentPosition;
-                        output.Add(str);
-                        break;
-                    default:
-                        continue;
+                    lineEndLen = 1;
+                    if (i + 1 < text.Length && text[i + 1] == '\n')
+                        lineEndLen = 2;           // CRLF
+                }
+                else if (text[i] == '\n')
+                {
+                    lineEndLen = 1;               // LF
+                }
+
+                if (lineEndLen > 0)
+                {
+                    int sliceLen = i - lastCut + lineEndLen;
+                    output.Add(text.Substring(lastCut, sliceLen));
+
+                    i += lineEndLen - 1;    // we already consumed them
+                    lastCut += sliceLen;
                 }
             }
 
-            if (lastCut != text.Length)
-            {
-                var str = text.Substring(lastCut, text.Length - lastCut);
-                output.Add(str);
-            }
+            if (lastCut != text.Length)           // trailing line without EOL
+                output.Add(text.Substring(lastCut));
 
             return output;
         }

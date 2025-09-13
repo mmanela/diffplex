@@ -9,6 +9,7 @@ The DiffPlex library currently exposes several interfaces and classes for genera
 
 * `IDiffer` (implemented by the `Differ` class) - This is the core diffing class.  It exposes the low level functions to generate differences between texts.
 * `ISidebySideDiffer` (implemented by the `SideBySideDiffer` class) - This is a higher level interface.  It consumes the `IDiffer` interface and generates a `SideBySideDiffModel`.  This is a model which is suited for displaying the differences of two pieces of text in a side by side view.
+* `IThreeWayDiffer` (implemented by the `ThreeWayDiffer` class) - This interface provides three-way diff and merge functionality, enabling intelligent merging by comparing a base text with two modified versions to detect changes and conflicts.
 * `UnidiffRenderer` - A renderer class that generates unified diff (unidiff) format output compatible with Git, patch utilities, and other standard diff tools.
 
 ## Examples

@@ -1,4 +1,4 @@
-﻿using DiffPlex.DiffBuilder.Model;
+using DiffPlex.DiffBuilder.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,6 +75,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the open type weight or thickness of the specified font.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int FontWeight
     {
         get => Core.FontWeight.ToOpenTypeWeight();
@@ -84,6 +85,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets a value indicating whether the font is italic.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsFontItalic
     {
         get => Core.FontStyle == System.Windows.FontStyles.Italic || Core.FontStyle == System.Windows.FontStyles.Oblique;
@@ -93,6 +95,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the degree to which a font is condensed or expanded on the screen.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public System.Windows.FontStretch FontStretch
     {
         get => Core.FontStretch;
@@ -103,6 +106,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the font size.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double FontSize
     {
         get => Core.FontSize;
@@ -112,6 +116,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the font family names.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string FontFamilyNames
     {
         get => Core.FontFamily?.Source ?? string.Empty;
@@ -121,6 +126,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the border width of a control.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Padding BorderWidth
     {
         get => ToPadding(Core.BorderThickness);
@@ -130,6 +136,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the border background color of a control.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color BorderColor
     {
         get => GetColor(Core.Background);
@@ -139,6 +146,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public override Color ForeColor
     {
         get
@@ -156,6 +164,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public override Color BackColor
     {
         get
@@ -173,6 +182,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the old text.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string OldText
     {
         get => Core.OldText;
@@ -182,6 +192,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the new text.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string NewText
     {
         get => Core.NewText;
@@ -191,6 +202,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets a value indicating whether ignore the white space.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IgnoreWhiteSpace
     {
         get => Core.IgnoreWhiteSpace;
@@ -200,6 +212,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets a value indicating whether ignore case.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IgnoreCase
     {
         get => Core.IgnoreCase;
@@ -209,6 +222,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line number.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color LineNumberForeColor
     {
         get => GetColor(Core.LineNumberForeground);
@@ -218,6 +232,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the line number width.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int LineNumberWidth
     {
         get => Core.LineNumberWidth;
@@ -227,6 +242,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the change type symbol.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color ChangeTypeForeColor
     {
         get => GetColor(Core.ChangeTypeForeground);
@@ -236,6 +252,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the header of the old text.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string OldTextHeader
     {
         get => Core.OldTextHeader;
@@ -245,6 +262,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the header of the new text.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string NewTextHeader
     {
         get => Core.NewTextHeader;
@@ -254,6 +272,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line added.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double HeaderHeight
     {
         get => Core.HeaderHeight;
@@ -263,6 +282,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line added.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color HeaderForeColor
     {
         get => GetColor(Core.HeaderForeground);
@@ -272,6 +292,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the line added.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color HeaderBackColor
     {
         get => GetColor(Core.HeaderBackground);
@@ -281,6 +302,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line added.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color InsertedForeColor
     {
         get => GetColor(Core.InsertedForeground);
@@ -290,6 +312,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the line added.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color InsertedBackColor
     {
         get => GetColor(Core.InsertedBackground);
@@ -299,6 +322,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line deleted.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color DeletedForeColor
     {
         get => GetColor(Core.DeletedForeground);
@@ -308,6 +332,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the line deleted.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color DeletedBackColor
     {
         get => GetColor(Core.DeletedBackground);
@@ -317,6 +342,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the foreground color of the line unchanged.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color UnchangedForeColor
     {
         get => GetColor(Core.UnchangedForeground);
@@ -326,6 +352,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the line unchanged.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color UnchangedBackColor
     {
         get => GetColor(Core.UnchangedBackground);
@@ -335,6 +362,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the line imaginary.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color ImaginaryBackColor
     {
         get => GetColor(Core.ImaginaryBackground);
@@ -344,6 +372,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the background color of the grid splitter.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color SplitterBackColor
     {
         get => GetColor(Core.SplitterBackground);
@@ -353,6 +382,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the border color of the grid splitter.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color SplitterBorderColor
     {
         get => GetColor(Core.SplitterBorderBrush);
@@ -362,6 +392,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the border width of the grid splitter.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Padding SplitterBorderWidth
     {
         get => ToPadding(Core.SplitterBorderThickness);
@@ -371,6 +402,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the width of the grid splitter.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double SplitterWidth
     {
         get => Core.SplitterWidth;
@@ -380,6 +412,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets a value indicating whether it is in side-by-side (split) view mode to diff.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsSideBySide
     {
         get => Core.IsSideBySide;
@@ -389,6 +422,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets a value indicating whether need collapse unchanged sections.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IgnoreUnchanged
     {
         get => Core.IgnoreUnchanged;
@@ -399,6 +433,7 @@ public partial class DiffViewer : UserControl
     /// Gets or sets the count of context line.
     /// The context line is the one unchanged arround others as their margin.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int LinesContext
     {
         get => Core.LinesContext;
@@ -408,6 +443,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the display name of inline mode toggle.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public object InlineModeToggleTitle
     {
         get => Core.InlineModeToggleTitle;
@@ -417,6 +453,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the display name of side by side mode toggle.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public object SideBySideModeToggleTitle
     {
         get => Core.SideBySideModeToggleTitle;
@@ -426,6 +463,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the display name of skip unchanged lines toggle.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public object CollapseUnchangedSectionsToggleTitle
     {
         get => Core.CollapseUnchangedSectionsToggleTitle;
@@ -435,6 +473,7 @@ public partial class DiffViewer : UserControl
     /// <summary>
     /// Gets or sets the display name of context lines count.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public object ContextLinesMenuItemsTitle
     {
         get => Core.ContextLinesMenuItemsTitle;

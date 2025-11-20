@@ -104,6 +104,59 @@ namespace DiffPlex.DiffBuilder
             return model;
         }
 
+        public static SideBySideDiffModel Diff(
+            IDiffer differ, 
+            string oldText, string newText,
+            List<IChunker> detailsPack,
+            bool ignoreWhiteSpace = true, bool ignoreCase = false)
+        {
+            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+            if (newText == null) throw new ArgumentNullException(nameof(newText));
+
+            if (differ == null) return Diff(oldText, newText, ignoreWhiteSpace, ignoreCase);
+
+            LinkedList<IChunker> chunkers;
+            if (detailsPack == null || !detailsPack.Any())
+            {
+                chunkers = new LinkedList<IChunker>();
+                chunkers.AddLast(DiffPlex.Chunkers.LineChunker.Instance);
+                chunkers.AddLast(DiffPlex.Chunkers.WordChunker.Instance);
+                chunkers.AddLast(DiffPlex.Chunkers.CharacterChunker.Instance);
+            }
+            else
+            {
+                chunkers = new LinkedList<IChunker>(detailsPack);
+            }
+
+            var model = new SideBySideDiffModel();
+            var cnode = chunkers.First;
+
+            var diffResult = differ.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, cnode.Value);
+            BuildDiffPieces(diffResult, model.OldText.Lines, model.NewText.Lines, NextPieceBuilderInternal(differ, cnode.Next), ignoreWhiteSpace, ignoreCase);
+
+            return model;
+        }
+
+
+        private static PieceBuilder NextPieceBuilderInternal(
+            IDiffer differ,
+            LinkedListNode<IChunker> chunkerNode)
+        {
+            if (chunkerNode == null)
+            {
+                return null;
+            }
+            else
+            {
+                return (ot, nt, op, np, iw, ic) =>
+                {
+                    var r = differ.CreateDiffs(ot, nt, iw, ic, chunkerNode.Value);
+                    return BuildDiffPieces(r, op, np, NextPieceBuilderInternal(differ, chunkerNode.Next), iw, ic);
+                };
+             }
+        }
+
+
         private static ChangeType BuildWordDiffPiecesInternal(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhiteSpace, bool ignoreCase)
         {
             var diffResult = Differ.Instance.CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, WordChunker.Instance);

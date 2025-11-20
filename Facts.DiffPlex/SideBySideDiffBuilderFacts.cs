@@ -6,6 +6,7 @@ using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using Moq;
 using Xunit;
+using System.Linq;
 
 namespace Facts.DiffPlex
 {
@@ -331,6 +332,90 @@ namespace Facts.DiffPlex
                 Assert.Equal(ChangeType.Unchanged, bidiff.OldText.Lines[0].SubPieces[4].Type);
 
                 Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
+            }
+
+            [Fact]
+            public void Will_build_hierarchial_diffModel_lines_words_chars()
+            {
+                string textOld = 
+                    @"What is Lorem Ipsum?
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
+when an unknown printer took a galley of type and scrambled it to make a type 
+specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, 
+remaining essentially unchanged. 
+It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
+                string textNew = 
+                    @"What the heck is Lorem Ipsum?
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+when an unknown printer took a galley of type and scrambled it to make a type 
+specimen book. It hos survived not only five centuries, but also the leap into electronic typesatting, 
+remaining essentially unchanged. 
+It was popularised in the 1961s with the release of Letraset sheets containing Lorem Ipsum passages,
+and more recently with desktop publishing software like Aldus PagesMaker including versions of Lorem Ipsum.";
+
+
+                var bidiff = SideBySideDiffBuilder.Diff(
+                    new Differ(), 
+                    textOld, textNew,
+                    detailsPack: null,
+                    ignoreWhiteSpace: false,
+                    ignoreCase: false
+                    );
+
+                Assert.NotNull(bidiff);
+                Assert.True(bidiff.OldText.Lines.Count == 8);
+                Assert.True(bidiff.NewText.Lines.Count == 8);
+
+                Assert.True(bidiff.OldText.HasDifferences && bidiff.NewText.HasDifferences);
+
+                // Check on Line level
+                var changedOldLines = bidiff.OldText.Lines.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.Equal(5, changedOldLines.Count);
+
+                var changedNewLines = bidiff.NewText.Lines.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.Equal(5, changedNewLines.Count);
+
+                // Check on Word level
+                var changedOldWords = changedOldLines[0].SubPieces.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.NotNull(changedOldWords);
+                Assert.True(changedOldWords.Count == 4);
+                Assert.Equal(ChangeType.Imaginary, changedOldWords[0].Type);
+                Assert.Null(changedOldWords[0].Text);
+                Assert.Equal(ChangeType.Imaginary, changedOldWords[1].Type);
+                Assert.Null(changedOldWords[1].Text);
+                Assert.Equal(ChangeType.Imaginary, changedOldWords[2].Type);
+                Assert.Null(changedOldWords[2].Text);
+                Assert.Equal(ChangeType.Imaginary, changedOldWords[3].Type);
+                Assert.Null(changedOldWords[3].Text);
+
+                var changedNewWords = changedNewLines[0].SubPieces.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.NotNull(changedNewWords);
+                Assert.True(changedNewWords.Count == 4);
+                Assert.Equal(ChangeType.Inserted, changedNewWords[0].Type);
+                Assert.Equal("the", changedNewWords[0].Text);
+                Assert.Equal(ChangeType.Inserted, changedNewWords[1].Type);
+                Assert.Equal(" ", changedNewWords[1].Text);
+                Assert.Equal(ChangeType.Inserted, changedNewWords[2].Type);
+                Assert.Equal("heck", changedNewWords[2].Text);
+                Assert.Equal(ChangeType.Inserted, changedNewWords[3].Type);
+                Assert.Equal(" ", changedNewWords[3].Text);
+
+
+                // Check on Character level
+                var changedOldChars = changedOldLines[2].SubPieces[30].SubPieces.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.NotNull(changedOldChars);
+                Assert.Single(changedOldChars);
+                Assert.Equal(ChangeType.Deleted, changedOldChars[0].Type);
+                Assert.Equal("e", changedOldChars[0].Text);
+
+                var changedNewChars = changedNewLines[2].SubPieces[30].SubPieces.Where(x => x.Type != ChangeType.Unchanged).ToList();
+                Assert.NotNull(changedNewChars);
+                Assert.Single(changedNewChars);
+                Assert.Equal(ChangeType.Inserted, changedNewChars[0].Type);
+                Assert.Equal("a", changedNewChars[0].Text);
             }
 
             [Fact]

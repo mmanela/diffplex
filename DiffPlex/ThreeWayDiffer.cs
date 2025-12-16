@@ -3,51 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using DiffPlex.Model;
 
-namespace DiffPlex
+namespace DiffPlex;
+
+public class ThreeWayDiffer : IThreeWayDiffer
 {
-    public class ThreeWayDiffer : IThreeWayDiffer
+    /// <summary>
+    /// Gets the default singleton instance of three-way differ.
+    /// </summary>
+    public static ThreeWayDiffer Instance { get; } = new();
+
+    private readonly IDiffer _differ = Differ.Instance;
+
+    public ThreeWayDiffResult CreateDiffs(string baseText, string oldText, string newText,
+    bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
     {
-        /// <summary>
-        /// Gets the default singleton instance of three-way differ.
-        /// </summary>
-        public static ThreeWayDiffer Instance { get; } = new ThreeWayDiffer();
+        if (baseText == null) throw new ArgumentNullException(nameof(baseText));
+        if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+        if (newText == null) throw new ArgumentNullException(nameof(newText));
+        if (chunker == null) throw new ArgumentNullException(nameof(chunker));
 
-        private readonly IDiffer _differ = Differ.Instance;
+        var basePieces = chunker.Chunk(baseText);
+        var oldPieces = chunker.Chunk(oldText);
+        var newPieces = chunker.Chunk(newText);
 
-        public ThreeWayDiffResult CreateDiffs(string baseText, string oldText, string newText,
-        bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
-        {
-            if (baseText == null) throw new ArgumentNullException(nameof(baseText));
-            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
-            if (newText == null) throw new ArgumentNullException(nameof(newText));
-            if (chunker == null) throw new ArgumentNullException(nameof(chunker));
+        // Create two-way diffs: base->old and base->new
+        var baseToOld = _differ.CreateDiffs(baseText, oldText, ignoreWhiteSpace, ignoreCase, chunker);
+        var baseToNew = _differ.CreateDiffs(baseText, newText, ignoreWhiteSpace, ignoreCase, chunker);
 
-            var basePieces = chunker.Chunk(baseText);
-            var oldPieces = chunker.Chunk(oldText);
-            var newPieces = chunker.Chunk(newText);
+        var threeWayBlocks = CreateThreeWayDiffBlocks(basePieces, oldPieces, newPieces,
+        baseToOld, baseToNew, ignoreWhiteSpace, ignoreCase);
 
-            // Create two-way diffs: base->old and base->new
-            var baseToOld = _differ.CreateDiffs(baseText, oldText, ignoreWhiteSpace, ignoreCase, chunker);
-            var baseToNew = _differ.CreateDiffs(baseText, newText, ignoreWhiteSpace, ignoreCase, chunker);
+        return new(basePieces, oldPieces, newPieces, threeWayBlocks);
+    }
 
-            var threeWayBlocks = CreateThreeWayDiffBlocks(basePieces, oldPieces, newPieces,
-            baseToOld, baseToNew, ignoreWhiteSpace, ignoreCase);
+    public ThreeWayMergeResult CreateMerge(string baseText, string oldText, string newText,
+    bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+    {
+        var diffResult = CreateDiffs(baseText, oldText, newText, ignoreWhiteSpace, ignoreCase, chunker);
 
-            return new ThreeWayDiffResult(basePieces, oldPieces, newPieces, threeWayBlocks);
-        }
+        List<string> mergedPieces = [];
+        List<ThreeWayConflictBlock> conflictBlocks = [];
+        var isSuccessful = true;
 
-        public ThreeWayMergeResult CreateMerge(string baseText, string oldText, string newText,
-        bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
-        {
-            var diffResult = CreateDiffs(baseText, oldText, newText, ignoreWhiteSpace, ignoreCase, chunker);
-
-            var mergedPieces = new List<string>();
-            var conflictBlocks = new List<ThreeWayConflictBlock>();
-            var isSuccessful = true;
-
-            var baseIndex = 0;
-            var oldIndex = 0;
-            var newIndex = 0;
+        var baseIndex = 0;
+        var oldIndex = 0;
+        var newIndex = 0;
 
             foreach (var block in diffResult.DiffBlocks)
             {
@@ -122,15 +122,15 @@ namespace DiffPlex
                 newIndex += block.NewCount;
             }
 
-            // Add remaining unchanged content
-            while (baseIndex < diffResult.PiecesBase.Count)
-            {
-                mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
-                baseIndex++;
-            }
-
-            return new ThreeWayMergeResult(mergedPieces, isSuccessful, conflictBlocks, diffResult);
+        // Add remaining unchanged content
+        while (baseIndex < diffResult.PiecesBase.Count)
+        {
+            mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
+            baseIndex++;
         }
+
+        return new(mergedPieces, isSuccessful, conflictBlocks, diffResult);
+    }
 
         private List<ThreeWayDiffBlock> CreateThreeWayDiffBlocks(IReadOnlyList<string> basePieces,
             IReadOnlyList<string> oldPieces, IReadOnlyList<string> newPieces,
@@ -149,9 +149,9 @@ namespace DiffPlex
                 return blocks;
             }
 
-            var baseIndex = 0;
-            var oldIndex = 0;
-            var newIndex = 0;
+        var baseIndex = 0;
+        var oldIndex = 0;
+        var newIndex = 0;
 
             var oldBlockIndex = 0;
             var newBlockIndex = 0;
@@ -295,12 +295,11 @@ namespace DiffPlex
                     _ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
             }
 
-            public int GetHashCode(string obj)
-            {
-                if (obj == null) return 0;
-                var str = _ignoreWhiteSpace ? obj.Trim() : obj;
-                return _ignoreCase ? str.ToUpperInvariant().GetHashCode() : str.GetHashCode();
-            }
+        public int GetHashCode(string obj)
+        {
+            if (obj == null) return 0;
+            var str = _ignoreWhiteSpace ? obj.Trim() : obj;
+            return _ignoreCase ? str.ToUpperInvariant().GetHashCode() : str.GetHashCode();
         }
     }
 }

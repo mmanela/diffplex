@@ -6,20 +6,20 @@ using DiffPlex;
 using DiffPlex.Chunkers;
 using DiffPlex.Model;
 
-namespace DiffPlex.Renderer
+namespace DiffPlex.Renderer;
+
+/// <summary>
+/// Renderer for generating unified diff (unidiff) format output from diff results
+/// </summary>
+public class UnidiffRenderer
 {
+    private readonly IDiffer differ;
+    private readonly int contextLines;
+    
     /// <summary>
-    /// Renderer for generating unified diff (unidiff) format output from diff results
+    /// Gets the default singleton instance of the unidiff renderer.
     /// </summary>
-    public class UnidiffRenderer
-    {
-        private readonly IDiffer differ;
-        private readonly int contextLines;
-        
-        /// <summary>
-        /// Gets the default singleton instance of the unidiff renderer.
-        /// </summary>
-        public static UnidiffRenderer Instance { get; } = new UnidiffRenderer();
+    public static UnidiffRenderer Instance { get; } = new();
         
         /// <summary>
         /// Initializes a new instance of the <see cref="UnidiffRenderer"/> class.
@@ -302,12 +302,11 @@ namespace DiffPlex.Renderer
         
         private class DiffHunk
         {
-            public int OldStartLine { get; set; }
-            public int OldLength { get; set; }
-            public int NewStartLine { get; set; }
-            public int NewLength { get; set; }
-            public List<DiffLine> Lines { get; } = new List<DiffLine>();
-        }
-        #endregion
+        public int OldStartLine { get; set; }
+        public int OldLength { get; set; }
+        public int NewStartLine { get; set; }
+        public int NewLength { get; set; }
+        public List<DiffLine> Lines { get; } = [];
     }
+    #endregion
 }

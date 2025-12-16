@@ -5,29 +5,29 @@ using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
 
-namespace DiffPlex.DiffBuilder
+namespace DiffPlex.DiffBuilder;
+
+public class SideBySideDiffBuilder : ISideBySideDiffBuilder
 {
-    public class SideBySideDiffBuilder : ISideBySideDiffBuilder
+    private readonly IDiffer differ;
+    private readonly IChunker lineChunker;
+    private readonly IChunker wordChunker;
+
+    private delegate ChangeType PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhitespace, bool ignoreCase);
+
+    /// <summary>
+    /// Gets the default singleton instance.
+    /// </summary>
+    public static SideBySideDiffBuilder Instance { get; } = new();
+
+    public SideBySideDiffBuilder(IDiffer differ, IChunker lineChunker, IChunker wordChunker)
     {
-        private readonly IDiffer differ;
-        private readonly IChunker lineChunker;
-        private readonly IChunker wordChunker;
+        this.differ = differ ?? Differ.Instance;
+        this.lineChunker = lineChunker ?? throw new ArgumentNullException(nameof(lineChunker));
+        this.wordChunker = wordChunker ?? throw new ArgumentNullException(nameof(wordChunker));
+    }
 
-        private delegate ChangeType PieceBuilder(string oldText, string newText, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, bool ignoreWhitespace, bool ignoreCase);
-
-        /// <summary>
-        /// Gets the default singleton instance.
-        /// </summary>
-        public static SideBySideDiffBuilder Instance { get; } = new SideBySideDiffBuilder();
-
-        public SideBySideDiffBuilder(IDiffer differ, IChunker lineChunker, IChunker wordChunker)
-        {
-            this.differ = differ ?? Differ.Instance;
-            this.lineChunker = lineChunker ?? throw new ArgumentNullException(nameof(lineChunker));
-            this.wordChunker = wordChunker ?? throw new ArgumentNullException(nameof(wordChunker));
-        }
-
-        public SideBySideDiffBuilder(IDiffer differ = null) :
+    public SideBySideDiffBuilder(IDiffer differ = null) :
             this(differ, new LineChunker(), new WordChunker())
         {
         }
@@ -37,7 +37,7 @@ namespace DiffPlex.DiffBuilder
         {
         }
 
-        public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
+    public SideBySideDiffModel BuildDiffModel(string oldText, string newText)
             => BuildDiffModel(oldText, newText, ignoreWhitespace: true);
 
         public SideBySideDiffModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace) => BuildDiffModel(
@@ -192,12 +192,11 @@ namespace DiffPlex.DiffBuilder
                 return ChangeType.Modified;
             }
 
-            if (newPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
-            {
-                return ChangeType.Modified;
-            }
-
-            return ChangeType.Unchanged;
+        if (newPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
+        {
+            return ChangeType.Modified;
         }
+
+        return ChangeType.Unchanged;
     }
 }

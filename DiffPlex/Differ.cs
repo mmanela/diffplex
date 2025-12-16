@@ -3,150 +3,150 @@ using System.Collections.Generic;
 using DiffPlex.Chunkers;
 using DiffPlex.Model;
 
-namespace DiffPlex
+namespace DiffPlex;
+
+public class Differ : IDiffer
 {
-    public class Differ : IDiffer
+    /// <summary>
+    /// Gets the default singleton instance of differ instance.
+    /// </summary>
+    public static Differ Instance { get; } = new();
+
+    public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
     {
-        /// <summary>
-        /// Gets the default singleton instance of differ instance.
-        /// </summary>
-        public static Differ Instance { get; } = new Differ();
+        return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());
+    }
 
-        public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
+    public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
+    }
+
+    public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhitespace, false, new CharacterChunker());
+    }
+
+    public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new CharacterChunker());
+    }
+
+    public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhitespace, false, new DelimiterChunker(separators));
+    }
+
+    public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new DelimiterChunker(separators));
+    }
+
+    public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhiteSpace, false, new CustomFunctionChunker(chunker));
+    }
+
+    public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
+    {
+        return CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, new CustomFunctionChunker(chunker));
+    }
+
+    public DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
+    {
+        if (oldText == null) throw new ArgumentNullException(nameof(oldText));
+        if (newText == null) throw new ArgumentNullException(nameof(newText));
+        if (chunker == null) throw new ArgumentNullException(nameof(chunker));
+
+        var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        var lineDiffs = new List<DiffBlock>();
+
+        var modOld = new ModificationData(oldText);
+        var modNew = new ModificationData(newText);
+
+        BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, chunker);
+        BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, chunker);
+
+        BuildModificationData(modOld, modNew);
+
+        int piecesALength = modOld.HashedPieces.Length;
+        int piecesBLength = modNew.HashedPieces.Length;
+        int posA = 0;
+        int posB = 0;
+
+        do
         {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());
-        }
-
-        public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
-        }
-
-        public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new CharacterChunker());
-        }
-
-        public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new CharacterChunker());
-        }
-
-        public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new DelimiterChunker(separators));
-        }
-
-        public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, char[] separators)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new DelimiterChunker(separators));
-        }
-
-        public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, Func<string, string[]> chunker)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhiteSpace, false, new CustomFunctionChunker(chunker));
-        }
-
-        public DiffResult CreateCustomDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, Func<string, string[]> chunker)
-        {
-            return CreateDiffs(oldText, newText, ignoreWhiteSpace, ignoreCase, new CustomFunctionChunker(chunker));
-        }
-
-        public DiffResult CreateDiffs(string oldText, string newText, bool ignoreWhiteSpace, bool ignoreCase, IChunker chunker)
-        {
-            if (oldText == null) throw new ArgumentNullException(nameof(oldText));
-            if (newText == null) throw new ArgumentNullException(nameof(newText));
-            if (chunker == null) throw new ArgumentNullException(nameof(chunker));
-
-            var pieceHash = new Dictionary<string, int>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
-            var lineDiffs = new List<DiffBlock>();
-
-            var modOld = new ModificationData(oldText);
-            var modNew = new ModificationData(newText);
-
-            BuildPieceHashes(pieceHash, modOld, ignoreWhiteSpace, chunker);
-            BuildPieceHashes(pieceHash, modNew, ignoreWhiteSpace, chunker);
-
-            BuildModificationData(modOld, modNew);
-
-            int piecesALength = modOld.HashedPieces.Length;
-            int piecesBLength = modNew.HashedPieces.Length;
-            int posA = 0;
-            int posB = 0;
-
-            do
+            while (posA < piecesALength
+                   && posB < piecesBLength
+                   && !modOld.Modifications[posA]
+                   && !modNew.Modifications[posB])
             {
-                while (posA < piecesALength
-                       && posB < piecesBLength
-                       && !modOld.Modifications[posA]
-                       && !modNew.Modifications[posB])
-                {
-                    posA++;
-                    posB++;
-                }
-
-                int beginA = posA;
-                int beginB = posB;
-                for (; posA < piecesALength && modOld.Modifications[posA]; posA++) ;
-
-                for (; posB < piecesBLength && modNew.Modifications[posB]; posB++) ;
-
-                int deleteCount = posA - beginA;
-                int insertCount = posB - beginB;
-                if (deleteCount > 0 || insertCount > 0)
-                {
-                    lineDiffs.Add(new DiffBlock(beginA, deleteCount, beginB, insertCount));
-                }
-            } while (posA < piecesALength && posB < piecesBLength);
-
-            return new DiffResult(modOld.Pieces, modNew.Pieces, lineDiffs);
-        }
-
-        /// <summary>
-        /// Finds the middle snake and the minimum length of the edit script comparing string A and B
-        /// </summary>
-        /// <param name="A"></param>
-        /// <param name="startA">Lower bound inclusive</param>
-        /// <param name="endA">Upper bound exclusive</param>
-        /// <param name="B"></param>
-        /// <param name="startB">lower bound inclusive</param>
-        /// <param name="endB">upper bound exclusive</param>
-        /// <returns></returns>
-        protected static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB)
-        {
-            int N = endA - startA;
-            int M = endB - startB;
-            int MAX = M + N + 1;
-
-            var forwardDiagonal = new int[MAX + 1];
-            var reverseDiagonal = new int[MAX + 1];
-            return CalculateEditLength(A, startA, endA, B, startB, endB, forwardDiagonal, reverseDiagonal);
-        }
-
-        private static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
-        {
-            if (null == A) throw new ArgumentNullException(nameof(A));
-            if (null == B) throw new ArgumentNullException(nameof(B));
-
-            if (A.Length == 0 && B.Length == 0)
-            {
-                return new EditLengthResult();
+                posA++;
+                posB++;
             }
 
-            int N = endA - startA;
-            int M = endB - startB;
-            int MAX = M + N + 1;
-            int HALF = MAX / 2;
-            int delta = N - M;
-            bool deltaEven = delta % 2 == 0;
-            forwardDiagonal[1 + HALF] = 0;
-            reverseDiagonal[1 + HALF] = N + 1;
+            int beginA = posA;
+            int beginB = posB;
+            for (; posA < piecesALength && modOld.Modifications[posA]; posA++) ;
 
-            Log.WriteLine("Comparing strings");
-            Log.WriteLine("\t{0} of length {1}", A, A.Length);
-            Log.WriteLine("\t{0} of length {1}", B, B.Length);
+            for (; posB < piecesBLength && modNew.Modifications[posB]; posB++) ;
 
-            for (int D = 0; D <= HALF; D++)
+            int deleteCount = posA - beginA;
+            int insertCount = posB - beginB;
+            if (deleteCount > 0 || insertCount > 0)
+            {
+                lineDiffs.Add(new(beginA, deleteCount, beginB, insertCount));
+            }
+        } while (posA < piecesALength && posB < piecesBLength);
+
+        return new(modOld.Pieces, modNew.Pieces, lineDiffs);
+    }
+
+    /// <summary>
+    /// Finds the middle snake and the minimum length of the edit script comparing string A and B
+    /// </summary>
+    /// <param name="A"></param>
+    /// <param name="startA">Lower bound inclusive</param>
+    /// <param name="endA">Upper bound exclusive</param>
+    /// <param name="B"></param>
+    /// <param name="startB">lower bound inclusive</param>
+    /// <param name="endB">upper bound exclusive</param>
+    /// <returns></returns>
+    protected static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB)
+    {
+        int N = endA - startA;
+        int M = endB - startB;
+        int MAX = M + N + 1;
+
+        var forwardDiagonal = new int[MAX + 1];
+        var reverseDiagonal = new int[MAX + 1];
+        return CalculateEditLength(A, startA, endA, B, startB, endB, forwardDiagonal, reverseDiagonal);
+    }
+
+    private static EditLengthResult CalculateEditLength(int[] A, int startA, int endA, int[] B, int startB, int endB, int[] forwardDiagonal, int[] reverseDiagonal)
+    {
+        if (null == A) throw new ArgumentNullException(nameof(A));
+        if (null == B) throw new ArgumentNullException(nameof(B));
+
+        if (A.Length == 0 && B.Length == 0)
+        {
+            return new();
+        }
+
+        int N = endA - startA;
+        int M = endB - startB;
+        int MAX = M + N + 1;
+        int HALF = MAX / 2;
+        int delta = N - M;
+        bool deltaEven = delta % 2 == 0;
+        forwardDiagonal[1 + HALF] = 0;
+        reverseDiagonal[1 + HALF] = N + 1;
+
+        Log.WriteLine("Comparing strings");
+        Log.WriteLine("\t{0} of length {1}", A, A.Length);
+        Log.WriteLine("\t{0} of length {1}", B, B.Length);
+
+        for (int D = 0; D <= HALF; D++)
             {
                 Log.WriteLine("\nSearching for a {0}-Path", D);
                 // forward D-path
@@ -352,8 +352,7 @@ namespace DiffPlex
                     data.HashedPieces[i] = pieceHash.Count;
                     pieceHash[piece] = pieceHash.Count;
                 }
-            }
-
         }
+
     }
 }

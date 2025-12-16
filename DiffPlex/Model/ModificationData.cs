@@ -1,20 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace DiffPlex.Model
+namespace DiffPlex.Model;
+
+public class ModificationData(string str)
 {
-    public class ModificationData
-    {
-        public int[] HashedPieces { get; set; }
+    public int[] HashedPieces { get; set; }
 
-        public string RawData { get; }
+    public string RawData { get; } = str;
 
-        public bool[] Modifications { get; set; }
+    public bool[] Modifications { get; set; }
 
-        public IReadOnlyList<string> Pieces { get; set; }
-
-        public ModificationData(string str)
-        {
-            RawData = str;
-        }
-    }
+    public IReadOnlyList<string> Pieces { get; set; }
 }

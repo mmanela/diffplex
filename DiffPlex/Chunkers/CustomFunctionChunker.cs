@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DiffPlex.Chunkers
+namespace DiffPlex.Chunkers;
+
+public class CustomFunctionChunker(Func<string, IReadOnlyList<string>> customChunkerFunc) : IChunker
 {
-    public class CustomFunctionChunker: IChunker
+    private readonly Func<string, IReadOnlyList<string>> customChunkerFunc = customChunkerFunc ?? throw new ArgumentNullException(nameof(customChunkerFunc));
+
+    public IReadOnlyList<string> Chunk(string text)
     {
-        private readonly Func<string, IReadOnlyList<string>> customChunkerFunc;
-
-        public CustomFunctionChunker(Func<string, IReadOnlyList<string>> customChunkerFunc)
-        {
-            if (customChunkerFunc == null) throw new ArgumentNullException(nameof(customChunkerFunc));
-            this.customChunkerFunc = customChunkerFunc;
-        }
-
-        public IReadOnlyList<string> Chunk(string text)
-        {
-            return customChunkerFunc(text);
-        }
+        return customChunkerFunc(text);
     }
 }

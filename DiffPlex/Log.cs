@@ -1,19 +1,18 @@
 ﻿using System.Diagnostics;
 
-namespace DiffPlex
-{
-    static class Log
-    {
-        [Conditional("LOG")]
-        public static void WriteLine(string format, params object[] args)
-        {
-            Debug.WriteLine(string.Format(format, args));
-        }
+namespace DiffPlex;
 
-        [Conditional("LOG")]
-        public static void Write(string format, params object[] args)
-        {
-            // not implemented
-        }
+static class Log
+{
+    [Conditional("LOG")]
+    public static void WriteLine(string format, params object[] args)
+    {
+        Debug.WriteLine(string.Format(format, args));
+    }
+
+    [Conditional("LOG")]
+    public static void Write(string format, params object[] args)
+    {
+        // not implemented
     }
 }

@@ -1,10 +1,9 @@
 ﻿using DiffPlex.DiffBuilder.Model;
 
-namespace DiffPlex.DiffBuilder
+namespace DiffPlex.DiffBuilder;
+
+public interface IInlineDiffBuilder
 {
-    public interface IInlineDiffBuilder
-    {
-        DiffPaneModel BuildDiffModel(string oldText, string newText);
-        DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, IChunker chunker);
-    }
+    DiffPaneModel BuildDiffModel(string oldText, string newText);
+    DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, IChunker chunker);
 }

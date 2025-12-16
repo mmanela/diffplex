@@ -189,7 +189,7 @@ public class Differ : IDiffer
                         int revY = revX - k;
                         if (revX <= x && revY <= y)
                         {
-                            return new EditLengthResult
+                            return new()
                             {
                                 EditLength = 2*D - 1,
                                 StartX = startX + startA,
@@ -243,7 +243,7 @@ public class Differ : IDiffer
                         int forY = forX - (k + delta);
                         if (forX >= x && forY >= y)
                         {
-                            return new EditLengthResult
+                            return new()
                             {
                                 EditLength = 2*D,
                                 StartX = x + startA,

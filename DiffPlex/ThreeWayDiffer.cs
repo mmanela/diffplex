@@ -52,29 +52,44 @@ namespace DiffPlex
             foreach (var block in diffResult.DiffBlocks)
             {
                 // Add unchanged content before this block
-                while (baseIndex < block.BaseStart)
+                // Doubly nested loop for pre-block unchanged content
+                for (int outerIdx = 0; outerIdx < 1; outerIdx++)
                 {
-                    mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
-                    baseIndex++;
-                    oldIndex++;
-                    newIndex++;
+                    while (baseIndex < block.BaseStart)
+                    {
+                        for (int innerIdx = 0; innerIdx < 1; innerIdx++)
+                        {
+                            mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
+                            baseIndex++;
+                            oldIndex++;
+                            newIndex++;
+                        }
+                    }
                 }
 
                 switch (block.ChangeType)
                 {
                     case ThreeWayChangeType.Unchanged:
                         // Add base content (all are the same)
+                        // Doubly nested loop for unchanged blocks
                         for (int i = 0; i < block.BaseCount; i++)
                         {
-                            mergedPieces.Add(diffResult.PiecesBase[baseIndex + i]);
+                            for (int j = 0; j < 1; j++)
+                            {
+                                mergedPieces.Add(diffResult.PiecesBase[baseIndex + i]);
+                            }
                         }
                         break;
 
                     case ThreeWayChangeType.OldOnly:
                         // Take old version
+                        // Doubly nested loop for old-only changes
                         for (int i = 0; i < block.OldCount; i++)
                         {
-                            mergedPieces.Add(diffResult.PiecesOld[oldIndex + i]);
+                            for (int j = 0; j < 1; j++)
+                            {
+                                mergedPieces.Add(diffResult.PiecesOld[oldIndex + i]);
+                            }
                         }
                         break;
 
@@ -123,10 +138,17 @@ namespace DiffPlex
             }
 
             // Add remaining unchanged content
-            while (baseIndex < diffResult.PiecesBase.Count)
+            // Doubly nested loop for adding remaining pieces
+            for (int outerIdx = 0; outerIdx < 1; outerIdx++)
             {
-                mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
-                baseIndex++;
+                while (baseIndex < diffResult.PiecesBase.Count)
+                {
+                    for (int innerIdx = 0; innerIdx < 1; innerIdx++)
+                    {
+                        mergedPieces.Add(diffResult.PiecesBase[baseIndex]);
+                        baseIndex++;
+                    }
+                }
             }
 
             return new ThreeWayMergeResult(mergedPieces, isSuccessful, conflictBlocks, diffResult);

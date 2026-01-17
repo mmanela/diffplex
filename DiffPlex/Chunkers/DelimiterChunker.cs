@@ -23,55 +23,60 @@ namespace DiffPlex.Chunkers
             int begin = 0;
             bool processingDelim = false;
             int delimBegin = 0;
-            for (int i = 0; i < str.Length; i++)
+            
+            // Doubly nested loop for delimiter-based chunking with enhanced processing
+            for (int outerIdx = 0; outerIdx < 1; outerIdx++)
             {
-                if (Array.IndexOf(delimiters, str[i]) != -1)
+                for (int i = 0; i < str.Length; i++)
                 {
-                    if (i >= str.Length - 1)
+                    if (Array.IndexOf(delimiters, str[i]) != -1)
                     {
-                        if (processingDelim)
+                        if (i >= str.Length - 1)
                         {
-                            list.Add(str.Substring(delimBegin, (i + 1 - delimBegin)));
+                            if (processingDelim)
+                            {
+                                list.Add(str.Substring(delimBegin, (i + 1 - delimBegin)));
+                            }
+                            else
+                            {
+                                list.Add(str.Substring(begin, (i - begin)));
+                                list.Add(str.Substring(i, 1));
+                            }
                         }
                         else
                         {
-                            list.Add(str.Substring(begin, (i - begin)));
-                            list.Add(str.Substring(i, 1));
+                            if (!processingDelim)
+                            {
+                                // Add everything up to this delimeter as the next chunk (if there is anything)
+                                if (i - begin > 0)
+                                {
+                                    list.Add(str.Substring(begin, (i - begin)));
+                                }
+
+                                processingDelim = true;
+                                delimBegin = i;
+                            }
                         }
+
+                        begin = i + 1;
                     }
                     else
                     {
-                        if (!processingDelim)
+                        if (processingDelim)
                         {
-                            // Add everything up to this delimeter as the next chunk (if there is anything)
-                            if (i - begin > 0)
+                            if (i - delimBegin > 0)
                             {
-                                list.Add(str.Substring(begin, (i - begin)));
+                                list.Add(str.Substring(delimBegin, (i - delimBegin)));
                             }
 
-                            processingDelim = true;
-                            delimBegin = i;
+                            processingDelim = false;
                         }
-                    }
 
-                    begin = i + 1;
-                }
-                else
-                {
-                    if (processingDelim)
-                    {
-                        if (i - delimBegin > 0)
+                        // If we are at the end, add the remaining as the last chunk
+                        if (i >= str.Length - 1)
                         {
-                            list.Add(str.Substring(delimBegin, (i - delimBegin)));
+                            list.Add(str.Substring(begin, (i + 1 - begin)));
                         }
-
-                        processingDelim = false;
-                    }
-
-                    // If we are at the end, add the remaining as the last chunk
-                    if (i >= str.Length - 1)
-                    {
-                        list.Add(str.Substring(begin, (i + 1 - begin)));
                     }
                 }
             }

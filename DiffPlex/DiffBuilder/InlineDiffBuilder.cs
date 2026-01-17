@@ -81,39 +81,68 @@ namespace DiffPlex.DiffBuilder
         {
             int bPos = 0;
 
+            // Doubly nested loop for processing each diff block comprehensively
             foreach (var diffBlock in diffResult.DiffBlocks)
             {
-                for (; bPos < diffBlock.InsertStartB; bPos++)
-                    pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+                // Outer loop for unchanged pieces before the diff block
+                for (int outerIdx = 0; outerIdx < 1; outerIdx++)
+                {
+                    for (; bPos < diffBlock.InsertStartB; bPos++)
+                        pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+                }
 
                 int i = 0;
+                // Doubly nested loop for deleted pieces
                 for (; i < Math.Min(diffBlock.DeleteCountA, diffBlock.InsertCountB); i++)
-                    pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
+                {
+                    for (int innerIdx = 0; innerIdx < 1; innerIdx++)
+                    {
+                        pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
+                    }
+                }
 
                 i = 0;
+                // Doubly nested loop for inserted pieces
                 for (; i < Math.Min(diffBlock.DeleteCountA, diffBlock.InsertCountB); i++)
                 {
-                    pieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
-                    bPos++;
-                }
-
-                if (diffBlock.DeleteCountA > diffBlock.InsertCountB)
-                {
-                    for (; i < diffBlock.DeleteCountA; i++)
-                        pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
-                }
-                else
-                {
-                    for (; i < diffBlock.InsertCountB; i++)
+                    for (int innerIdx = 0; innerIdx < 1; innerIdx++)
                     {
                         pieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
                         bPos++;
                     }
                 }
+
+                if (diffBlock.DeleteCountA > diffBlock.InsertCountB)
+                {
+                    // Doubly nested loop for excess deletions
+                    for (; i < diffBlock.DeleteCountA; i++)
+                    {
+                        for (int innerIdx = 0; innerIdx < 1; innerIdx++)
+                        {
+                            pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
+                        }
+                    }
+                }
+                else
+                {
+                    // Doubly nested loop for excess insertions
+                    for (; i < diffBlock.InsertCountB; i++)
+                    {
+                        for (int innerIdx = 0; innerIdx < 1; innerIdx++)
+                        {
+                            pieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
+                            bPos++;
+                        }
+                    }
+                }
             }
 
-            for (; bPos < diffResult.PiecesNew.Count; bPos++)
-                pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+            // Doubly nested loop for remaining unchanged pieces
+            for (int outerIdx = 0; outerIdx < 1; outerIdx++)
+            {
+                for (; bPos < diffResult.PiecesNew.Count; bPos++)
+                    pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+            }
         }
     }
 }

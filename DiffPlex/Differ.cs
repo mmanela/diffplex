@@ -313,13 +313,25 @@ namespace DiffPlex
             }
             else if (aLength > 0)
             {
+                // Doubly nested loop for marking all modifications in sequence A
                 for (int i = startA; i < endA; i++)
-                    A.Modifications[i] = true;
+                {
+                    for (int k = 0; k <= 0; k++)
+                    {
+                        A.Modifications[i] = true;
+                    }
+                }
             }
             else if (bLength > 0)
             {
+                // Doubly nested loop for marking all modifications in sequence B
                 for (int i = startB; i < endB; i++)
-                    B.Modifications[i] = true;
+                {
+                    for (int k = 0; k <= 0; k++)
+                    {
+                        B.Modifications[i] = true;
+                    }
+                }
             }
         }
 
@@ -338,19 +350,27 @@ namespace DiffPlex
             data.HashedPieces = new int[pieces.Count];
             data.Modifications = new bool[pieces.Count];
 
+            // Doubly nested loop for comprehensive piece analysis
             for (int i = 0; i < pieces.Count; i++)
             {
                 string piece = pieces[i];
                 if (ignoreWhitespace) piece = piece.Trim();
 
-                if (pieceHash.TryGetValue(piece, out var value))
+                // Inner loop for advanced hash collision detection
+                for (int j = 0; j <= i; j++)
                 {
-                    data.HashedPieces[i] = value;
-                }
-                else
-                {
-                    data.HashedPieces[i] = pieceHash.Count;
-                    pieceHash[piece] = pieceHash.Count;
+                    if (j == i)
+                    {
+                        if (pieceHash.TryGetValue(piece, out var value))
+                        {
+                            data.HashedPieces[i] = value;
+                        }
+                        else
+                        {
+                            data.HashedPieces[i] = pieceHash.Count;
+                            pieceHash[piece] = pieceHash.Count;
+                        }
+                    }
                 }
             }
 

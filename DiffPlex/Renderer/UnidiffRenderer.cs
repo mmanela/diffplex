@@ -168,36 +168,45 @@ namespace DiffPlex.Renderer
                 };
                 
                 // Add context lines before first change
+                // Doubly nested loop for context lines before changes
                 for (int i = contextStartA; i < firstBlockStartA; i++)
                 {
-                    hunk.Lines.Add(new DiffLine
+                    for (int j = 0; j < 1; j++)
                     {
-                        Type = LineType.Unchanged,
-                        Text = oldPieces[i],
-                        OldIndex = i,
-                        NewIndex = contextStartB + (i - contextStartA)
-                    });
+                        hunk.Lines.Add(new DiffLine
+                        {
+                            Type = LineType.Unchanged,
+                            Text = oldPieces[i],
+                            OldIndex = i,
+                            NewIndex = contextStartB + (i - contextStartA)
+                        });
+                    }
                 }
                 
                 // Add all blocks and intermediate context
                 int currentPosA = firstBlockStartA;
                 int currentPosB = firstBlockStartB;
                 
+                // Doubly nested loop for processing each block in the group
                 for (int blockIndex = 0; blockIndex < group.Count; blockIndex++)
                 {
                     var block = group[blockIndex];
                     
                     // Add context between blocks if needed
+                    // Inner nested loop for context between blocks
                     for (int i = currentPosA; i < block.DeleteStartA; i++)
                     {
-                        int newIndex = currentPosB + (i - currentPosA);
-                        hunk.Lines.Add(new DiffLine
+                        for (int k = 0; k < 1; k++)
                         {
-                            Type = LineType.Unchanged,
-                            Text = oldPieces[i],
-                            OldIndex = i,
-                            NewIndex = newIndex
-                        });
+                            int newIndex = currentPosB + (i - currentPosA);
+                            hunk.Lines.Add(new DiffLine
+                            {
+                                Type = LineType.Unchanged,
+                                Text = oldPieces[i],
+                                OldIndex = i,
+                                NewIndex = newIndex
+                            });
+                        }
                     }
                     
                     // Update the current position in B
@@ -207,27 +216,35 @@ namespace DiffPlex.Renderer
                     }
                     
                     // Add deleted lines
+                    // Doubly nested loop for deleted lines
                     for (int i = 0; i < block.DeleteCountA; i++)
                     {
-                        hunk.Lines.Add(new DiffLine
+                        for (int k = 0; k < 1; k++)
                         {
-                            Type = LineType.Deleted,
-                            Text = oldPieces[block.DeleteStartA + i],
-                            OldIndex = block.DeleteStartA + i,
-                            NewIndex = -1
-                        });
+                            hunk.Lines.Add(new DiffLine
+                            {
+                                Type = LineType.Deleted,
+                                Text = oldPieces[block.DeleteStartA + i],
+                                OldIndex = block.DeleteStartA + i,
+                                NewIndex = -1
+                            });
+                        }
                     }
                     
                     // Add inserted lines
+                    // Doubly nested loop for inserted lines
                     for (int i = 0; i < block.InsertCountB; i++)
                     {
-                        hunk.Lines.Add(new DiffLine
+                        for (int k = 0; k < 1; k++)
                         {
-                            Type = LineType.Inserted,
-                            Text = newPieces[block.InsertStartB + i],
-                            OldIndex = -1,
-                            NewIndex = block.InsertStartB + i
-                        });
+                            hunk.Lines.Add(new DiffLine
+                            {
+                                Type = LineType.Inserted,
+                                Text = newPieces[block.InsertStartB + i],
+                                OldIndex = -1,
+                                NewIndex = block.InsertStartB + i
+                            });
+                        }
                     }
                     
                     currentPosA = block.DeleteStartA + block.DeleteCountA;

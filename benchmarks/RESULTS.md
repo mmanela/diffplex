@@ -102,15 +102,15 @@ Positive percentages below indicate improvement. The largest retained gains are 
 
 | Method | Scenario | Size | Baseline Mean | Final Mean | Time Change | Baseline Allocated | Final Allocated | Allocation Change |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
-| CreateLineDiffs | Identical | Small | 13.62 μs | 13.70 μs | -0.6% | 10.48 KB | 10.41 KB | 0.7% |
-| CreateCharacterDiffs | Identical | Small | 14.39 μs | 14.86 μs | -3.3% | 23.34 KB | 23.32 KB | 0.1% |
-| BuildSideBySideDiffModel | Identical | Large | 874.99 μs | 942.19 μs | -7.7% | 881.17 KB | 840.17 KB | 4.7% |
-| BuildSideBySideDiffModel | ManySmallChanges | Small | 25.92 μs | 25.33 μs | 2.3% | 38.86 KB | 35.46 KB | 8.7% |
-| BuildSideBySideDiffModel | ManySmallChanges | Large | 1,939.46 μs | 1,675.72 μs | 13.6% | 2038.47 KB | 1863.92 KB | 8.6% |
-| BuildSideBySideDiffModel | FewLargeChanges | Large | 2,986.63 μs | 2,842.09 μs | 4.8% | 3762.32 KB | 3475.27 KB | 7.6% |
-| BuildSideBySideDiffModel | CompletelyDifferent | Large | 17,702.56 μs | 16,892.68 μs | 4.6% | 10543.03 KB | 9998.19 KB | 5.2% |
-| BuildSideBySideDiffModel | Long common subsequence | Large | 995.12 μs | 946.13 μs | 4.9% | 989.58 KB | 988.12 KB | 0.1% |
-| CreateWordDiffs | ManySmallChanges | Large | 4,079.09 μs | 4,075.55 μs | 0.1% | 3119.17 KB | 3119.17 KB | 0.0% |
+| CreateLineDiffs | Identical | Small | 13.62 μs | 13.59 μs | 0.2% | 10.48 KB | 10.41 KB | 0.7% |
+| CreateCharacterDiffs | Identical | Small | 14.39 μs | 14.60 μs | -1.5% | 23.34 KB | 23.32 KB | 0.1% |
+| BuildSideBySideDiffModel | Identical | Large | 874.99 μs | 869.97 μs | 0.6% | 881.17 KB | 840.17 KB | 4.7% |
+| BuildSideBySideDiffModel | ManySmallChanges | Small | 25.92 μs | 25.55 μs | 1.4% | 38.86 KB | 35.46 KB | 8.7% |
+| BuildSideBySideDiffModel | ManySmallChanges | Large | 1,939.46 μs | 1,712.49 μs | 11.7% | 2038.47 KB | 1863.92 KB | 8.6% |
+| BuildSideBySideDiffModel | FewLargeChanges | Large | 2,986.63 μs | 2,878.48 μs | 3.6% | 3762.32 KB | 3475.27 KB | 7.6% |
+| BuildSideBySideDiffModel | CompletelyDifferent | Large | 17,702.56 μs | 16,772.30 μs | 5.3% | 10543.03 KB | 9998.19 KB | 5.2% |
+| BuildSideBySideDiffModel | Long common subsequence | Large | 995.12 μs | 1,023.03 μs | -2.8% | 989.58 KB | 988.12 KB | 0.1% |
+| CreateWordDiffs | ManySmallChanges | Large | 4,079.09 μs | 4,149.08 μs | -1.7% | 3119.17 KB | 3119.17 KB | 0.0% |
 
 ## Optimization notes and ROI conclusion
 
@@ -137,7 +137,7 @@ BenchmarkDotNet v0.13.12, Ubuntu 24.04.4 LTS (Noble Numbat)
 AMD EPYC 7763, 1 CPU, 4 logical and 2 physical cores
 .NET SDK 9.0.317
   [Host]     : .NET 8.0.30 (8.0.3026.36720), X64 RyuJIT AVX2
-  Job-EXTCWP : .NET 8.0.30 (8.0.3026.36720), X64 RyuJIT AVX2
+  Job-ZBOZAN : .NET 8.0.30 (8.0.3026.36720), X64 RyuJIT AVX2
 
 Runtime=.NET 8.0  IterationCount=3  LaunchCount=1  
 WarmupCount=1  
@@ -145,72 +145,72 @@ WarmupCount=1
 ```
 | Method                   | Scenario             | Size  | Mean         | Error        | StdDev     | Ratio | RatioSD | Gen0     | Gen1     | Gen2     | Allocated  | Alloc Ratio |
 |------------------------- |--------------------- |------ |-------------:|-------------:|-----------:|------:|--------:|---------:|---------:|---------:|-----------:|------------:|
-| CreateLineDiffs          | Identical            | Small |     13.70 μs |     1.077 μs |   0.059 μs |  0.99 |    0.01 |   0.6256 |   0.0153 |        - |   10.41 KB |        1.00 |
-| CreateDiffs_LineChunker  | Identical            | Small |     13.79 μs |     2.335 μs |   0.128 μs |  1.00 |    0.00 |   0.6256 |   0.0153 |        - |   10.41 KB |        1.00 |
-| BuildInlineDiffModel     | Identical            | Small |     14.63 μs |     0.425 μs |   0.023 μs |  1.06 |    0.01 |   0.7935 |   0.0305 |        - |   12.98 KB |        1.25 |
-| CreateCharacterDiffs     | Identical            | Small |     14.86 μs |     4.109 μs |   0.225 μs |  1.08 |    0.01 |   1.4191 |   0.0916 |        - |   23.32 KB |        2.24 |
-| BuildSideBySideDiffModel | Identical            | Small |     17.96 μs |     3.441 μs |   0.189 μs |  1.30 |    0.01 |   0.9155 |   0.0305 |        - |   14.96 KB |        1.44 |
-| CreateWordDiffs          | Identical            | Small |     39.27 μs |     8.815 μs |   0.483 μs |  2.85 |    0.02 |   3.1738 |   0.3662 |        - |   52.08 KB |        5.00 |
+| CreateLineDiffs          | Identical            | Small |     13.59 μs |     1.376 μs |   0.075 μs |  0.46 |    0.13 |   0.6256 |   0.0153 |        - |   10.41 KB |        1.00 |
+| BuildInlineDiffModel     | Identical            | Small |     13.71 μs |     6.050 μs |   0.332 μs |  0.46 |    0.13 |   0.7935 |   0.0305 |        - |   12.98 KB |        1.25 |
+| CreateCharacterDiffs     | Identical            | Small |     14.60 μs |     6.931 μs |   0.380 μs |  0.49 |    0.13 |   1.4191 |   0.0916 |        - |   23.32 KB |        2.24 |
+| BuildSideBySideDiffModel | Identical            | Small |     15.29 μs |     2.122 μs |   0.116 μs |  0.52 |    0.14 |   0.9155 |   0.0305 |        - |   14.96 KB |        1.44 |
+| CreateDiffs_LineChunker  | Identical            | Small |     31.37 μs |   186.786 μs |  10.238 μs |  1.00 |    0.00 |   0.6104 |        - |        - |   10.41 KB |        1.00 |
+| CreateWordDiffs          | Identical            | Small |     40.11 μs |    16.704 μs |   0.916 μs |  1.36 |    0.38 |   3.1738 |   0.3662 |        - |   52.08 KB |        5.00 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateCharacterDiffs     | Identical            | Large |     57.39 μs |     6.506 μs |   0.357 μs |  0.07 |    0.00 |   5.4321 |   1.0376 |        - |   89.23 KB |        0.15 |
-| CreateDiffs_LineChunker  | Identical            | Large |    785.11 μs |   115.082 μs |   6.308 μs |  1.00 |    0.00 |  35.1563 |  22.4609 |        - |  582.11 KB |        1.00 |
-| BuildInlineDiffModel     | Identical            | Large |    817.88 μs |    56.223 μs |   3.082 μs |  1.04 |    0.01 |  43.9453 |  28.3203 |        - |  731.56 KB |        1.26 |
-| CreateLineDiffs          | Identical            | Large |    842.10 μs |   160.964 μs |   8.823 μs |  1.07 |    0.01 |  35.1563 |  22.4609 |        - |  582.11 KB |        1.00 |
-| BuildSideBySideDiffModel | Identical            | Large |    942.19 μs |   332.279 μs |  18.213 μs |  1.20 |    0.03 |  50.7813 |  34.1797 |        - |  840.17 KB |        1.44 |
-| CreateWordDiffs          | Identical            | Large |  3,024.70 μs |   554.037 μs |  30.369 μs |  3.85 |    0.04 | 371.0938 | 371.0938 | 371.0938 | 3081.63 KB |        5.29 |
+| CreateCharacterDiffs     | Identical            | Large |     58.36 μs |     1.954 μs |   0.107 μs |  0.07 |    0.00 |   5.4321 |   1.0376 |        - |   89.23 KB |        0.15 |
+| CreateDiffs_LineChunker  | Identical            | Large |    783.15 μs |   113.850 μs |   6.241 μs |  1.00 |    0.00 |  35.1563 |  22.4609 |        - |  582.11 KB |        1.00 |
+| CreateLineDiffs          | Identical            | Large |    840.63 μs |   172.137 μs |   9.435 μs |  1.07 |    0.00 |  35.1563 |  22.4609 |        - |  582.11 KB |        1.00 |
+| BuildInlineDiffModel     | Identical            | Large |    841.13 μs |    44.147 μs |   2.420 μs |  1.07 |    0.01 |  43.9453 |  28.3203 |        - |  731.56 KB |        1.26 |
+| BuildSideBySideDiffModel | Identical            | Large |    869.97 μs |    83.672 μs |   4.586 μs |  1.11 |    0.01 |  50.7813 |  34.1797 |        - |  840.17 KB |        1.44 |
+| CreateWordDiffs          | Identical            | Large |  2,997.95 μs |   566.837 μs |  31.070 μs |  3.83 |    0.06 | 371.0938 | 371.0938 | 371.0938 | 3081.63 KB |        5.29 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateLineDiffs          | ManySmallChanges     | Small |     14.06 μs |     2.047 μs |   0.112 μs |  0.98 |    0.01 |   0.6561 |   0.0153 |        - |   10.77 KB |        1.00 |
-| CreateDiffs_LineChunker  | ManySmallChanges     | Small |     14.28 μs |     0.892 μs |   0.049 μs |  1.00 |    0.00 |   0.6561 |   0.0153 |        - |   10.77 KB |        1.00 |
-| BuildInlineDiffModel     | ManySmallChanges     | Small |     14.96 μs |     2.423 μs |   0.133 μs |  1.05 |    0.01 |   0.8240 |   0.0305 |        - |   13.61 KB |        1.26 |
-| CreateCharacterDiffs     | ManySmallChanges     | Small |     18.09 μs |     3.366 μs |   0.185 μs |  1.27 |    0.01 |   1.4954 |   0.0916 |        - |   24.68 KB |        2.29 |
-| BuildSideBySideDiffModel | ManySmallChanges     | Small |     25.33 μs |     6.762 μs |   0.371 μs |  1.77 |    0.02 |   2.1667 |   0.1831 |        - |   35.46 KB |        3.29 |
-| CreateWordDiffs          | ManySmallChanges     | Small |     41.51 μs |     6.226 μs |   0.341 μs |  2.91 |    0.02 |   3.1738 |   0.3662 |        - |   52.72 KB |        4.90 |
+| CreateDiffs_LineChunker  | ManySmallChanges     | Small |     13.07 μs |     1.536 μs |   0.084 μs |  1.00 |    0.00 |   0.6561 |   0.0153 |        - |   10.77 KB |        1.00 |
+| BuildInlineDiffModel     | ManySmallChanges     | Small |     14.05 μs |     2.628 μs |   0.144 μs |  1.07 |    0.01 |   0.8240 |   0.0305 |        - |   13.61 KB |        1.26 |
+| CreateLineDiffs          | ManySmallChanges     | Small |     14.25 μs |     1.418 μs |   0.078 μs |  1.09 |    0.00 |   0.6561 |   0.0153 |        - |   10.77 KB |        1.00 |
+| CreateCharacterDiffs     | ManySmallChanges     | Small |     18.05 μs |     6.905 μs |   0.378 μs |  1.38 |    0.02 |   1.4954 |   0.0916 |        - |   24.68 KB |        2.29 |
+| BuildSideBySideDiffModel | ManySmallChanges     | Small |     25.55 μs |    18.594 μs |   1.019 μs |  1.95 |    0.09 |   2.1667 |   0.1831 |        - |   35.46 KB |        3.29 |
+| CreateWordDiffs          | ManySmallChanges     | Small |     43.60 μs |    11.351 μs |   0.622 μs |  3.33 |    0.03 |   3.1738 |   0.3662 |        - |   52.72 KB |        4.90 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateCharacterDiffs     | ManySmallChanges     | Large |     89.87 μs |    25.690 μs |   1.408 μs |  0.08 |    0.00 |   5.7373 |   1.2207 |        - |   94.59 KB |        0.16 |
-| BuildInlineDiffModel     | ManySmallChanges     | Large |  1,077.34 μs |   269.700 μs |  14.783 μs |  0.97 |    0.05 |  44.9219 |  29.2969 |        - |  761.55 KB |        1.27 |
-| CreateDiffs_LineChunker  | ManySmallChanges     | Large |  1,109.17 μs |   977.425 μs |  53.576 μs |  1.00 |    0.00 |  35.1563 |  25.3906 |        - |  600.35 KB |        1.00 |
-| CreateLineDiffs          | ManySmallChanges     | Large |  1,228.58 μs |   197.915 μs |  10.848 μs |  1.11 |    0.06 |  35.1563 |  25.3906 |        - |  600.35 KB |        1.00 |
-| BuildSideBySideDiffModel | ManySmallChanges     | Large |  1,675.72 μs |   620.007 μs |  33.985 μs |  1.51 |    0.09 | 113.2813 |  93.7500 |        - | 1863.92 KB |        3.10 |
-| CreateWordDiffs          | ManySmallChanges     | Large |  4,075.55 μs |   298.629 μs |  16.369 μs |  3.68 |    0.17 | 398.4375 | 398.4375 | 398.4375 | 3119.17 KB |        5.20 |
+| CreateCharacterDiffs     | ManySmallChanges     | Large |     90.79 μs |    17.780 μs |   0.975 μs |  0.09 |    0.00 |   5.7373 |   1.2207 |        - |   94.59 KB |        0.16 |
+| CreateLineDiffs          | ManySmallChanges     | Large |    979.16 μs |   130.092 μs |   7.131 μs |  0.94 |    0.01 |  35.1563 |  25.3906 |        - |  600.35 KB |        1.00 |
+| CreateDiffs_LineChunker  | ManySmallChanges     | Large |  1,041.50 μs |   267.067 μs |  14.639 μs |  1.00 |    0.00 |  35.1563 |  25.3906 |        - |  600.35 KB |        1.00 |
+| BuildInlineDiffModel     | ManySmallChanges     | Large |  1,111.84 μs |   289.028 μs |  15.843 μs |  1.07 |    0.00 |  44.9219 |  29.2969 |        - |  761.55 KB |        1.27 |
+| BuildSideBySideDiffModel | ManySmallChanges     | Large |  1,712.49 μs |   425.442 μs |  23.320 μs |  1.64 |    0.03 | 113.2813 |  93.7500 |        - | 1863.92 KB |        3.10 |
+| CreateWordDiffs          | ManySmallChanges     | Large |  4,149.08 μs |   330.977 μs |  18.142 μs |  3.98 |    0.05 | 398.4375 | 398.4375 | 398.4375 | 3119.17 KB |        5.20 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateLineDiffs          | FewLargeChanges      | Small |     13.07 μs |     1.354 μs |   0.074 μs |  0.92 |    0.01 |   0.6409 |   0.0153 |        - |   10.62 KB |        1.00 |
-| CreateDiffs_LineChunker  | FewLargeChanges      | Small |     14.14 μs |     2.017 μs |   0.111 μs |  1.00 |    0.00 |   0.6409 |   0.0153 |        - |   10.62 KB |        1.00 |
-| BuildInlineDiffModel     | FewLargeChanges      | Small |     14.77 μs |     1.320 μs |   0.072 μs |  1.05 |    0.01 |   0.8240 |   0.0305 |        - |   13.62 KB |        1.28 |
-| CreateCharacterDiffs     | FewLargeChanges      | Small |     23.57 μs |     6.211 μs |   0.340 μs |  1.67 |    0.04 |   1.4343 |   0.0916 |        - |   23.45 KB |        2.21 |
-| BuildSideBySideDiffModel | FewLargeChanges      | Small |     38.36 μs |    10.972 μs |   0.601 μs |  2.71 |    0.06 |   3.6011 |   0.4272 |        - |   59.03 KB |        5.56 |
-| CreateWordDiffs          | FewLargeChanges      | Small |     57.75 μs |     6.185 μs |   0.339 μs |  4.09 |    0.05 |   3.4180 |   0.4272 |        - |   56.72 KB |        5.34 |
+| CreateLineDiffs          | FewLargeChanges      | Small |     13.16 μs |     0.866 μs |   0.047 μs |  0.94 |    0.01 |   0.6409 |   0.0153 |        - |   10.62 KB |        1.00 |
+| CreateDiffs_LineChunker  | FewLargeChanges      | Small |     13.98 μs |     1.465 μs |   0.080 μs |  1.00 |    0.00 |   0.6409 |   0.0153 |        - |   10.62 KB |        1.00 |
+| BuildInlineDiffModel     | FewLargeChanges      | Small |     17.79 μs |     4.537 μs |   0.249 μs |  1.27 |    0.01 |   0.8240 |   0.0305 |        - |   13.62 KB |        1.28 |
+| CreateCharacterDiffs     | FewLargeChanges      | Small |     23.05 μs |     4.014 μs |   0.220 μs |  1.65 |    0.01 |   1.4343 |   0.0916 |        - |   23.45 KB |        2.21 |
+| BuildSideBySideDiffModel | FewLargeChanges      | Small |     38.88 μs |    14.848 μs |   0.814 μs |  2.78 |    0.04 |   3.6011 |   0.4272 |        - |   59.03 KB |        5.56 |
+| CreateWordDiffs          | FewLargeChanges      | Small |     58.26 μs |     8.588 μs |   0.471 μs |  4.17 |    0.01 |   3.4180 |   0.4272 |        - |   56.72 KB |        5.34 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateCharacterDiffs     | FewLargeChanges      | Large |    195.00 μs |    27.998 μs |   1.535 μs |  0.17 |    0.00 |   5.3711 |   1.2207 |        - |   89.35 KB |        0.15 |
-| CreateDiffs_LineChunker  | FewLargeChanges      | Large |  1,132.69 μs |   247.261 μs |  13.553 μs |  1.00 |    0.00 |  35.1563 |  21.4844 |        - |  587.27 KB |        1.00 |
-| BuildInlineDiffModel     | FewLargeChanges      | Large |  1,145.58 μs |   274.827 μs |  15.064 μs |  1.01 |    0.00 |  44.9219 |  42.9688 |        - |  760.21 KB |        1.29 |
-| CreateLineDiffs          | FewLargeChanges      | Large |  1,168.24 μs |   885.656 μs |  48.546 μs |  1.03 |    0.05 |  35.1563 |  21.4844 |        - |  587.27 KB |        1.00 |
-| BuildSideBySideDiffModel | FewLargeChanges      | Large |  2,842.09 μs | 1,148.873 μs |  62.974 μs |  2.51 |    0.03 | 210.9375 | 187.5000 |        - | 3475.27 KB |        5.92 |
-| CreateWordDiffs          | FewLargeChanges      | Large | 46,409.79 μs | 3,809.567 μs | 208.815 μs | 40.98 |    0.63 | 363.6364 | 363.6364 | 363.6364 | 3328.73 KB |        5.67 |
+| CreateCharacterDiffs     | FewLargeChanges      | Large |    187.61 μs |    24.022 μs |   1.317 μs |  0.17 |    0.00 |   5.3711 |   1.2207 |        - |   89.35 KB |        0.15 |
+| CreateDiffs_LineChunker  | FewLargeChanges      | Large |  1,094.80 μs |    62.034 μs |   3.400 μs |  1.00 |    0.00 |  35.1563 |  21.4844 |        - |  587.29 KB |        1.00 |
+| CreateLineDiffs          | FewLargeChanges      | Large |  1,145.38 μs |   224.340 μs |  12.297 μs |  1.05 |    0.01 |  35.1563 |  21.4844 |        - |  587.27 KB |        1.00 |
+| BuildInlineDiffModel     | FewLargeChanges      | Large |  1,213.08 μs |    61.797 μs |   3.387 μs |  1.11 |    0.00 |  44.9219 |  42.9688 |        - |  760.19 KB |        1.29 |
+| BuildSideBySideDiffModel | FewLargeChanges      | Large |  2,878.48 μs | 1,053.643 μs |  57.754 μs |  2.63 |    0.04 | 210.9375 | 187.5000 |        - | 3475.27 KB |        5.92 |
+| CreateWordDiffs          | FewLargeChanges      | Large | 46,643.44 μs | 3,771.753 μs | 206.743 μs | 42.60 |    0.07 | 363.6364 | 363.6364 | 363.6364 | 3328.73 KB |        5.67 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateDiffs_LineChunker  | CompletelyDifferent  | Small |     16.35 μs |     2.461 μs |   0.135 μs |  1.00 |    0.00 |   0.7935 |   0.0305 |        - |   13.02 KB |        1.00 |
-| CreateLineDiffs          | CompletelyDifferent  | Small |     16.50 μs |     4.997 μs |   0.274 μs |  1.01 |    0.01 |   0.7935 |   0.0305 |        - |   13.02 KB |        1.00 |
-| BuildInlineDiffModel     | CompletelyDifferent  | Small |     17.36 μs |     3.310 μs |   0.181 μs |  1.06 |    0.00 |   1.0986 |   0.0305 |        - |   18.11 KB |        1.39 |
-| CreateWordDiffs          | CompletelyDifferent  | Small |     48.35 μs |    14.064 μs |   0.771 μs |  2.96 |    0.02 |   3.2959 |   0.4272 |        - |   54.71 KB |        4.20 |
-| BuildSideBySideDiffModel | CompletelyDifferent  | Small |     92.27 μs |     8.958 μs |   0.491 μs |  5.64 |    0.02 |  10.2539 |   2.9297 |        - |  168.39 KB |       12.93 |
-| CreateCharacterDiffs     | CompletelyDifferent  | Small |    226.16 μs |    30.315 μs |   1.662 μs | 13.84 |    0.02 |   1.4648 |        - |        - |   24.51 KB |        1.88 |
+| CreateLineDiffs          | CompletelyDifferent  | Small |     15.30 μs |     1.534 μs |   0.084 μs |  0.99 |    0.01 |   0.7935 |   0.0305 |        - |   13.02 KB |        1.00 |
+| CreateDiffs_LineChunker  | CompletelyDifferent  | Small |     15.47 μs |     2.659 μs |   0.146 μs |  1.00 |    0.00 |   0.7935 |   0.0305 |        - |   13.02 KB |        1.00 |
+| BuildInlineDiffModel     | CompletelyDifferent  | Small |     17.74 μs |    14.397 μs |   0.789 μs |  1.15 |    0.04 |   1.0986 |   0.0305 |        - |   18.11 KB |        1.39 |
+| CreateWordDiffs          | CompletelyDifferent  | Small |     47.82 μs |    11.050 μs |   0.606 μs |  3.09 |    0.05 |   3.2959 |   0.4272 |        - |   54.71 KB |        4.20 |
+| BuildSideBySideDiffModel | CompletelyDifferent  | Small |     91.63 μs |    12.982 μs |   0.712 μs |  5.92 |    0.07 |  10.2539 |   2.9297 |        - |  168.39 KB |       12.93 |
+| CreateCharacterDiffs     | CompletelyDifferent  | Small |    215.45 μs |    28.647 μs |   1.570 μs | 13.93 |    0.05 |   1.4648 |        - |        - |   24.51 KB |        1.88 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateCharacterDiffs     | CompletelyDifferent  | Large |  3,372.52 μs |   338.465 μs |  18.552 μs |  0.40 |    0.00 |   3.9063 |        - |        - |   90.42 KB |        0.13 |
-| CreateLineDiffs          | CompletelyDifferent  | Large |  8,161.70 μs |   516.252 μs |  28.298 μs |  0.97 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  693.03 KB |        1.00 |
-| CreateDiffs_LineChunker  | CompletelyDifferent  | Large |  8,436.76 μs |   768.326 μs |  42.115 μs |  1.00 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  693.03 KB |        1.00 |
-| BuildInlineDiffModel     | CompletelyDifferent  | Large |  8,531.53 μs | 1,318.007 μs |  72.244 μs |  1.01 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  991.73 KB |        1.43 |
-| BuildSideBySideDiffModel | CompletelyDifferent  | Large | 16,892.68 μs | 3,345.925 μs | 183.401 μs |  2.00 |    0.01 | 593.7500 | 500.0000 | 187.5000 | 9998.19 KB |       14.43 |
-| CreateWordDiffs          | CompletelyDifferent  | Large | 19,645.50 μs | 1,221.744 μs |  66.968 μs |  2.33 |    0.00 | 343.7500 | 343.7500 | 343.7500 |  3237.9 KB |        4.67 |
+| CreateCharacterDiffs     | CompletelyDifferent  | Large |  3,380.31 μs |   147.912 μs |   8.108 μs |  0.40 |    0.00 |   3.9063 |        - |        - |   90.42 KB |        0.13 |
+| BuildInlineDiffModel     | CompletelyDifferent  | Large |  8,259.31 μs | 1,129.393 μs |  61.906 μs |  0.97 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  991.73 KB |        1.43 |
+| CreateLineDiffs          | CompletelyDifferent  | Large |  8,476.78 μs |   811.258 μs |  44.468 μs |  1.00 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  693.03 KB |        1.00 |
+| CreateDiffs_LineChunker  | CompletelyDifferent  | Large |  8,490.00 μs |   743.915 μs |  40.776 μs |  1.00 |    0.00 |  46.8750 |  31.2500 |  15.6250 |  693.03 KB |        1.00 |
+| BuildSideBySideDiffModel | CompletelyDifferent  | Large | 16,772.30 μs | 1,104.411 μs |  60.537 μs |  1.98 |    0.01 | 593.7500 | 500.0000 | 187.5000 | 9998.19 KB |       14.43 |
+| CreateWordDiffs          | CompletelyDifferent  | Large | 19,650.84 μs |    71.024 μs |   3.893 μs |  2.31 |    0.01 | 343.7500 | 343.7500 | 343.7500 |  3237.9 KB |        4.67 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateLineDiffs          | LongC(...)uence [21] | Small |     13.80 μs |     2.279 μs |   0.125 μs |  0.99 |    0.04 |   0.6409 |   0.0153 |        - |   10.58 KB |        1.00 |
-| CreateDiffs_LineChunker  | LongC(...)uence [21] | Small |     14.02 μs |     7.660 μs |   0.420 μs |  1.00 |    0.00 |   0.6409 |   0.0153 |        - |   10.58 KB |        1.00 |
-| BuildInlineDiffModel     | LongC(...)uence [21] | Small |     14.50 μs |     0.425 μs |   0.023 μs |  1.04 |    0.03 |   0.8087 |   0.0305 |        - |   13.27 KB |        1.25 |
-| CreateCharacterDiffs     | LongC(...)uence [21] | Small |     15.68 μs |     8.267 μs |   0.453 μs |  1.12 |    0.01 |   1.4954 |   0.0916 |        - |   24.52 KB |        2.32 |
-| BuildSideBySideDiffModel | LongC(...)uence [21] | Small |     19.75 μs |     2.864 μs |   0.157 μs |  1.41 |    0.05 |   1.4648 |   0.0916 |        - |   24.29 KB |        2.30 |
-| CreateWordDiffs          | LongC(...)uence [21] | Small |     41.38 μs |     2.799 μs |   0.153 μs |  2.95 |    0.08 |   3.2349 |   0.3662 |        - |   52.93 KB |        5.00 |
+| BuildInlineDiffModel     | LongC(...)uence [21] | Small |     13.51 μs |     1.857 μs |   0.102 μs |  0.98 |    0.01 |   0.8087 |   0.0305 |        - |   13.27 KB |        1.25 |
+| CreateLineDiffs          | LongC(...)uence [21] | Small |     13.74 μs |     2.298 μs |   0.126 μs |  1.00 |    0.01 |   0.6409 |   0.0153 |        - |   10.58 KB |        1.00 |
+| CreateDiffs_LineChunker  | LongC(...)uence [21] | Small |     13.78 μs |     1.691 μs |   0.093 μs |  1.00 |    0.00 |   0.6409 |   0.0153 |        - |   10.58 KB |        1.00 |
+| CreateCharacterDiffs     | LongC(...)uence [21] | Small |     15.25 μs |     0.181 μs |   0.010 μs |  1.11 |    0.01 |   1.4954 |   0.1068 |        - |   24.52 KB |        2.32 |
+| BuildSideBySideDiffModel | LongC(...)uence [21] | Small |     22.72 μs |     5.309 μs |   0.291 μs |  1.65 |    0.03 |   1.4648 |   0.0916 |        - |   24.29 KB |        2.30 |
+| CreateWordDiffs          | LongC(...)uence [21] | Small |     39.98 μs |     6.527 μs |   0.358 μs |  2.90 |    0.04 |   3.2349 |   0.3662 |        - |   52.93 KB |        5.00 |
 |                          |                      |       |              |              |            |       |         |          |          |          |            |             |
-| CreateCharacterDiffs     | LongC(...)uence [21] | Large |     59.23 μs |     5.010 μs |   0.275 μs |  0.07 |    0.00 |   5.7373 |   1.4038 |        - |   93.71 KB |        0.16 |
-| CreateDiffs_LineChunker  | LongC(...)uence [21] | Large |    842.18 μs |   131.067 μs |   7.184 μs |  1.00 |    0.00 |  35.1563 |  25.3906 |        - |  588.25 KB |        1.00 |
-| CreateLineDiffs          | LongC(...)uence [21] | Large |    844.96 μs |   183.045 μs |  10.033 μs |  1.00 |    0.01 |  35.1563 |  25.3906 |        - |  588.25 KB |        1.00 |
-| BuildInlineDiffModel     | LongC(...)uence [21] | Large |    909.15 μs |   532.317 μs |  29.178 μs |  1.08 |    0.04 |  44.9219 |  33.2031 |        - |  740.08 KB |        1.26 |
-| BuildSideBySideDiffModel | LongC(...)uence [21] | Large |    946.13 μs |   141.596 μs |   7.761 μs |  1.12 |    0.01 |  59.5703 |  43.9453 |        - |  988.12 KB |        1.68 |
-| CreateWordDiffs          | LongC(...)uence [21] | Large |  4,678.57 μs | 1,007.041 μs |  55.199 μs |  5.56 |    0.02 | 398.4375 | 398.4375 | 398.4375 | 3110.18 KB |        5.29 |
+| CreateCharacterDiffs     | LongC(...)uence [21] | Large |     59.73 μs |     6.903 μs |   0.378 μs |  0.08 |    0.00 |   5.7373 |   1.4038 |        - |   93.71 KB |        0.16 |
+| CreateDiffs_LineChunker  | LongC(...)uence [21] | Large |    788.26 μs |   120.861 μs |   6.625 μs |  1.00 |    0.00 |  35.1563 |  25.3906 |        - |  588.25 KB |        1.00 |
+| CreateLineDiffs          | LongC(...)uence [21] | Large |    793.99 μs |   102.032 μs |   5.593 μs |  1.01 |    0.01 |  35.1563 |  25.3906 |        - |  588.25 KB |        1.00 |
+| BuildInlineDiffModel     | LongC(...)uence [21] | Large |    838.26 μs |    30.790 μs |   1.688 μs |  1.06 |    0.01 |  44.9219 |  33.2031 |        - |  740.08 KB |        1.26 |
+| BuildSideBySideDiffModel | LongC(...)uence [21] | Large |  1,023.03 μs |   110.408 μs |   6.052 μs |  1.30 |    0.00 |  58.5938 |  42.9688 |        - |  988.12 KB |        1.68 |
+| CreateWordDiffs          | LongC(...)uence [21] | Large |  4,663.38 μs |   252.355 μs |  13.832 μs |  5.92 |    0.06 | 398.4375 | 398.4375 | 398.4375 | 3110.18 KB |        5.29 |

@@ -124,6 +124,7 @@ internal sealed record BenchmarkInput(string OldText, string NewText, string Cha
             InputScenario.ManySmallChanges => ReplaceEvery(characterOldText, every: 19, 'Z'),
             InputScenario.FewLargeChanges => ReplaceRange(characterOldText, characterCount / 3, characterCount / 5, 'X'),
             InputScenario.CompletelyDifferent => CreateCharacterText(characterCount, "ZYXWVUTSRQ"),
+            // Keep the character variant bounded while still preserving a long common subsequence around an insertion.
             InputScenario.LongCommonSubsequence => characterOldText.Insert(characterCount / 2, CreateCharacterText(characterCount / 10, "lcs")),
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null)
         };
@@ -188,6 +189,11 @@ internal sealed record BenchmarkInput(string OldText, string NewText, string Cha
 
     private static string CreateCharacterText(int characterCount, string pattern)
     {
+        if (characterCount <= 0)
+        {
+            return string.Empty;
+        }
+
         var builder = new System.Text.StringBuilder(characterCount);
         while (builder.Length < characterCount)
         {

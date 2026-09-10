@@ -12,7 +12,7 @@ Useful shorter commands while iterating:
 
 ```console
 dotnet run -c Release -- --filter "*CreateLineDiffs*"
-dotnet run -c Release -- --filter "*Large*" --exporters markdown,csv
+dotnet run -c Release -- --filter "*Large*" --exporters github csv
 ```
 
 BenchmarkDotNet writes detailed reports under `BenchmarkDotNet.Artifacts/results` by default. Committed before/after summaries for this optimization effort are tracked in `../benchmarks/RESULTS.md`.

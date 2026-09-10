@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Model;
@@ -127,6 +126,18 @@ namespace DiffPlex.DiffBuilder
 
         private static ChangeType BuildDiffPieces(DiffResult diffResult, List<DiffPiece> oldPieces, List<DiffPiece> newPieces, PieceBuilder subPieceBuilder, bool ignoreWhiteSpace, bool ignoreCase)
         {
+            int capacity = Math.Max(diffResult.PiecesOld.Count, diffResult.PiecesNew.Count);
+            if (oldPieces.Capacity < capacity)
+            {
+                oldPieces.Capacity = capacity;
+            }
+
+            if (newPieces.Capacity < capacity)
+            {
+                newPieces.Capacity = capacity;
+            }
+
+            bool hasChanges = false;
             int aPos = 0;
             int bPos = 0;
 
@@ -152,6 +163,7 @@ namespace DiffPlex.DiffBuilder
                         newPiece.Type = oldPiece.Type = subChangeSummary;
                     }
 
+                    hasChanges |= oldPiece.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted;
                     oldPieces.Add(oldPiece);
                     newPieces.Add(newPiece);
                     aPos++;
@@ -164,6 +176,7 @@ namespace DiffPlex.DiffBuilder
                     {
                         oldPieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted, aPos + 1));
                         newPieces.Add(new DiffPiece());
+                        hasChanges = true;
                         aPos++;
                     }
                 }
@@ -173,6 +186,7 @@ namespace DiffPlex.DiffBuilder
                     {
                         newPieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
                         oldPieces.Add(new DiffPiece());
+                        hasChanges = true;
                         bPos++;
                     }
                 }
@@ -187,17 +201,7 @@ namespace DiffPlex.DiffBuilder
             }
 
             // Consider the whole diff as "modified" if we found any change, otherwise we consider it unchanged
-            if(oldPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
-            {
-                return ChangeType.Modified;
-            }
-
-            if (newPieces.Any(x => x.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted))
-            {
-                return ChangeType.Modified;
-            }
-
-            return ChangeType.Unchanged;
+            return hasChanges ? ChangeType.Modified : ChangeType.Unchanged;
         }
     }
 }

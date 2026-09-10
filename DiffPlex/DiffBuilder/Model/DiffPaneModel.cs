@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace DiffPlex.DiffBuilder.Model
 {
@@ -9,7 +8,18 @@ namespace DiffPlex.DiffBuilder.Model
 
         public bool HasDifferences
         {
-            get { return Lines.Any(x => x.Type != ChangeType.Unchanged); }
+            get
+            {
+                for (int i = 0; i < Lines.Count; i++)
+                {
+                    if (Lines[i].Type != ChangeType.Unchanged)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         public DiffPaneModel()

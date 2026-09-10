@@ -14,22 +14,22 @@ namespace DiffPlex
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new LineChunker());
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, LineChunker.Instance);
         }
 
         public DiffResult CreateLineDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new LineChunker());
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, LineChunker.Instance);
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace)
         {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, false, new CharacterChunker());
+            return CreateDiffs(oldText, newText, ignoreWhitespace, false, CharacterChunker.Instance);
         }
 
         public DiffResult CreateCharacterDiffs(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase)
         {
-            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, new CharacterChunker());
+            return CreateDiffs(oldText, newText, ignoreWhitespace, ignoreCase, CharacterChunker.Instance);
         }
 
         public DiffResult CreateWordDiffs(string oldText, string newText, bool ignoreWhitespace, char[] separators)

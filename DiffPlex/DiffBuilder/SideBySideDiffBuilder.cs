@@ -137,7 +137,7 @@ namespace DiffPlex.DiffBuilder
                 newPieces.Capacity = capacity;
             }
 
-            bool hasChanges = false;
+            bool hasChanges = subPieceBuilder == null && diffResult.DiffBlocks.Count > 0;
             int aPos = 0;
             int bPos = 0;
 
@@ -161,9 +161,8 @@ namespace DiffPlex.DiffBuilder
                     {
                         var subChangeSummary = subPieceBuilder(diffResult.PiecesOld[aPos], diffResult.PiecesNew[bPos], oldPiece.SubPieces, newPiece.SubPieces, ignoreWhiteSpace, ignoreCase);
                         newPiece.Type = oldPiece.Type = subChangeSummary;
+                        hasChanges |= subChangeSummary != ChangeType.Unchanged;
                     }
-
-                    hasChanges |= oldPiece.Type is ChangeType.Modified or ChangeType.Inserted or ChangeType.Deleted;
                     oldPieces.Add(oldPiece);
                     newPieces.Add(newPiece);
                     aPos++;

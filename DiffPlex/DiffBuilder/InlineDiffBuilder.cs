@@ -25,8 +25,7 @@ namespace DiffPlex.DiffBuilder
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace)
         {
-            var chunker = new LineChunker();
-            return BuildDiffModel(oldText, newText, ignoreWhitespace, false, chunker);
+            return BuildDiffModel(oldText, newText, ignoreWhitespace, false, LineChunker.Instance);
         }
 
         public DiffPaneModel BuildDiffModel(string oldText, string newText, bool ignoreWhitespace, bool ignoreCase, IChunker chunker)

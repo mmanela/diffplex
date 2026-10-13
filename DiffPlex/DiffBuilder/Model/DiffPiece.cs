@@ -55,6 +55,13 @@ namespace DiffPlex.DiffBuilder.Model
             return hashCode;
         }
 
+        public override string ToString()
+        {
+            var position = Position?.ToString() ?? "-";
+            var subPieceCount = SubPieces?.Count ?? 0;
+            return $"Pos:{position,-6} Subs:{subPieceCount,-6} {Type,-16} {Text}";
+        }
+
         private bool SubPiecesEqual(DiffPiece other)
         {
             if (SubPieces is null)

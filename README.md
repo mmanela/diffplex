@@ -380,7 +380,7 @@ public IObservableVector<ICommandBarElement> SecondaryCommands { get; }
 
 ## WPF Controls
 
-[![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
+[![NuGet](https://badge.fury.io/nu/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
 DiffPlex WPF control library `DiffPlex.Wpf` is used to render textual diffs in your WPF application.
 It targets `.NET 9`, `.NET 8`, `.NET 6`, `.NET Framework 4.8` and `.NET Framework 4.6`.
@@ -506,7 +506,7 @@ public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
 ## WinForms Controls
 
-[![NuGet](https://img.shields.io/nuget/v/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
+[![NuGet](https://badge.fury.io/nu/DiffPlex.Wpf.svg)](https://www.nuget.org/packages/DiffPlex.Wpf/)
 
 Windows Forms control of diff viewer is a WPF element host control.
 It is also included in `DiffPlex.Wpf` assembly.
